@@ -13,5 +13,3 @@ Install one:
 ```bash
 npx skills add bmcszk/agent-skills --skill beans -g
 ```
-
-Managed declaratively by [bmcszk/pot](https://github.com/bmcszk/pot) (chezmoi) via `~/.agents/.skill-lock.json`.
