@@ -106,8 +106,12 @@ shallow diff and a confident bug.
    later." No deferred remainder.
 2. **Re-read as a domain expert.** Replace the cheap version of each
    part. "This works" is not the bar; "this is how I'd write it" is.
-3. **Hunt defects.** Correctness, integration, portability,
-   performance, evidence. Fix what you find.
+3. **Hunt defects** in the **claimed bean's own change**. Correctness,
+   integration, portability, performance, evidence. Fix those.
+
+   A **new** bug found in live tests, another path, or unrelated
+   behaviour is not pass-3 work. Stop. `beans create -t bug -s draft`,
+   document evidence, triage first. See [`beans` Found a bug](../beans/SKILL.md#found-a-bug-binding).
 4. **Polish.** Low-cost wins, then repeat from step 2 until a full
    pass finds nothing.
 

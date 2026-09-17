@@ -61,6 +61,31 @@ beans create "Add OAuth token exchange"  -t task -s draft --parent myproj-oauth1
 subagent can complete without asking questions. If the body needs more
 than 3 acceptance criteria, it is probably a task, not a subtask.
 
+## Found a bug: document, then triage
+
+Stop. Do not write a fix yet.
+
+```bash
+beans create "CRS pending OR completed matches 0" -t bug -s draft --tag found-in-test
+# → myproj-xxxx
+
+beans show myproj-xxxx --body-only
+```
+
+Put in the draft body (via `--body-append` / `--body-replace-*`):
+
+- Expected vs actual
+- Stack, org, ids, times
+- Evidence paths (`raw/NN-….log`, worker log)
+- Open questions
+
+Then triage (research the serving contract and the client). Only then:
+
+```bash
+beans update myproj-xxxx -s todo
+beans update myproj-xxxx -s in-progress
+```
+
 ## Find blocked work
 
 ```bash
