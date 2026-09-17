@@ -1,6 +1,6 @@
 ---
 name: beans
-description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics/milestones, or query project state from the CLI. Keywords: beans, task management, issue tracker, create task, close task, list tasks, bug tracking, project management, draft triage, epic task subtask.'
+description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics/milestones, or query project state from the CLI. Keywords: beans, task management, issue tracker, create task, close task, list tasks, bug tracking, project management, draft triage, epic task subtask, found a bug.'
 metadata:
   risk: none
   source: community
@@ -105,6 +105,21 @@ or human triaging it must:
 
 A `draft` that surfaces unanswerable questions is scrapped with the
 questions written into `## Reasons for Scrapping`.
+
+### Found a bug (binding)
+
+**If you find a bug, it needs to go through the correct beans process. It has to be documented, triaged first.**
+
+Do not patch first. Do not jump to `todo` or `in-progress`. Do not "just fix it" because the test caught it.
+
+1. **Stop coding.** Keep the evidence (httpyac logs, worker logs, failing test output).
+2. **Document** — `beans create "<short title>" -t bug -s draft`. Body: what failed, expected vs actual, ids, times, stack, evidence paths.
+3. **Triage** — deep research (code, contract, docs). Write acceptance criteria. Split if needed. Then `beans update <id> -s todo`.
+4. **Claim** — only after triage: `beans update <id> -s in-progress`. Then implement.
+
+A live mismatch is still a `draft` until triage says it is a real, scoped, actionable bug. Wrong env, empty data, or an unsupported type is not a silent code change.
+
+Recipe: [`references/patterns.md`](references/patterns.md#found-a-bug-document-then-triage).
 
 ---
 
@@ -298,6 +313,7 @@ Process and CLI hygiene — not the closure rules, which live in
 | Forget to update status when starting work | Set `-s in-progress` when claiming a task |
 | Leave beans in `in-progress` when done | Always close with `-s completed` or `-s scrapped` |
 | Open two active epics in one session | Pick one GOAL per session, loop on it until reached |
+| Find a bug and patch it immediately | `beans create -t bug -s draft`, document evidence, triage, then claim |
 
 ---
 
