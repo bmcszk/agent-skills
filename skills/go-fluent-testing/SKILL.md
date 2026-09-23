@@ -41,13 +41,48 @@ skill.
 
 - **Package** `<name>_test` (e.g. `handlers_test`); test ONLY exported
   functions/methods; never touch unexported fields or private funcs.
+  This blackbox rule applies to BOTH unit styles below.
 - **No I/O**: no DB, no HTTP, no filesystem — mock every dependency
   via constructor injection (define a small interface at the consumer).
 - **Speed** <10ms per test; **naming** `TestComponent_Scenario`.
 - **Never**: `wantErr bool` (split into separate tests), build tags,
   `//nolint`, deleting or skipping tests.
 
-## Fluent pattern (all tiers)
+## Unit styles: fluent OR classic
+
+Unit tests accept two layouts — pick per repo convention, keep one per
+repo, never mix within a package:
+
+**Fluent** — the full DSL below (parts struct, `newParts(t)`,
+`.and()` chaining). Use when the package already has a fluent DSL or
+the tier is integration/E2E anyway.
+
+**Classic** — plain test funcs segmented by `// given` / `// when` /
+`// then` comments. Default for units: no DSL to build, same
+discipline, less machinery.
+
+```go
+func TestService_CreateUser(t *testing.T) {
+    // given
+    mockRepo := &MockRepository{}
+    mockRepo.On("Save", mock.Anything, mock.Anything).Return(nil)
+    service := service.NewService(mockRepo)
+
+    // when
+    err := service.CreateUser("test@example.com", "Test User")
+
+    // then
+    assert.NoError(t, err)
+    mockRepo.AssertExpectations(t)
+}
+```
+
+Classic rules: the three comments in order, one each; setup only under
+`// given`, calls only under `// when`, assertions only under
+`// then`; no section skipped; state stays local to the test func (the
+parts-struct rule does not apply here).
+
+## Fluent pattern (integration & E2E; units when repo is fluent)
 
 ```go
 func TestService_CreateUser(t *testing.T) {
@@ -81,8 +116,9 @@ func TestService_CreateUser(t *testing.T) {
 
 ## Forbidden (all tiers)
 
-- NEVER use direct helper function calls inside Test funcs — everything
-  flows through given/when/then methods
-- NEVER put validation in the when section
+- NEVER use direct helper function calls inside fluent Test funcs —
+  everything flows through given/when/then methods (classic units:
+  setup under `// given` instead)
+- NEVER put validation in the when section (either style)
 - NEVER use build tags, `//nolint`, or skip/delete tests
 - NEVER leave containers running or skip cleanup (integration/E2E)
