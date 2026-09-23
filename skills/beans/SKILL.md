@@ -106,6 +106,36 @@ or human triaging it must:
 A `draft` that surfaces unanswerable questions is scrapped with the
 questions written into `## Reasons for Scrapping`.
 
+#### Who triages (binding)
+
+Triage is done by the **best available research subagent**, not by
+whoever happens to be around and not by the main session skimming the
+ticket:
+
+- **Pick the strongest available model dynamically at triage time** —
+  query the agent runtime's own model-selection mechanism (its model
+  list, router, or provider catalog) for the best currently-reachable
+  reasoning model, and delegate to it. Do not hardcode a model name:
+  the best choice changes over time and what is reachable varies per
+  setup.
+- The triage subagent works **read-only on the repo** (research, not
+  implementation) and writes its findings into the bean body.
+- Triage output contract — the draft body must end up with:
+  1. **Root cause / answer to the open question** — with file:line
+     references or cited URLs; "unknown" is not a triage result.
+  2. **Local research** — affected code paths, configs, contracts read
+     and summarized with paths.
+  3. **Online research** — upstream docs/issues/specs consulted when
+     in-repo evidence is insufficient; links recorded.
+  4. **Scope** — tasks/subtasks split, ~10-min granularity at the
+     bottom, with blockers wired via `--blocked-by`.
+  5. **Acceptance criteria** — `- [ ]` checkboxes, independently
+     verifiable.
+
+Only when all five are in the body may the triager run
+`beans update <id> -s todo`. A `todo` bean whose body lacks root cause
+or acceptance criteria is a triage failure — send it back to `draft`.
+
 ### Found a bug (binding)
 
 **If you find a bug, it needs to go through the correct beans process. It has to be documented, triaged first.**
