@@ -73,6 +73,8 @@ reconstruct:
 - `references/scorecard-workflow.md` — complete scorecard.yml + badge
 - `references/dependabot-config.md` — dependabot.yml ecosystems + grouping
 - `references/security-policy.md` — SECURITY.md placement + reporting link
+- `references/github-badges.md` — full README badge family (workflow
+  status, coverage-via-gh-pages recipe, scorecard/pkg.go.dev/license/CII)
 - `references/user-side-checklist.md` — Settings click-paths (branch
   protection, secret scanning, Dependabot alerts, CII registration)
 
