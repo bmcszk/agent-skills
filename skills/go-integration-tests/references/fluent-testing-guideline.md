@@ -784,6 +784,119 @@ func (p *parts) sendMessageFromTemplate(templateFile string, data map[string]any
 }
 ```
 
+### 6. t.Run Promotion Rule
+**Prefer separate top-level Test funcs over t.Run subtests.** Only use t.Run when a subtest genuinely needs state isolation (fresh parts, fresh server, fresh env). t.Run that exists only to share a "name with a twist" is an anti-pattern — split into separate Test funcs with descriptive names.
+
+```go
+// ❌ FORBIDDEN: t.Run wrapper only to share a name
+func TestCookieJarHandling(t *testing.T) {
+    t.Run("default_behavior", func(t *testing.T) {
+        given, when, then := newParts(t)
+        // ...
+    })
+    t.Run("directive_no_cookie_jar", func(t *testing.T) {
+        given, when, then := newParts(t)
+        // ...
+    })
+}
+
+// ✅ CORRECT: two top-level Test funcs, one per scenario
+func TestCookieJarHandling_DefaultBehavior(t *testing.T) {
+    given, when, then := newParts(t)
+    // ...
+}
+
+func TestCookieJarHandling_NoCookieJarDirective(t *testing.T) {
+    given, when, then := newParts(t)
+    // ...
+}
+```
+
+**Rationale:**
+- Simpler test func bodies; complexity stays in the DSL
+- `go test -run TestCookieJarHandling_NoCookieJarDirective` works for targeted runs
+- No wrapper Test funcs — every test is directly runnable
+- Junit reports one clean entry per test
+
+### 7. Fixtures Over Inline Strings
+**aHttpFile(content) accepts SHORT inline HTTP requests only.** For multi-line request bodies with JSON templates, multi-line bodies with @vars, or `<@` / `<` external-file references, commit a fixture in `test/data/` and use `aHttpFileFromTemplate(name)`. Tests must not encode request bodies with sprintf + newlines + escapes.
+
+```go
+// ❌ FORBIDDEN: inline sprintf'd .http body
+anExternalFile("test_vars.json", `...long inline JSON...`).and().
+aHttpFile(fmt.Sprintf(`@userId = user123
+POST %s/post
+<@ ./test_vars.json`, given.serverURL))
+
+// ✅ CORRECT: committed fixture + one DSL call
+anExternalFile("test_vars.json", `...`).and().
+aHttpFileFromTemplate("external_file_with_vars.http")
+```
+
+**Rationale:**
+- Fixture files diff cleanly and are reviewable
+- No escaping pitfalls in Go raw strings
+- Template variables ([[.ServerURL]]) keep the server URL dynamic
+
+### 8. Handler Assertions via DSL
+**aHttpServer's handler must NOT contain inline `if r.Method != X { t.Errorf(...) }` cascades.** Keep the handler short (echo back / 200 OK). Assertions belong in the then-chain via `serverReceivedMethodAndPath` / `serverReceivedHeader*` / `serverReceivedBody*` / `serverReceivedJSONBody` reading capturedRequests.
+
+```go
+// ❌ FORBIDDEN: handler with inline t.Errorf cascade
+aHttpServer(func(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        t.Errorf("method = %v", r.Method)
+    }
+    if got := r.Header.Get("Content-Type"); got != "application/json" {
+        t.Errorf("Content-Type = %q", got)
+    }
+    // ...
+})
+
+// ✅ CORRECT: short echo handler + DSL assertions in then
+aJsonEchoServer().and().
+    // ... other given
+
+then.
+    serverReceivedMethodAndPath(0, http.MethodPost, "/post").and().
+    serverReceivedHeaderValue(0, "Content-Type", "application/json").and().
+    serverReceivedBodyParsesAsJSON(0)
+```
+
+**Rationale:**
+- Handler stays a plain test-data function (no *testing.T dependency)
+- Assertion failures report through the fluent chain, not buried t.Errorf
+- Captured requests can be asserted multiple ways without re-serving
+
+### 9. Faker/Rule Data Structures Belong in DSL
+**When a test needs a list of validation rules (key, pattern, fieldCount, containsCheck), expose ONE DSL method taking a small struct slice — not per-fixture helper functions that build the slice from a separate file.**
+
+```go
+// ❌ FORBIDDEN: per-fixture rule builders in the test file
+func fakerPersonDataHeaders() (vsCode, jetBrains []fakerHeaderRule) { /* ... */ }
+func fakerContactInternetHeaders() (vsCode, jetBrains []fakerHeaderRule) { /* ... */ }
+
+// Test:
+vsCode, jetBrains := fakerPersonDataHeaders()
+then.
+    assertFakerHeaders(0, vsCode).and().
+    assertFakerHeaders(1, jetBrains)
+
+// ✅ CORRECT: one DSL method + inline rule literal
+then.
+    serverReceivedFakerHeaders(0, []fakerHeaderRule{
+        {key: "X-Random-First-Name", pattern: `^\S+$`, fieldCount: 1},
+        {key: "X-Random-Job-Title", pattern: `^.+$`, fieldCount: -1},
+        {key: "X-User-Agent", containsCheck: "Mozilla"},
+    }).and().
+    serverReceivedFakerHeaders(1, []fakerHeaderRule{ /* ... */ })
+```
+
+**Rationale:**
+- Rules visible inline next to the test that owns them
+- No indirection through builder functions
+- One DSL entry point; rule types shared across faker tests
+
 ## Test Helper Functions
 **ONLY helper functions MUST use `t.Helper()` (NOT test functions).** All helpers should follow Given/When/Then structure:
 
@@ -1253,6 +1366,50 @@ just check
 - `TEST_SERVICE_ADDRESS` - Service base URL for HTTP tests
 - `CI` - Automatically set in CI environments
 - `GITHUB_ACTIONS` - Automatically set in GitHub Actions
+
+### 11. Minimal Comments Rule
+**Test source carries near-zero comments. The fluent chain IS the documentation.** Delete: `// PRD-COMMENT:` / requirement-tracker blocks (that context belongs in the PR description), `// Given / // When / // Then` section headers (the chain shows it), `// X was captured before...` / `// suppress unused-var` meta-comments, and anything that paraphrases the next line. Keep only: TODO/FIXME with an issue reference, one-line godoc on exported symbols, `// nolint:` directives. If a test needs a paragraph to be understandable, the fix is better names or a DSL method — not a comment.
+
+```go
+// ❌ FORBIDDEN: comment-driven test
+// PRD-COMMENT: FR10.1 - Client Core Execution: Single Request
+// This test verifies that the client can execute one request...
+func TestExecuteFile_SingleRequest(t *testing.T) {
+    given, when, then := newParts(t)
+    // Given
+    given.aClient()
+    // When
+    when.executeFile()
+    // Then
+    then.noError()
+}
+
+// ✅ CORRECT: names + chain speak for themselves
+func TestExecuteFile_SingleRequest(t *testing.T) {
+    given, when, then := newParts(t)
+
+    given.
+        aRequestFixture("single_request.http").and().
+        aClient()
+
+    when.
+        executeFile()
+
+    then.
+        noError()
+}
+```
+
+### 12. YAGNI Pass Before Every PR (ponytail)
+**Before opening a PR, delete everything that has no caller.** Migration/refactor work breeds orphaned helpers — grep and remove: DSL methods with zero call sites, struct types whose table tests were split, per-fixture builder functions, unused fixture files, dead `_ = x` lines. A helper "we might need later" is a liability; re-adding it later costs less than maintaining it now. Prove the pass: grep each deleted symbol returns 0 hits, then run the full gate (build/vet/lint/tests).
+
+**Never appease the `unused` linter with reference lists (PR#35 round 3).** `var _ = []any{ (*parts).foo, ... }` blocks in DSL files keep dead methods lint-clean forever — 5 dead DSL methods survived 3 review rounds behind them. Delete the blocks and let `unused` name the dead methods, then delete them. Same for `var _ = time.Time{}`-style "silence unused import" lines: fix the import, not the symptom.
+
+**DSL domain split when one file bloats (PR#35 round 3).** fluent_parts_test.go core (parts/newParts/and/lifecycle/base assertions); ext (fixtures/templates/external files/env/servers); capture (tracking/captured*); validator; graphql; per-feature files as needed. File moves only — no renames, no behavior changes; one package so all files share `parts`. Reviewer-triggered splits are exactly this shape.
+
+**Migration-history godoc is deleted, not shrunk (PR#35 rounds 2-3).** "The legacy tests never exercised this path... gate-mandated count..." belongs in the PR description / bean PoW, never in code. This includes 1-line shrunk survivors and mid-sentence `//` fragments above Test funcs. Delegate contracts for review rounds must state: comments max 1 line across the ENTIRE diff (DSL files included — workers otherwise read "minimal comments" as scoping only Test funcs), only non-obvious WHY, no `// --- moved from X ---` banners. Census: `awk '/^\/\//{c++;next} {if(c>2) print FILENAME": "c" before "NR; c=0}' *_test.go`.
+
+**Repeated mock-infrastructure in Test bodies = missing DSL given (PR#35 rounds 1-3).** The same handler shape appearing 3+ times (GraphQL JSON encoding, canned routes, echo) becomes an `a*Server` method. Likewise multi-line inline content strings (external-file JSON payloads) become committed fixtures under `test/data/<domain>/` with a `*Fixture` DSL variant — single-line payloads may stay inline. Keep fixture layout canonical: one `test/data/` tree; dissolve stray dirs (test/fixtures/) and grep `*.go *.http *.md` for stale paths in the same batch.
 
 ---
 
