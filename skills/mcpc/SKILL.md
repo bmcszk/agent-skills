@@ -1,6 +1,6 @@
 ---
 name: mcpc
-description: 'Use mcpc CLI to interact with MCP servers — call tools, read resources, manage sessions. Load this when you need to access any MCP server via the command line. Configured servers: context7, pixellab, MiniMax, gemini-cli, playwright, searxng. Keywords: mcpc, mcp client, model context protocol, mcp server, call tool, read resource, mcp session.'
+description: 'Use mcpc CLI to interact with MCP servers — call tools, read resources, manage sessions. Load this when you need to access any MCP server via the command line. Configured servers: context7, pixellab, MiniMax, zai-search, zai-reader, zread, zai-vision, gemini-cli, playwright, searxng. Keywords: mcpc, mcp client, model context protocol, mcp server, call tool, read resource, mcp session.'
 metadata:
   audience: developers
   workflow: infrastructure
@@ -20,7 +20,21 @@ MCP servers are defined in `~/.mcpc/mcp.json`. Connect via `file:entry` syntax:
 mcpc connect ~/.mcpc/mcp.json:<entry> @<name>
 ```
 
-**Available servers:** context7, pixellab, MiniMax, gemini-cli, playwright, searxng
+**Available servers:** context7, pixellab, MiniMax, gemini-cli, playwright, searxng, plus Z.ai coding-plan servers (added 2026-09-16, key = ZAI_AUTH_TOKEN from ~/.config/environment.d/secrets.conf):
+
+| Session | Entry | Tools | Notes |
+|---|---|---|---|
+| `@zai-search` | `zai-web-search` | `web_search_prime` | remote, live-verified |
+| `@zai-reader` | `zai-web-reader` | `webReader` | remote, live-verified |
+| `@zread` | `zread` | `search_doc`, `read_file`, `get_repo_structure` | remote; repo_name = owner/repo |
+| `@zai-vision` | `zai-vision` | `analyze_image`, `ui_to_artifact`, OCR, … | stdio npx @z_ai/mcp-server; **local file paths only** — URL fetch fails (400 图片输入格式/解析错误); Node ≥22 |
+| `@minimax` | `MiniMax` | `web_search`, `understand_image` | uvx minimax-coding-plan-mcp, key = MINIMAX_CODING_KEY; local paths verified; search verified |
+
+Not configured (pay-per-use platform API, NOT covered by coding plans): official generative MiniMax-MCP (uvx minimax-mcp: TTS/video/image/music). Only add on explicit user request.
+
+**PATH pitfall:** `mcpc` binary lives in `~/.bun/bin` — absent from default non-login PATH. First line of any script: `export PATH="$HOME/.bun/bin:$PATH"` (else `command not found`, exit 127).
+
+**Verified quirks (2026-09-16):** Z.ai/zread remote tools take `owner/repo` as `repo_name`; vision tools reject remote image URLs (HTTP 400 图片输入格式/解析错误) — download or generate a local file first (local paths verified OK on both @zai-vision and @minimax).
 
 ## Quick reference
 
