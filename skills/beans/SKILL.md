@@ -113,10 +113,11 @@ whoever happens to be around and not by the main session skimming the
 ticket:
 
 - **Pick the strongest available model dynamically at triage time** —
-  check the configured providers/routers (e.g. OmniRoute/9router model
-  lists, `hermes model`, provider status pages) and delegate to the
-  best currently-reachable reasoning model, not a fixed name. A model
-  that was best last month may be down or outranked today.
+  query the agent runtime's own model-selection mechanism (its model
+  list, router, or provider catalog) for the best currently-reachable
+  reasoning model, and delegate to it. Do not hardcode a model name:
+  the best choice changes over time and what is reachable varies per
+  setup.
 - The triage subagent works **read-only on the repo** (research, not
   implementation) and writes its findings into the bean body.
 - Triage output contract — the draft body must end up with:
