@@ -79,7 +79,10 @@ Put in the draft body (via `--body-append` / `--body-replace-*`):
 - Evidence paths (`raw/NN-….log`, worker log)
 - Open questions
 
-Then triage (research the serving contract and the client). Only then:
+Then triage (research the serving contract and the client) — delegate
+to the best available research subagent with the strongest currently
+reachable model (see **Who triages (binding)** in the parent
+`SKILL.md`). Only then:
 
 ```bash
 beans update myproj-xxxx -s todo
