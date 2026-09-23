@@ -287,6 +287,4 @@ jobs:
 
 After setup, use these skills for development:
 - `go-dev` - Go development patterns and best practices
-- `go-unit-tests` - Unit testing patterns
-- `go-integration-tests` - Integration testing with testcontainers
-- `go-e2e-tests` - E2E testing patterns
+- `go-fluent-testing` - Unit/integration/E2E testing (fluent Given/When/Then)

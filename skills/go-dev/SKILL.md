@@ -32,9 +32,7 @@ Use this skill when:
 ## Related Skills
 
 - `go-setup` - Project initialization and library selection
-- `go-unit-tests` - Unit testing patterns
-- `go-integration-tests` - Integration testing
-- `go-e2e-tests` - E2E testing
+- `go-fluent-testing` - Unit/integration/E2E testing (fluent Given/When/Then)
 
 ---
 
