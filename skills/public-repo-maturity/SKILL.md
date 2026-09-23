@@ -62,6 +62,22 @@ releases. Language-agnostic; Go examples where concrete.
    the release artifact + `.sig`/`.bundle` exist on the release page — a
    merged PR is not a moved metric.
 
+## Project configuration (wire-up before any scores move)
+
+The scorecard API only reports a repo that is public **and** has a
+Scorecard run — a new repo scores nothing until configured. Do the
+agent-side wiring as one PR, the user-side clicks in one message. Full
+templates and click-paths live in `references/` — copy, don't
+reconstruct:
+
+- `references/scorecard-workflow.md` — complete scorecard.yml + badge
+- `references/dependabot-config.md` — dependabot.yml ecosystems + grouping
+- `references/security-policy.md` — SECURITY.md placement + reporting link
+- `references/user-side-checklist.md` — Settings click-paths (branch
+  protection, secret scanning, Dependabot alerts, CII registration)
+
+Decision points here; the files carry the exact YAML and paths.
+
 ## Pitfalls
 
 - A green CI matrix is false comfort when the workflow's GOTOOLCHAIN is
