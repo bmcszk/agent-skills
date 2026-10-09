@@ -54,6 +54,13 @@ English tag namespaces (`dev/`, `ai/`, `home/`) for `tags:` in frontmatter.
 
 ## Vault-specific hazards (check before any move)
 
+- **Moving with shell/git never rewrites links** — only renaming/moving inside
+  the Obsidian app auto-updates them. External moves require a scripted link
+  sweep covering wikilinks (including aliased, heading, and frontmatter-quoted
+  forms), relative markdown links, embeds, and absolute/file:// paths, plus a
+  vault-wide broken-link scan before the batch commit. See step 4 in
+  references/triage-workflow.md.
+
 - **Wikilinks survive moves** — `[[Note]]` resolves by filename, not path.
   Relative markdown links (`![](../../_resources/hash.png)`) do NOT: after
   moving a note, recompute and fix every relative path (script it, don't hand-edit).

@@ -44,14 +44,22 @@ For each note in the batch source:
    - the source daily note, once fully split, moves out of root (archive of
      dailies) or is deleted in the same commit ONLY if every fragment is
      verifiably present in the new notes — count fragments before and after.
-4. **Fix links after moves.**
-   - `[[wikilinks]]` need nothing — they resolve by filename vault-wide.
-   - Relative markdown links/images: after moving a note, recompute each
-     relative path to the resource. Do this with a script over all moved files
-     in the batch; hand-edits miss files. Verify a sample of image links
-     resolves after every batch that moved resource-linked notes.
-   - If two notes share a filename across folders, wikilinks silently resolve
-     to the alphabetically-first path — rename one of the duplicates.
+4. **Fix ALL links after every move.** Moving files with shell/git does NOT
+   update any link (only moving inside the Obsidian app rewrites them).
+   After each batch, sweep every link form in every moved note:
+   - `[[wikilink]]` — resolves by filename, survives moves, BUT breaks if the
+     target is renamed; renaming a note means updating inbound wikilinks too.
+   - `[[note|alias]]` and `[[note#heading]]` — same filename rule.
+   - Quoted wikilinks in frontmatter (`related: "[[Note]]"`) — same rule,
+     easy to miss in a grep for `[[`.
+   - Relative markdown links and embeds (`[t](../x.md)`, `![](../../_resources/hash.png)`)
+     — path-based, break on every move. Recompute each path from the note's
+     new location; script this over all moved files, hand-edits miss files.
+   - Absolute paths and `file://` links — rewrite to vault-relative or
+     wikilinks; absolute paths die on any reorganization.
+   Then verify: run a broken-link scan vault-wide (grep all `[[ ]]` and `]( )`
+   targets, check each resolves to an existing file) and require zero broken
+   links before the batch commit. A batch is not done while a link is broken.
 5. **Tag existing notes** in the same pass: minimal flat frontmatter
    (`created`, `tags`), namespaced tags `domain/type`, English namespaces.
    Do not retrofit frontmatter onto Archive in bulk — only when touching a file.
