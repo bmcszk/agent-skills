@@ -92,6 +92,10 @@ more, it's a task, not a subtask. The whole tree starts as
 `draft` — triage waves move epic → tasks → subtasks from `draft`
 to `todo` as research completes.
 
+Coding subtasks must also include **`## Skills for coder`**: skill
+paths discovered for that leaf (stack + task), so the coding agent
+loads the right guidance. See [`beans` triage](../beans/SKILL.md#triage--deep-research).
+
 See [`beans` Workflow Model](../beans/SKILL.md#workflow-model) for the
 full tree semantics.
 
