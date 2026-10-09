@@ -38,7 +38,7 @@ For each note in the batch source:
 2. **Classify** into exactly one target:
    - a domain folder note (gets a proper Title Case filename)
    - a split-source: the note contains several unrelated items, go to step 3
-   - `90 Archive/` (stale, junk, obsolete) — still kept, still tagged
+   - `90 Archive/` (stale, junk, obsolete), still kept, still tagged
    After renaming, check for duplicate basenames vault-wide
    (`find . -name '*.md' -printf '%f\n' | sort | uniq -d`): wikilinks resolve
    by basename, so two notes with the same name silently break resolution.
