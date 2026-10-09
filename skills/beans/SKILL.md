@@ -97,11 +97,25 @@ or human triaging it must:
    that is one fat bean is a smell; it should be an epic + children.
 4. **Write acceptance criteria** — `- [ ]` checkboxes an outside
    reviewer can independently verify.
-5. **Identify blockers and dependencies** — `--blocked-by` on children
+5. **Discover skills for the coding agent** — when the leaf will be
+   implemented by a coder, scan skill roots (repo `.cursor/skills/`,
+   `.agents/skills/`, user `~/.cursor/skills/`, `~/.agents/skills/`)
+   and match by skill **description** to this stack and task. Write
+   them into the bean body as:
+
+   ```markdown
+   ## Skills for coder
+
+   - `~/.agents/skills/<name>/SKILL.md` — why this leaf needs it
+   ```
+
+   Do not hardcode a language or project pack. Re-discover per leaf.
+   Coding subtasks without this section are not ready for `todo`.
+6. **Identify blockers and dependencies** — `--blocked-by` on children
    that can't start yet.
-6. **Promote** — `beans update <id> -s todo` only when the body is
-   research-backed, acceptance criteria exist, and the bean is small
-   enough to claim.
+7. **Promote** — `beans update <id> -s todo` only when the body is
+   research-backed, acceptance criteria exist, skills for coder are
+   listed when coding will happen, and the bean is small enough to claim.
 
 A `draft` that surfaces unanswerable questions is scrapped with the
 questions written into `## Reasons for Scrapping`.
@@ -131,10 +145,14 @@ ticket:
      bottom, with blockers wired via `--blocked-by`.
   5. **Acceptance criteria** — `- [ ]` checkboxes, independently
      verifiable.
+  6. **Skills for coder** — when the leaf is for a coding agent:
+     `## Skills for coder` with discovered skill paths (see triage
+     step 5). Skip only for pure docs/ops leaves with no code edits.
 
-Only when all five are in the body may the triager run
+Only when these are in the body may the triager run
 `beans update <id> -s todo`. A `todo` bean whose body lacks root cause
 or acceptance criteria is a triage failure — send it back to `draft`.
+A coding leaf without `## Skills for coder` is also a triage failure.
 
 ### Found a bug (binding)
 
