@@ -45,14 +45,33 @@ For each note in the batch source:
    Disambiguate before commit.
 3. **Split multi-topic notes.** A daily note or capture note often holds many
    unrelated fragments (a log excerpt, a tool discovery, a personal thought).
-   Each fragment becomes its own atomic note:
-   - one idea per file, Title Case filename that describes the content
+   Split ONLY at top-level topic boundaries: a new item starts at a top-level
+   heading of a distinct subject, not at every `##`. Sub-headings like
+   `Summary`, `Key Points`, `Products`, `Notes`, `Zakres usług` are SECTIONS
+   of their parent item, not separate notes — they must stay glued to the
+   parent. An orphan section-note (`2026-08-25 - Summary.md`) is contextless
+   garbage and a triage failure; when in doubt, merge. Each remaining topic
+   becomes its own atomic note:
+   - one idea per file, Title Case filename that describes the CONTENT.
+     Never keep generic section words as titles; retitle from the body
+     ("CRUD Events vs Business Events", not "Summary").
+   - filenames cannot contain `/`: titles like `r/subreddit` or `A/B` must be
+     normalized (`r-subreddit`, `A-B`) in the FILENAME and every MOC link,
+     or the link silently breaks.
    - add frontmatter: `created: <original note date>`, `tags: [<domain>/<type>]`
    - keep the original wording. Triage reorganizes, it does not rewrite.
+   - classify by READING each topic. Never batch-classify with a keyword
+     regex over the body: substring matching misfiles relentlessly
+     ("vat" inside "private", "dom" inside random English words). A regex
+     over 100 notes is exactly the "read the filename" mistake at scale.
+   - before removing the source, verify COVERAGE AT LINE LEVEL: every
+     non-trivial content line of the source (whitespace-normalized) must
+     appear in the new notes, and every source topic must map to exactly one
+     destination (no double-filing, none uncovered). A file count alone
+     cannot catch a merged or shredded note.
    - the source daily note, once fully split, is removed in the same commit
-     ONLY if every fragment is verifiably present in the new notes. Count
-     fragments before and after; if in doubt, move it to the daily archive
-     instead of deleting.
+     ONLY if that line-level coverage check passes; if in doubt, move the
+     source to the daily archive instead of deleting.
 4. **Fix all links after every move.** Moving files with shell/git does not
    update any link (only moving inside the Obsidian app rewrites them).
    After each batch, sweep every link form in every moved note:
