@@ -35,6 +35,14 @@ For each note in the batch source:
 1. **Read the whole note.** Understand what it is before deciding where it
    goes. A filename like `Untitled Note.345` or a timestamp tells you nothing;
    the body might be a license key, a diary line, or a project plan.
+   When dumping bodies by splitting on `---`, check for block scalars in
+   frontmatter (`frontmatter: >-`, `tags: |-`): an importer that wrapped the
+   body inside frontmatter makes a naive split read the note as empty or
+   tag-only. A frontmatter block hundreds of lines long is the tell — read
+   the raw file before writing the verdict. `titlecheck.py` flags these
+   (exit 1) — treat the flag as "raw read required", and after unwrapping a
+   wrapped note audit WORD-LEVEL (old vs new, not line-level: the fold
+   changes line breaks) that nothing was dropped before committing.
 2. **Classify** into exactly one target:
    - a domain folder note (gets a proper Title Case filename)
    - a split-source: the note contains several unrelated items, go to step 3
@@ -72,6 +80,10 @@ For each note in the batch source:
    - the source daily note, once fully split, is removed in the same commit
      ONLY if that line-level coverage check passes; if in doubt, move the
      source to the daily archive instead of deleting.
+   - MOC pruning after a move: match stale links by the OLD basenames from
+     the move log (the retitle changed them), never by new titles. Script
+     this with the mapping JSON; a hand-prune keyed on the wrong side
+     silently removes nothing.
 4. **Fix all links after every move.** Moving files with shell/git does not
    update any link (only moving inside the Obsidian app rewrites them).
    After each batch, sweep every link form in every moved note:

@@ -67,7 +67,17 @@ Gate scripts (run from `scripts/`, do not reinvent per session):
   source maps to exactly one destination. Exit 1 = lost content, stop.
 
 A vault git repo should wire `titlecheck.py` + the staged-file linkcheck as a
-`pre-commit` hook so the gates run without agent discipline.
+`pre-commit` hook so the gates run without agent discipline. Know what the
+gates CANNOT catch: wrong-domain classification (`Gabinet Weterynaryjny` in
+`10 Dev/`) passes all three gates — a structurally perfect vault can still be
+misfiled. Classification is guarded only by the read-per-note rule; gates
+guard structure and loss.
+
+Import-era frontmatter can wrap a note's ENTIRE body in a block scalar
+(`frontmatter: >-` / `tags: |-`). titlecheck flags these — the body is
+invisible to a naive `---` split, so such a note reads as empty and gets
+filed as an "empty stub". Never verdict a flagged note without a raw file
+read, and when unwrapping, audit word-level (old vs new) before committing.
 
 Domain naming: use the vault owner's language for folder names; use short
 English tag namespaces (`dev/`, `ai/`, `home/`) for `tags:` in frontmatter.
