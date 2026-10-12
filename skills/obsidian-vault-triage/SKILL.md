@@ -51,6 +51,24 @@ including the note-splitting rules and MOC maintenance, is in
 [references/triage-workflow.md](references/triage-workflow.md). Load it before
 the first batch.
 
+Gate scripts (run from `scripts/`, do not reinvent per session):
+
+- `linkcheck.py <vault>` — every `[[wikilink]]` and relative `](` target
+  resolves. Zero broken links before a batch commit; classify each reported
+  break as real or false positive (code spans, original import text) before
+  touching anything.
+- `titlecheck.py <vault>` — no note carries a bare section-word title
+  (`Summary`, `Key Points`, `Produkty`, …). Sections stay glued to their
+  parent note; an orphan section-note is a triage failure. Exit 1 = fix the
+  split.
+- `coverage_audit.py <vault> <mapping.json>` — run BEFORE removing a split
+  source. Mapping JSON: `{"<source-relpath>": ["<dest-relpath>", …]}`. Every
+  non-trivial source line must exist in the destination corpus and every
+  source maps to exactly one destination. Exit 1 = lost content, stop.
+
+A vault git repo should wire `titlecheck.py` + the staged-file linkcheck as a
+`pre-commit` hook so the gates run without agent discipline.
+
 Domain naming: use the vault owner's language for folder names; use short
 English tag namespaces (`dev/`, `ai/`, `home/`) for `tags:` in frontmatter.
 
