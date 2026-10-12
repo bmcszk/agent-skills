@@ -13,6 +13,7 @@ Exit 0 = full coverage; exit 1 = lost lines / unmapped / double-mapped.
 import json
 import os
 import re
+import subprocess
 import sys
 import unicodedata
 
@@ -40,22 +41,40 @@ def corpus_lines(vault: str) -> set:
     return lines
 
 
+def source_lines(vault: str, relpath: str):
+    """Read a mapping source. On disk if present; after a move, from git
+    HEAD's pre-move version (the documented post-move mode)."""
+    sp = os.path.join(vault, relpath)
+    if os.path.exists(sp):
+        with open(sp, encoding='utf-8', errors='replace') as fh:
+            return fh.read()
+    if os.path.isdir(os.path.join(vault, '.git')):
+        blob = subprocess.run(['git', '-C', vault, 'show', f'HEAD:{relpath}'],
+                              capture_output=True, text=True)
+        if blob.returncode == 0:
+            return blob.stdout
+        problems_src.append(f'{relpath}: source missing (not on disk, not in HEAD)')
+    else:
+        problems_src.append(f'{relpath}: source missing (no .git for post-move lookup)')
+    return None
+
+
+problems_src: list = []
+
+
 def main(vault: str, mapping_path: str) -> int:
     mapping = json.load(open(mapping_path, encoding='utf-8'))
     corpus = corpus_lines(vault)
-    problems = []
+    problems = list(problems_src)
     for src, dests in mapping.items():
         if not dests:
             problems.append(f'{src}: mapped to nothing')
             continue
         if len(dests) > 1 and len(set(dests)) != len(dests):
             problems.append(f'{src}: duplicate destinations {dests}')
-        sp = os.path.join(vault, src)
-        if not os.path.exists(sp):
-            problems.append(f'{src}: source missing')
-            continue
-        with open(sp, encoding='utf-8', errors='replace') as fh:
-            for ln in fh:
+        text = source_lines(vault, src)
+        if text is not None:
+            for ln in text.splitlines():
                 n = norm(ln)
                 if len(n) < MIN_LINE:
                     continue

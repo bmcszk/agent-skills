@@ -37,6 +37,7 @@ def norm(s: str) -> str:
 
 def main(vault: str) -> int:
     bad = []
+    flagged = []
     for root, dirs, files in os.walk(vault):
         dirs[:] = [d for d in dirs if not d.startswith(('.', '_'))]
         if 'smart-templates' in root.replace(vault, '').lstrip('/\\'):
@@ -51,10 +52,29 @@ def main(vault: str) -> int:
                 # also catch "<date> - Summary" shapes
                 if re.search(r'(^|\s)(summary|podsumowanie|key points|tresc|notes)$', stem):
                     bad.append(os.path.join(root, f))
+                p = os.path.join(root, f)
+                # importers can wrap the BODY inside frontmatter (block scalar):
+                # a naive split then reads the note as empty/tag-only, and it
+                # gets filed as "empty stub" and lost to Archive. Flag for a
+                # raw-file read before any verdict.
+                try:
+                    with open(p, encoding='utf-8', errors='replace') as fh:
+                        head = fh.read(65536)
+                except OSError:
+                    continue
+                parts = head.split('---')
+                fm = parts[1] if len(parts) > 2 else ''
+                if fm.count('\n') > 60 or re.search(r'^(frontmatter|tags):\s*[|>][-+0-9]*\s*$', fm, re.M):
+                    flagged.append(p + '  (frontmatter block-scalar or >60 lines: read raw file before classifying)')
     if bad:
         print(f'titlecheck: {len(bad)} section-title note(s):')
         for b in bad:
             print(' ', b)
+        return 1
+    if flagged:
+        print(f'titlecheck: titles OK, but {len(flagged)} note(s) need a raw read (wrapped body):')
+        for fl in flagged:
+            print(' ', fl)
         return 1
     print('titlecheck: OK (no orphan section-title notes)')
     return 0
