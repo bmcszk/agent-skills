@@ -51,6 +51,34 @@ including the note-splitting rules and MOC maintenance, is in
 [references/triage-workflow.md](references/triage-workflow.md). Load it before
 the first batch.
 
+Gate scripts (run from `scripts/`, do not reinvent per session):
+
+- `linkcheck.py <vault>` — every `[[wikilink]]` and relative `](` target
+  resolves. Zero broken links before a batch commit; classify each reported
+  break as real or false positive (code spans, original import text) before
+  touching anything.
+- `titlecheck.py <vault>` — no note carries a bare section-word title
+  (`Summary`, `Key Points`, `Produkty`, …). Sections stay glued to their
+  parent note; an orphan section-note is a triage failure. Exit 1 = fix the
+  split.
+- `coverage_audit.py <vault> <mapping.json>` — run BEFORE removing a split
+  source. Mapping JSON: `{"<source-relpath>": ["<dest-relpath>", …]}`. Every
+  non-trivial source line must exist in the destination corpus and every
+  source maps to exactly one destination. Exit 1 = lost content, stop.
+
+A vault git repo should wire `titlecheck.py` + the staged-file linkcheck as a
+`pre-commit` hook so the gates run without agent discipline. Know what the
+gates CANNOT catch: wrong-domain classification (`Gabinet Weterynaryjny` in
+`10 Dev/`) passes all three gates — a structurally perfect vault can still be
+misfiled. Classification is guarded only by the read-per-note rule; gates
+guard structure and loss.
+
+Import-era frontmatter can wrap a note's ENTIRE body in a block scalar
+(`frontmatter: >-` / `tags: |-`). titlecheck flags these — the body is
+invisible to a naive `---` split, so such a note reads as empty and gets
+filed as an "empty stub". Never verdict a flagged note without a raw file
+read, and when unwrapping, audit word-level (old vs new) before committing.
+
 Domain naming: use the vault owner's language for folder names; use short
 English tag namespaces (`dev/`, `ai/`, `home/`) for `tags:` in frontmatter.
 
