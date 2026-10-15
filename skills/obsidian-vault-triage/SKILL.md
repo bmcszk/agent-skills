@@ -71,13 +71,29 @@ A vault git repo should wire `titlecheck.py` + the staged-file linkcheck as a
 gates CANNOT catch: wrong-domain classification (`Gabinet Weterynaryjny` in
 `10 Dev/`) passes all three gates — a structurally perfect vault can still be
 misfiled. Classification is guarded only by the read-per-note rule; gates
-guard structure and loss.
+guard structure and loss. A user-flagged misfile is a CLASS signal: read the
+whole source domain and refile every sibling sharing the cause (see the
+workflow's "flagged misfiles travel in packs").
+
+Keep gate docs honest: when a documented script mode (e.g. coverage_audit
+reading a moved source from git HEAD) is not actually implemented, either
+ship it or fix the doc — a gate that exits 1 on its documented happy path
+gets worked around ad-hoc, and the workaround is where mistakes happen.
 
 Import-era frontmatter can wrap a note's ENTIRE body in a block scalar
 (`frontmatter: >-` / `tags: |-`). titlecheck flags these — the body is
 invisible to a naive `---` split, so such a note reads as empty and gets
 filed as an "empty stub". Never verdict a flagged note without a raw file
 read, and when unwrapping, audit word-level (old vs new) before committing.
+After a move batch, run the post-move verification from the workflow's loss
+audit (byte-diff each moved note vs `HEAD~1:<old-path>`) — "I only moved
+them" is a claim to prove, not assert.
+
+Watch out for a Python gotcha in move loops: dumping bodies by splitting on
+a regex `^---$` mis-parses notes whose BODY contains a literal `---` fence
+(a separator line inside the text) — the split reads only the last chunk as
+the body. For verdict-critical reads use the raw file (or a split that
+requires the frontmatter to be the FIRST block).
 
 Domain naming: use the vault owner's language for folder names; use short
 English tag namespaces (`dev/`, `ai/`, `home/`) for `tags:` in frontmatter.

@@ -97,3 +97,60 @@ Decision points here; the files carry the exact YAML and paths.
   closest approximation, and say plainly it does not restrict admin hands.
 - Never claim a score "will improve" from a merge — quote the live API
   before and after; Scorecard's public report updates lag merges by hours.
+- Never trust a mutable `uses:` ref to resolve: some actions publish no
+  resolvable major tag (`scorecard-action@v2` fails at workflow-parse time
+  with "unable to find version"). Resolve every action to a peeled commit
+  SHA via the GitHub API before pushing — annotated tags need a second hop
+  (`GET /git/tags/<sha>` peels to the commit; `/git/ref/tags/x` may return
+  the tag object, not the commit).
+- Security-scanner actions ship their own toolchain: gosec's docker image
+  bundles a Go release that must be ≥ the module's `go` directive, and
+  `GOTOOLCHAIN=auto` in the workflow does not reach into the action
+  container — an older gosec parses nothing and fails with "package
+  requires newer Go version". Bump to a gosec whose image matches the
+  module floor.
+- When the user cites a sibling repo as the standard ("configure it like
+  <other-repo>"), diff `.github/workflows/` of both repos first and port
+  the same jobs/pins — describing security checks from memory produces a
+  workflow that misses what the sibling actually runs.
+- Badge row is guilty until verified: fetch each badge SVG live and read
+  its `<title>`/`aria-label` (a 200 response can still say "failing",
+  "not found", or "retired" — Go Report Card is a sunset service and its
+  badge can never show green; remove it). pkg.go.dev's badge SVG is
+  icon-only (no text/aria-label): verify the module link by curling the
+  module page (expect 200), not the SVG.
+- Verify the badge-publish pipeline end-to-end once (seed gh-pages as an
+  orphan branch holding only `badges/*.json`, trigger the workflow, curl
+  the raw JSON and the shields endpoint) — a badge URL that returns 200
+  with placeholder content is still a broken badge. Coverage badge reads a
+  gh-pages JSON that does not exist until the first push of the publishing
+  workflow — and that push 403s until BOTH the job has `contents: write`
+  and the repo's Settings→Actions default GITHUB_TOKEN permission is
+  `write`. shields `endpoint` badges lag the gh-pages JSON by minutes (CDN
+  caches both): verify the raw JSON by commit SHA first, then treat a
+  stale shields render as propagation delay, not a broken pipeline.
+- A failing PR check named "Scorecard" that is NOT the security.yml job is
+  the code-scanning alert-delta check (app `github-advanced-security`): it
+  re-reports open Token-Permissions/Pinned-Dependencies alerts as PR
+  failures until the next scorecard analysis re-scans the fixed workflows.
+  Clear the underlying alerts repo-wide — permissions block on EVERY
+  workflow, SHA-pin EVERY workflow including release-only ones; the
+  check-run rerequest API 404s because it is not a workflow check.
+- Scorecard's Token-Permissions check fails any job carrying `contents:
+  write` that also does test work. Split publishing into its own job
+  (`needs: test`, default-branch-only) holding the single write grant,
+  outputs via `upload-artifact`/`download-artifact`; the test matrix stays
+  read-only — granting the test job write fixes one check by failing the
+  other, so the job split is the only shape satisfying both.
+- Dependabot PRs can look hopelessly red when their check runs are STALE —
+  weeks-old failures from before a master lint/CI fix. Before diagnosing an
+  old PR, compare the check-run date to master's recent history; if stale,
+  force fresh runs first (`gh pr update-branch`, or `@dependabot rebase`
+  when the branch touches workflows your token can't edit) and only then
+  root-cause the NEW verdict.
+- A dep bump that raises its own minimum `go` above the module's floor is
+  unmergeable by construction — close it with the proxy-proven evidence
+  (`curl https://proxy.golang.org/<mod>/@v/<ver>.mod`, the `go` line) and
+  the newest compatible version, instead of chasing CI green on every
+  matrix leg. Bumping the module's Go floor is an owner policy call, never
+  smuggled in via Dependabot.

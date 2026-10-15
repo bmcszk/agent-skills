@@ -76,7 +76,15 @@ For each note in the batch source:
      non-trivial content line of the source (whitespace-normalized) must
      appear in the new notes, and every source topic must map to exactly one
      destination (no double-filing, none uncovered). A file count alone
-     cannot catch a merged or shredded note.
+     cannot catch a merged or shredded note. Two blind spots:
+     (a) MOVE+MERGE of near-duplicate notes into one destination — verify
+     each source's content lines appear verbatim in its OWN destination, not
+     just anywhere in the corpus, and prove suspected duplicates with a
+     word-subset check before folding (keep each generation as a section,
+     don't drop "the shorter one").
+     (b) original frontmatter tags: preserve them verbatim in the merged
+     note — the audit is mechanical and flags a dropped tag line as lost
+     content even when a synonymous tag exists.
    - the source daily note, once fully split, is removed in the same commit
      ONLY if that line-level coverage check passes; if in doubt, move the
      source to the daily archive instead of deleting.
@@ -84,6 +92,27 @@ For each note in the batch source:
      the move log (the retitle changed them), never by new titles. Script
      this with the mapping JSON; a hand-prune keyed on the wrong side
      silently removes nothing.
+   - When executing a move plan, skip the delete when source and destination
+     resolve to the same path (`os.path.abspath(sp) == os.path.abspath(dp)`):
+     write-then-remove on the same path deletes the note you just wrote. The
+     damage is silent until coverage_audit reports `destination missing` and
+     linkcheck counts climb — recover verbatim from git HEAD, never re-type.
+   - When consolidating a theme that lives in many domains (e.g. all poetry,
+     all receipts), build the candidate set from tags AND every MOC/wiki
+     reference, then READ each candidate's body before the verdict — a
+     `poetry` tag can sit on a prose story or a band list, and an article
+     ABOUT poetry is not poetry. Keep multi-variant texts as separate notes
+     (draft vs full version) unless word-subset proves one contains the
+     other; retitle from the first verse line when the filename is a
+     timestamp or `Untitled`.
+   - Flagged misfiles travel in packs. One misfiled note means a whole
+     import-era batch was classified by tags or filename: after fixing the
+     flagged note, sweep its original source folder (recover the batch list
+     from the snapshot commit) and re-read every sibling before declaring
+     the report fixed. The flagged note names the CLASS of error (a vet
+     clinic in Dev, a nickname list in Dev, car DTC reports in Dev) — read
+     the domain and evict every note sharing the cause, not just the one
+     named.
 4. **Fix all links after every move.** Moving files with shell/git does not
    update any link (only moving inside the Obsidian app rewrites them).
    After each batch, sweep every link form in every moved note:
@@ -112,6 +141,11 @@ For each note in the batch source:
    make the diff reviewable; the loss audit below does the verification.
 
 ## Loss audit (run at the end of every batch)
+
+After commit, diff each moved note against its pre-move version
+(`git show HEAD~1:<old-path>` vs the new file): expect byte-identical, or
+frontmatter-only additions. Any body diff is a problem — this audit is what
+lets the user trust "I only moved them, nothing changed".
 
 ```bash
 # before batch (also all-files variant: -type f, excluding .git and caches)
