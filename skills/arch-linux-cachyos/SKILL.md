@@ -25,7 +25,7 @@ metadata:
 
 ## Pacman / `pacman.conf`
 
-### IgnorePkg placement (the most recurring bug)
+### IgnorePkg placement (the top recurring bug)
 
 **`IgnorePkg` MUST be in the `[options]` section.** Anywhere else (end of file, `[multilib]`, etc.) → pacman prints `directive 'IgnorePkg' in section '<name>' not recognized` and **silently ignores it**.
 

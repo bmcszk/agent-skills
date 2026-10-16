@@ -97,7 +97,7 @@ exec "/path/to/real/binary" --ozone-platform=x11 "$@"
 
 ```bash
 # Confirm shortcuts were repointed (Exe should be the wrapper path, LaunchOptions empty)
-python3 -c "import vdf; d=vdf.binary_load(open('~/.steam/steam/userdata/<id>/config/shortcuts.vdf','rb')); [print(s.get('AppName'),'->',s.get('Exe'),'LaunchOpts=',s.get('LaunchOptions','')) for s in d.get('shortcuts',{}).values()]"
+python3 -c "import os, vdf; d=vdf.binary_load(open(os.path.expanduser('~/.steam/steam/userdata/<id>/config/shortcuts.vdf'),'rb')); [print(s.get('AppName'),'->',s.get('Exe'),'LaunchOpts=',s.get('LaunchOptions','')) for s in d.get('shortcuts',{}).values()]"
 
 # Confirm Heroic removed from CompatToolMapping (regex precise; only the proton-cachyos-slr block)
 grep -c '"2385805048"' ~/.steam/steam/config/config.vdf  # 2 is OK (ShaderCacheSize + SizeOnDisk)

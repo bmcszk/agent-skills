@@ -34,15 +34,17 @@ Residual: none."
 beans update myproj-a3x1 -s completed
 ```
 
-## Create an epic with tasks and subtasks (draft-first)
+## Create an epic with tasks (draft-first)
 
-This is the canonical tree shape. The whole tree starts in `draft` and
-is triaged in waves — epic first (research the goal), then each task
-(research the requirement), then each subtask (scope the 10-min piece).
+This is the canonical tree shape: epic → tasks, two levels. The CLI
+rejects a task under a task, so 10-minute work goes into a task's body
+as acceptance-criteria checkboxes, not into child beans. The whole tree
+starts in `draft` and is triaged in waves — epic first (research the
+goal), then each task (research the requirement, write ACs).
 
 ```bash
 # Epic (GOAL) — starts in draft
-beans create "Auth system overhaul" -t feature -p high -s draft --tag epic
+beans create "Auth system overhaul" -t epic -p high -s draft --tag epic
 # → myproj-auth1
 
 # After triaging the epic, promote and create the task children
@@ -50,16 +52,11 @@ beans update myproj-auth1 -s todo
 beans create "Add OAuth provider"     -t task -s draft --parent myproj-auth1
 beans create "Add 2FA support"        -t task -s draft --parent myproj-auth1
 beans create "Wire auth into API"     -t task -s draft --parent myproj-auth1
-
-# Triage each task, then split into 10-min subtasks:
-beans create "Add OAuth PKCE verifier"   -t task -s draft --parent myproj-oauth1
-beans create "Add OAuth state param"     -t task -s draft --parent myproj-oauth1
-beans create "Add OAuth token exchange"  -t task -s draft --parent myproj-oauth1
 ```
 
-**Rule:** a subtask is one ~10-minute piece of work an entry-level
-subagent can complete without asking questions. If the body needs more
-than 3 acceptance criteria, it is probably a task, not a subtask.
+**Rule:** each task is scoped so an entry-level subagent can complete it
+without asking questions. If one grows past ~3 acceptance criteria,
+split it into sibling tasks under the same epic.
 
 ## Found a bug: document, then triage
 

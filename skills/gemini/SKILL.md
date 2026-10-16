@@ -37,7 +37,7 @@ Ask Gemini a question or request analysis. Supports file references via `@` synt
 **Examples:**
 ```bash
 mcpc @gemini tools-call ask-gemini prompt:="@main.go explain the architecture and suggest improvements"
-mcpc @gemini tools-call ask-gemini prompt:="Compare REST vs GraphQL for a blog API" model:="gemini-2.5-flash"
+mcpc @gemini tools-call ask-gemini prompt:="Compare REST vs GraphQL for a blog API" model:="<flash-tier model name>"
 mcpc @gemini tools-call ask-gemini prompt:="@config.yaml refactor to use environment variables" changeMode:=true
 ```
 

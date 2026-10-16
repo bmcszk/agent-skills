@@ -40,7 +40,7 @@ bean `type` values — the `type` is still `task` / `bug` / `feature` /
 |---|---|---|---|
 | **Epic** | One GOAL. The outcome a session loops on until reached. | `epic` (multi-epic program root: parentless `epic`) | N tasks |
 | **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | none — leaf |
-| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | `task` (parent `feature`) or AC checkboxes inside the owning task | none |
+| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | AC checkboxes inside the owning task (NOT a bean — the CLI rejects a task under a task) | none |
 
 The hierarchy is enforced by the `parent` field — and by the CLI, which
 REJECTS illegal parent/type combos at create time with an explicit error.
@@ -63,10 +63,13 @@ map and skips already-created beans.
 ```
 epic (GOAL)
 ├─ task (requirement)
-│  ├─ subtask (10-min piece of work)
-│  └─ subtask
+├─ task
 └─ task
 ```
+
+Subtasks are NOT beans (the CLI rejects a task under a task) — split a
+task by adding acceptance-criteria checkboxes to its body, or create a
+`feature` grouping when a requirement genuinely needs child beans.
 
 ### One goal per session
 
