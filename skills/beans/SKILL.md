@@ -1,6 +1,6 @@
 ---
 name: beans
-description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics/milestones, or query project state from the CLI. Keywords: beans, task management, issue tracker, create task, close task, list tasks, bug tracking, project management, draft triage, epic task subtask, found a bug.'
+description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics, or query project state from the CLI. Keywords: beans, task management, issue tracker, create task, close task, list tasks, bug tracking, project management, draft triage, epic task subtask, found a bug.'
 metadata:
   risk: none
   source: community
@@ -20,7 +20,7 @@ Install, `beans init`, and agent-integration steps live in
 - Managing project tasks, bugs, features from the CLI
 - Letting coding agents track their work
 - Creating, listing, updating, and closing beans
-- Organizing work with epics, milestones, tags, priorities
+- Organizing work with epics, tags, priorities (never the `milestone` type)
 - Querying project state with `beans list` filters
 
 ---
@@ -38,7 +38,7 @@ bean `type` values — the `type` is still `task` / `bug` / `feature` /
 
 | Level | What it represents | Bean `type` | Children |
 |---|---|---|---|
-| **Epic** | One GOAL. The outcome a session loops on until reached. | `epic` (multi-epic program root: `milestone`) | N tasks |
+| **Epic** | One GOAL. The outcome a session loops on until reached. | `epic` (multi-epic program root: parentless `epic`) | N tasks |
 | **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | none — leaf |
 | **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | `task` (parent `feature`) or AC checkboxes inside the owning task | none |
 
@@ -46,9 +46,11 @@ The hierarchy is enforced by the `parent` field — and by the CLI, which
 REJECTS illegal parent/type combos at create time with an explicit error.
 Verified enforcement matrix (probe with one throwaway create per level
 before any bulk import; the CLI error is ground truth over any documented
-convention): `milestone` may have no parent; `epic` parent ∈ {milestone,
-none}; `feature` parent ∈ {milestone, epic}; `task` parent ∈ {milestone,
-epic, feature}; a `task` can NEVER be a parent. Where the CLI forbids an
+convention): `epic` parent ∈ {none}; `feature` parent ∈ {epic}; `task`
+parent ∈ {epic, feature}; a `task` can NEVER be a parent. Do NOT use the
+`milestone` type (house rule: it is upstream CLI baggage, never create it);
+where a release grouping is genuinely needed, tag beans (`--tag rel-v1`)
+instead. Where the CLI forbids an
 extra level, keep 10-minute granularity as countable acceptance-criteria
 checkboxes in the owning task instead of a separate bean.
 
@@ -226,7 +228,7 @@ owns the format; full schema and example in
 The recipes live in [`references/patterns.md`](references/patterns.md):
 **Start work on a bean** (claim → implement → check off → PoW → close)
 and **Create an epic with tasks and subtasks** (the canonical draft-first
-tree shape). Find-blocked and milestones are one-liners in that file.
+tree shape). Find-blocked is a one-liner in that file.
 
 ---
 

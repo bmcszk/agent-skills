@@ -11,7 +11,8 @@ should always use it.
 
 ## Create
 
-Title is the POSITIONAL arg; `-t` takes a TYPE (`milestone|epic|bug|feature|task`):
+Title is the POSITIONAL arg; `-t` takes a TYPE (`epic|bug|feature|task` —
+do NOT use `milestone`, house rule):
 `beans create epic "My goal"` ✗ → `invalid type: epic`. Correct:
 `beans create "My goal" -t epic`.
 
@@ -143,7 +144,7 @@ beans update myproj-a3x1 --remove-tag backend
 beans --beans-path /repo/.beans list --json
 beans --beans-path /repo/.beans create task "..." --parent <epic-id>
 
-# Parent type is validated: a task can only parent under milestone/epic/feature
+# Parent type is validated: a task can only parent under epic/feature
 # (never under another task) — retype the parent with `beans update <id> -t epic`
 # if you created the epic as the wrong type.
 

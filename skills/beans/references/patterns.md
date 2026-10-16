@@ -116,13 +116,15 @@ that only proves "tests pass" has not demonstrated its own AC.
 beans list --json --is-blocked
 ```
 
-## Organize into milestones
+## Group work into releases (tags, not `milestone` beans)
+
+The CLI ships a `milestone` type; house rule: never create one. Tag-based
+grouping does the same job:
 
 ```bash
-# Tag-based grouping
-beans update myproj-a3x1 --tag milestone-v1
-beans update myproj-b7k2 --tag milestone-v1
+beans update myproj-a3x1 --tag rel-v1
+beans update myproj-b7k2 --tag rel-v1
 
-# List everything in a milestone
-beans list --json -S "milestone-v1"
+# List everything in the release
+beans list --json -S "rel-v1"
 ```
