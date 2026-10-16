@@ -77,3 +77,9 @@ Deep-dive topics are split into focused reference files:
 | `go test -cover` | Show coverage |
 | `go test -bench .` | Run benchmarks |
 | `go test -fuzz Fuzz` | Run fuzzing |
+
+
+## Go embedding
+Embedding promotes the embedded struct's members onto the outer type. NEVER re-bind the host inside a method (`p := c.parts` is always wrong): call promoted members on the receiver directly (`c.require`, `c.parsedFile`, `c.aClient()`). A hop is justified ONLY when passing the host as a value. Never build a bidirectional cycle (base embeds sub-structs while sub-structs embed base) — shape promotion one-way. Full rules: references/performance.md §Go embedding.
+
+No `var _ = []any{ Type{} }` compile-assert blocks (or `var _` unused-import silencers) — dead noise; delete and let `unused` name genuinely dead symbols. Full rule: references/performance.md §No lint-appeasement constructs.

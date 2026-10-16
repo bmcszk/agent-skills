@@ -25,7 +25,7 @@ metadata:
 
 ## Pacman / `pacman.conf`
 
-### IgnorePkg placement (the #1 recurring bug)
+### IgnorePkg placement (the top recurring bug)
 
 **`IgnorePkg` MUST be in the `[options]` section.** Anywhere else (end of file, `[multilib]`, etc.) → pacman prints `directive 'IgnorePkg' in section '<name>' not recognized` and **silently ignores it**.
 
@@ -197,11 +197,11 @@ cat /sys/class/drm/card1-HDMI-A-1/dpms    # display powered?
 
 - **`references/electron-gamescope-fix.md`** — Electron apps (Discord, Heroic) in gamescope-session: root causes (Electron-Wayland, shortcuts.vdf not repointed, CompatToolMapping force-pin to proton), automated fix flow, restart requirement, verification commands, pitfalls (binary VDF needs python-vdf, userdata placeholder `0/`, grep -q too broad), rollback.
 
-## Fix-script index (in `/home/blaze/scripts/`)
+## Fix-script index (in `~/scripts/` — adjust to your setup)
 
 | Issue | Script | Notes |
 |---|---|---|
-| Gamescope crashes on monitor disconnect | `build-gamescope-patched.sh` → `install-gamescope-patched.sh` | Run build as `blaze` (not root); install with sudo |
+| Gamescope crashes on monitor disconnect | `build-gamescope-patched.sh` → `install-gamescope-patched.sh` | Run build as your user (not root); install with sudo |
 | `IgnorePkg` in wrong section | `fix-pacman-ignorepkg.sh` | Moves to `[options]`, validates with `pacman-conf` |
 | Monitor off → gamescope sees no display | `fix-virtual-display-edid.sh` | Saves EDID to initramfs + kernel cmdline |
 | Install both kernels + Strix boot params | `fix-boot-safe.sh` | Idempotent: amdgpu MODULES, dcdebugmask=0x412, PCIe AER |
@@ -210,7 +210,7 @@ cat /sys/class/drm/card1-HDMI-A-1/dpms    # display powered?
 | Rollback gamescope patch only | `rollback-gamescope-patch.sh` | Reinstalls repo gamescope |
 | Rollback EDID injection only | `rollback-virtual-display-edid.sh` | Removes EDID from initramfs + cmdline |
 | Disk cleanup | `clean-all.sh` | pacman, cargo, docker, flatpak, etc. |
-| signal-cli daemon dead (hermes Signal gateway) | (no script — manual) | Java missing → see "signal-cli / Java" below |
+| signal-cli daemon dead (breaks bot/API consumers) | (no script — manual) | Java missing → see "signal-cli / Java" below |
 
 ## Top pitfalls (learned the hard way)
 
@@ -220,19 +220,19 @@ cat /sys/class/drm/card1-HDMI-A-1/dpms    # display powered?
 | 2 | Overcomplicating kernel switch with BOOT_ORDER/default_entry hooks | System boots wrong kernel despite config changes | Just `pacman -Rns` the unwanted kernel; hooks auto-regen limine.conf |
 | 3 | Can't remove running kernel (pacman -Rns refuses) | pacman error message | It doesn't refuse — it's safe. The running kernel stays in memory. |
 | 4 | KWin doesn't re-enable display after gamescope teardown | `cat /sys/class/drm/card1-HDMI-A-1/enabled` = `disabled` | `qdbus6 org.kde.KWin /KWin org.kde.KWin.replace` or switch to LTS |
-| 5 | Building gamescope as root | `makepkg` error | Run as `blaze`, not root |
+| 5 | Building gamescope as root | `makepkg` error | Run as your user, not root |
 | 6 | Writing scripts from memory without verifying online | Script has subtle bugs (wrong sed patterns, wrong bash conditions) | Use `context7` + `searxng` skills; read actual man pages and binaries |
 | 7 | `cachyos-gamescope-autologin.service` reverts desktop autologin | Desktop reverts to gamescope after reboot | `steamos-session-select persistent` |
 | 8 | Electron app (Discord, Heroic, …) silent no-window in gamescope-session | THREE layered causes: (a) gamescope doesn't expose Wayland socket → Electron 27+ needs `--ozone-platform=x11`; (b) Steam shortcut still points at raw binary / is force-pinned to proton (can't run ELF); (c) Steam's overlay `LD_PRELOAD=gameoverlayrenderer.so` crashes Electron 42+ zygote (`FATAL zygote_host_impl_linux.cc:207`). Manual terminal tests never reproduce (c) — your shell lacks the injected preload. | `fix-electron-gamescope.sh` handles all three; verify with exact Steam env (see `references/electron-gamescope-fix.md` Failure D) |
-| 9 | `signal-cli-daemon.service` loops in `activating (auto-restart)` forever, Hermes Signal gateway shows "cannot reach signal-cli at http://127.0.0.1:41511" | `journalctl --user -u signal-cli-daemon` → `JAVA_HOME is not set and no 'java' command could be found in your PATH` | Install `jre-openjdk-headless`, then `sudo archlinux-java status` → patch service with `Environment=JAVA_HOME=<path>` |
+| 9 | `signal-cli-daemon.service` loops in `activating (auto-restart)` forever, bot consumers show "cannot reach signal-cli at http://127.0.0.1:41511" | `journalctl --user -u signal-cli-daemon` → `JAVA_HOME is not set and no 'java' command could be found in your PATH` | Install `jre-openjdk-headless`, then `sudo archlinux-java status` → patch service with `Environment=JAVA_HOME=<path>` |
 | 10 | **Steam shortcut pointing at Linux-native ELF (e.g. Heroic) still goes through `proton-cachyos-slr`** — proton can't run an ELF, exits in ~4 s, Steam shows "Preparing launch" forever, user sees black screen + spinner. Force-pin lives in `~/.steam/steam/config/config.vdf` → `CompatToolMapping` keyed by appid (Heroic = 2385805048) | `grep -B1 'proton-cachyos-slr' ~/.steam/steam/config/config.vdf` | `fix-electron-gamescope.sh` strips the bad `CompatToolMapping` entry, AND repoints the shortcut in `userdata/<id>/config/shortcuts.vdf` to call the wrapper directly. Steam restart required to apply. |
-| 11 | Steam `userdata/` has a placeholder `0/` dir with no real shortcuts; iterating `userdata/*/config` naively picks the placeholder first and patches a non-existent file | First `for cfg in /home/blaze/.steam/steam/userdata/*/config` picks `0/` | Require `dirname >= 1` AND `shortcuts.vdf` must exist before patching |
+| 11 | Steam `userdata/` has a placeholder `0/` dir with no real shortcuts; iterating `userdata/*/config` naively picks the placeholder first and patches a non-existent file | First `for cfg in ~/.steam/steam/userdata/*/config` picks `0/` | Require `dirname >= 1` AND `shortcuts.vdf` must exist before patching |
 | 12 | Trying to `pkill -9 -f 'gamescope\|steam'` from a non-root terminal to force Steam reload takes out the user's own shell with no recovery (`Operation not permitted` on plasmalogin-helper, but SIGKILL propagates via signal mask). | `pkill` returns `Operation not permitted` for root PIDs AND the calling shell exits with -9 | Use `systemctl --user restart gamescope-session.target` — plasmalogin-autologin respawns gamescope + Steam cleanly with new PIDs reading fresh config |
 
-## signal-cli / Java (Hermes Signal gateway)
+## signal-cli / Java (bot gateway consumers)
 
 **signal-cli is a JVM app.** If Java is missing, the daemon cannot start and loops in
-`activating (auto-restart)` — Hermes gateway then shows
+`activating (auto-restart)` — bot gateways then show
 `cannot reach signal-cli at http://127.0.0.1:41511`.
 
 ### Diagnosis
@@ -259,7 +259,7 @@ systemctl --user restart signal-cli-daemon
 systemctl --user status signal-cli-daemon
 ```
 
-Hermes gateway reconnects automatically every ~300s on retry. To force it now,
+Bot gateways reconnect automatically every ~300s on retry. To force a reconnect now,
 restart the gateway container.
 
 ## Reference URLs

@@ -52,8 +52,15 @@ beans list --json --ready
 beans update <id> -s in-progress
 ```
 
-Now run the four-pass leaf work (see [`leaf.md`](leaf.md)). Update the
-body as you go:
+When epic leaves are DELEGATED to a worker agent, size each wave
+to one structural move — one domain fold, one file merge — so it fits a
+single run. Before dispatch, pre-verify every symbol move with a consumer
+grep and paste the hit list into the contract; the worker then executes
+pure moves. If a wave overruns its budget and dies mid-edit, revert the
+partial tree and re-dispatch the wave split in two — a partial multi-file
+fold that does not build is not worth repairing.
+
+Update the body as you go:
 
 ```bash
 # Check off an acceptance criterion

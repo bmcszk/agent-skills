@@ -1,6 +1,6 @@
 ---
 name: beans
-description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics/milestones, or query project state from the CLI. Keywords: beans, task management, issue tracker, create task, close task, list tasks, bug tracking, project management, draft triage, epic task subtask, found a bug.'
+description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics, or query project state from the CLI. Keywords: beans, task management, issue tracker, create task, close task, list tasks, bug tracking, project management, draft triage, epic task subtask, found a bug.'
 metadata:
   risk: none
   source: community
@@ -20,7 +20,7 @@ Install, `beans init`, and agent-integration steps live in
 - Managing project tasks, bugs, features from the CLI
 - Letting coding agents track their work
 - Creating, listing, updating, and closing beans
-- Organizing work with epics, milestones, tags, priorities
+- Organizing work with epics, tags, priorities (never the `milestone` type)
 - Querying project state with `beans list` filters
 
 ---
@@ -38,20 +38,40 @@ bean `type` values — the `type` is still `task` / `bug` / `feature` /
 
 | Level | What it represents | Bean `type` | Children |
 |---|---|---|---|
-| **Epic** | One GOAL. The outcome a session loops on until reached. | `feature` (or `bug` for a single-issue goal) | N tasks |
-| **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | N subtasks |
-| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | `task` | none |
+| **Epic** | One GOAL. The outcome a session loops on until reached. | `epic` (multi-epic program root: parentless `epic`) | N tasks |
+| **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | none — leaf |
+| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | AC checkboxes inside the owning task (NOT a bean — the CLI rejects a task under a task) | none |
 
-The hierarchy is enforced by the `parent` field. A bean has **at most
-one** parent; epics have no parent (`beans list --no-parent`).
+The hierarchy is enforced by the `parent` field — and by the CLI, which
+REJECTS illegal parent/type combos at create time with an explicit error.
+Verified enforcement matrix (probe with one throwaway create per level
+before any bulk import; the CLI error is ground truth over any documented
+convention): `epic` parent ∈ {none}; `feature` parent ∈ {epic}; `task`
+parent ∈ {epic, feature}; a `task` can NEVER be a parent. Probe any
+hierarchy claim before relying on it. A documented convention the CLI
+rejects poisons every recipe built on it. Do NOT use the
+`milestone` type (house rule: it is upstream CLI baggage, never create it);
+where a release grouping is genuinely needed, tag beans (`--tag rel-v1`)
+instead. Where the CLI forbids an
+extra level, keep 10-minute granularity as countable acceptance-criteria
+checkboxes in the owning task instead of a separate bean.
+
+Bulk-import recipe (ids are CLI-generated, so never assume them): create
+ALL beans in pass 1 recording returned ids to a map; wire `--parent` /
+`--blocked-by` in pass 2 from the map. If any type/parent error rejects
+part of a batch, re-run as an idempotent repair script that reads the id
+map and skips already-created beans.
 
 ```
 epic (GOAL)
 ├─ task (requirement)
-│  ├─ subtask (10-min piece of work)
-│  └─ subtask
+├─ task
 └─ task
 ```
+
+Subtasks are NOT beans (the CLI rejects a task under a task) — split a
+task by adding acceptance-criteria checkboxes to its body, or create a
+`feature` grouping when a requirement genuinely needs child beans.
 
 ### One goal per session
 
@@ -98,8 +118,9 @@ or human triaging it must:
 4. **Write acceptance criteria** — `- [ ]` checkboxes an outside
    reviewer can independently verify.
 5. **Discover skills for the coding agent** — when the leaf will be
-   implemented by a coder, scan skill roots (repo `.cursor/skills/`,
-   `.agents/skills/`, user `~/.cursor/skills/`, `~/.agents/skills/`)
+   implemented by a coder, scan the project's and the user's skill roots
+   (`.agents/skills/`, `~/.agents/skills/`, and any agent-specific
+   skill directory the runtime uses)
    and match by skill **description** to this stack and task. Write
    them into the bean body as:
 
@@ -111,6 +132,14 @@ or human triaging it must:
 
    Do not hardcode a language or project pack. Re-discover per leaf.
    Coding subtasks without this section are not ready for `todo`.
+   Passing a skill means naming its PATH in the dispatch and instructing
+   the worker to read it fully before editing. Summarizing the skill's
+   rules into the task context is NOT passing it: the summary drops
+   whatever the summarizer did not think to include, and that gap is
+   how a purged rule class re-ships under green gates. Skill rules a
+   gate must verify get copied into the contract as explicit checkable
+   items — build/lint/gofmt stay green while style rules are violated,
+   so an unchecked style rule ships broken.
 6. **Identify blockers and dependencies** — `--blocked-by` on children
    that can't start yet.
 7. **Promote** — `beans update <id> -s todo` only when the body is
@@ -205,7 +234,7 @@ owns the format; full schema and example in
 The recipes live in [`references/patterns.md`](references/patterns.md):
 **Start work on a bean** (claim → implement → check off → PoW → close)
 and **Create an epic with tasks and subtasks** (the canonical draft-first
-tree shape). Find-blocked and milestones are one-liners in that file.
+tree shape). Find-blocked is a one-liner in that file.
 
 ---
 
@@ -235,6 +264,17 @@ Outputs context about the project's current beans, priorities, and recommended n
 9. beans update <id> --body-append      → Add ## Proof of Work (commands + results + residual)
 10. beans update <id> -s completed      → Mark done (only after verify + proof are present)
 ```
+
+The orchestrator, not the worker, owns steps 7-10: a worker report is
+a claim. Re-run the gates yourself, read the diff, then write the PoW
+in the bean body — a completion recorded only in chat is not a
+completion in the tracker, and the next session cannot verify what the
+tracker does not contain.
+
+When a triage verdict arrives AFTER a fix pass already shipped, append
+it to the same bean body and run the delta as a follow-up pass under
+that bean. Do not open a second bean for the same scope, and do not
+drop the stricter verdicts because a first pass already went green.
 
 For epics, steps 8–9 are replaced by: comprehensive end-to-end tests +
 a `## Proof of Work` section that exercises the goal as a user would.

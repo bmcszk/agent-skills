@@ -1,5 +1,7 @@
 import os, re, json, unicodedata
-V = '/home/blaze/Documents/Dig/dig'
+V = os.environ.get('VAULT') or '.'
+if not os.path.isdir(V):
+    raise SystemExit(f"vault dir not found: {V} (set VAULT=<vault path>)")
 SKIP = ('.git', '.obsidian', '.smart-env', '.trash', '.beans', '_triage_rework')
 
 md_names = set()

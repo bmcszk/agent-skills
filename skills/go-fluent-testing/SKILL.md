@@ -59,7 +59,27 @@ the tier is integration/E2E anyway.
 
 **Classic** — plain test funcs segmented by `// given` / `// when` /
 `// then` comments. Default for units: no DSL to build, same
-discipline, less machinery.
+discipline, less machinery. In FLUENT tests do NOT write these three
+comments: the `given.`/`when.`/`then.` receiver already names the
+phase, so a marker above it is narration (coding-rules comment rule;
+confirmed as the standard in a triage where a repo-wide sweep counted
+the markers as debt, not convention). The comments belong to the
+classic style only, where nothing else marks the sections. Test-func
+doc comments follow the same line: describe the non-obvious contract
+under test (an invariant the name does not carry) — never restate the
+given/when/then chain or the assertions below.
+
+Timing and duration are part of a feature's contract: when the code
+under test paces output (`interval_ms`, backoff, debounce), assert the
+pacing (per-frame arrival deltas, total duration bounds) and exercise
+durations that cross server-level limits (`http.Server` WriteTimeout),
+not only millisecond-fast samples — a suite whose every stream finishes
+in <100ms cannot see truncation at 10s. Also cover the server's own
+documented env var and timeout knobs in at least one long-running e2e.
+Wire-behavior features (streaming formats, delivery headers, retry
+exhaustion) need at least one e2e assertion each, even when unit tests
+already check the pieces — e2e proves the parts wired through the real
+HTTP server, router wrappers, and middleware.
 
 ```go
 func TestService_CreateUser(t *testing.T) {
@@ -97,9 +117,30 @@ func TestService_CreateUser(t *testing.T) {
 }
 ```
 
-- `newParts(t)` returns `p, p, p` (given, when, then) over one parts
-  struct that embeds `*testing.T`, `require.New(t)`, and ALL test
-  state — no local state variables in test funcs.
+- `newParts(t)` returns `p, p, p` (given, when, then) over one flat parts
+  struct that holds `*testing.T`, `require.New(t)`, and ALL test
+  state — no local state variables in test funcs, no separate state
+  structs.
+- LARGE DSL SHAPE (settled after five rejected topologies): ONE flat `parts`
+  struct holding ALL state — core (T, require/assert, ledger) PLUS every domain's
+  fields. State never splits into per-domain structs; no wrapping composite
+  fixture (rejected on sight); no per-domain wrapper structs either (rejected:
+  `type <dom>Parts struct { parts }` markers added ceremony, deleted same day).
+  Every builder is `func (p *parts) … *parts` in its domain file, so mixed
+  chains and `.and()` survive with zero call-site churn. Self-typed generics
+  (`parts[S]`) are NOT the fix for chain typing. They break cross-domain chains
+  (Go 1.27 generic methods don't rescue this either: a `*parts` receiver cannot
+  produce a sound domain-typed return; verified in scratch).
+- ONE constructor: `newParts(t)` in the base file constructs the whole parts
+  literal and returns `p, p, p`. Domain ctors per file are ceremony and are deleted.
+  Never split construction or delegate partial construction, or core state
+  stays nil.
+- Pairs: each domain primary is an exact-stem pair `X_test.go` ↔
+  `X_parts_test.go`; extra feature files inside a domain share the domain parts
+  file. A parts file is a pure method group on `*parts` (no struct, no ctor of
+  its own); a parts file with zero methods is deleted.
+- NEVER base-embeds-domains while domains-embed-base — that cycle reads as a
+  structural error. Recipe: `references/fluent-testing-guideline.md`.
 - Tier differences live in the given-methods only: unit `given` builds
   mocks; integration `given` starts containers; E2E `given` waits for
   compose services. The when/then shape is identical everywhere.

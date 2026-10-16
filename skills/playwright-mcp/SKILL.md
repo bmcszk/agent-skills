@@ -99,6 +99,16 @@ mcpc connect ~/.mcpc/mcp.json:playwright @pw
 4. **Wait** — Use `mcpc @pw tools-call browser_wait_for` after actions to ensure page has updated
 5. **Check console** — Run `mcpc @pw tools-call browser_console_messages` to catch JavaScript errors
 
+## Widget-framework pages (TP-Link routers, jQuery-UI style apps)
+
+Embedded-device and jQuery-widget UIs defeat standard Playwright helpers — snapshot may show nothing interactive and `fill`/`click` can silently no-op:
+
+- Type into inputs via the native value setter + `input` event (`Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el, v); el.dispatchEvent(new Event('input',{bubbles:true}))`) — direct `el.value=` renders but the framework never sees the change.
+- Click via the full pointer sequence — `pointerdown, mousedown, pointerup, mouseup, click`, each a `MouseEvent` with `bubbles:true` — a bare `.click()` does nothing on these widgets.
+- Read state from custom widget classes, not form semantics: no real `<input type=checkbox>`/`<select>` exist. Toggle state = class on the container (`checkbox-container` with `on`/`checked`); dropdown selection = input `value` + which `<li class="combobox-list selected">`/`checked="checked"` option in the hidden list; spinner values = the `*_hour`/`*_minute` child input values.
+- Expect the tab to die mid-session (navigation hash changes, page reloads); re-navigate and re-login — the session cookie survives.
+- Discover the widget structure by slicing `document.body.innerHTML` around a known label rather than querying by tag.
+
 ## Best practices
 
 - Start every session with `mcpc @pw tools-call browser_navigate` to set the initial URL
