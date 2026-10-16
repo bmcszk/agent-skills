@@ -1400,7 +1400,7 @@ func TestExecuteFile_SingleRequest(t *testing.T) {
 }
 ```
 
-### 12. YAGNI Pass Before Every PR (ponytail)
+### 12. YAGNI Pass Before Every PR (smallest-change discipline)
 **Before opening a PR, delete everything that has no caller.** Migration/refactor work breeds orphaned helpers — grep and remove: DSL methods with zero call sites, struct types whose table tests were split, per-fixture builder functions, unused fixture files, dead `_ = x` lines. A helper "we might need later" is a liability; re-adding it later costs less than maintaining it now. Prove the pass: grep each deleted symbol returns 0 hits, then run the full gate (build/vet/lint/tests).
 
 **Never appease the `unused` linter with reference lists (PR#35 round 3).** `var _ = []any{ (*parts).foo, ... }` blocks in DSL files keep dead methods lint-clean forever — 5 dead DSL methods survived 3 review rounds behind them. Delete the blocks and let `unused` name the dead methods, then delete them. Same for `var _ = time.Time{}`-style "silence unused import" lines: fix the import, not the symptom.

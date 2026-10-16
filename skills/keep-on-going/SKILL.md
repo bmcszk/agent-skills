@@ -6,12 +6,12 @@ metadata:
   audience: agents
   workflow: planning
   category: meta
-  technologies: beans, subagents, unlazy
+  technologies: beans, subagents, completion discipline
 ---
 
 # Keep On Going
 
-Finish work, not narrate it. The discipline is the unlazy discipline — gates, evidence, depth tree, four-pass leaf work — expressed as a **beans session loop**.
+Finish work, not narrate it. The discipline is completion discipline — gates, evidence, depth tree, four-pass leaf work — expressed as a **beans session loop**.
 
 `keep-on-going` is the **session wrapper** around [`beans`](../beans/SKILL.md). Beans is the storage + CLI; keep-on-going is the rule that says *one epic, looped, until reached*. When `beans prime` says "here's the project state," `keep-on-going` says "now drive it to completion, properly."
 
@@ -20,8 +20,8 @@ Finish work, not narrate it. The discipline is the unlazy discipline — gates, 
 HARD sequence for ANY multi-step request. Implementation NEVER precedes the full tree:
 
 1. **PLAN first** — before any implementation, delegate the WHOLE-task plan
-   to the best available research agent (brainer subagent, or pi subagent
-   read-only). Output: goal, epic body, task list, 10-min subtask split,
+   to the agent's best available research subagent (any reasoning-capable
+   subagent mechanism, read-only). Output: goal, epic body, task list, 10-min subtask split,
    deps/blockers, per-leaf skills. Present the tree to the user when the
    request is ambiguous; proceed when it is not. The plan agent re-verifies
    state against the live tree (`ls`, `wc -l`, `grep`) instead of trusting
@@ -34,11 +34,11 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    `--body-replace-*`. Every body carries the beans-skill sections: research
    (root cause, local+online sources), scope, acceptance criteria,
    `## Skills for coder`.
-3. **TRIAGE DELEGATED** — triage is done by a research subagent (brainer or
-   pi read-only), not by the orchestrator skimming inline. Promote
+3. **TRIAGE DELEGATED** — triage is done by a research subagent
+   (read-only), not by the orchestrator skimming inline. Promote
    draft→todo only when the triaged body is complete (beans skill triage
    contract). Wire `--blocked-by` + `--parent` at creation time.
-4. **THEN implement** — claim `todo` leaves in wave order (unlazy orchestrated
+4. **THEN implement** — claim `todo` leaves in wave order (orchestrated
    mode for multi-leaf: PLAN table + per-leaf gates), four passes, PoW, close,
    `beans list --ready` heartbeat after every PR — claim next or state the
    stop condition. Never end a turn with a ready child unclaimed silently.

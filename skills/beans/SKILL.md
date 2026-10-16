@@ -113,8 +113,9 @@ or human triaging it must:
 4. **Write acceptance criteria** — `- [ ]` checkboxes an outside
    reviewer can independently verify.
 5. **Discover skills for the coding agent** — when the leaf will be
-   implemented by a coder, scan skill roots (repo `.cursor/skills/`,
-   `.agents/skills/`, user `~/.cursor/skills/`, `~/.agents/skills/`)
+   implemented by a coder, scan the project's and the user's skill roots
+   (`.agents/skills/`, `~/.agents/skills/`, and any agent-specific
+   skill directory the runtime uses)
    and match by skill **description** to this stack and task. Write
    them into the bean body as:
 

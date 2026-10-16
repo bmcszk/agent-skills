@@ -40,13 +40,13 @@ env -i HOME=$HOME USER=$USER LOGNAME=$USER PATH=/usr/bin:/bin \
   DISPLAY=:1 \
   LD_PRELOAD=":$HOME/.local/share/Steam/ubuntu12_32/gameoverlayrenderer.so:$HOME/.local/share/Steam/ubuntu12_64/gameoverlayrenderer.so" \
   ENABLE_VK_LAYER_VALVE_steam_overlay_1=1 \
-  /home/blaze/scripts/discord-gamescope.sh & sleep 15
+  ~/scripts/discord-gamescope.sh & sleep 15
 pgrep -f 'Discord --ozone' && echo PASS   # PID present + no FATAL in wrapper output
 ```
 
 ## Procedure
 
-`/home/blaze/scripts/fix-electron-gamescope.sh` does all three fixes idempotently. After it runs, the only remaining step is restarting Steam so it re-reads the two config files:
+`~/scripts/fix-electron-gamescope.sh` does all three fixes idempotently. After it runs, the only remaining step is restarting Steam so it re-reads the two config files:
 
 ```bash
 # Close any running game first — this terminates gamescope + Steam + your session
@@ -59,8 +59,8 @@ The script does **not** restart Steam automatically; that would interrupt in-pro
 
 | App | Wrapper | .desktop | Repointed shortcut | CompatToolMapping |
 |---|---|---|---|---|
-| Discord | `/home/blaze/scripts/discord-gamescope.sh` | `~/.local/share/applications/discord-gamescope.desktop` | yes | not pinned (was already absent) |
-| Heroic | `/home/blaze/scripts/heroic-gamescope.sh` | `~/.local/share/applications/heroic-gamescope.desktop` | yes | entry removed (was `proton-cachyos-slr`) |
+| Discord | `~/scripts/discord-gamescope.sh` | `~/.local/share/applications/discord-gamescope.desktop` | yes | not pinned (was already absent) |
+| Heroic | `~/scripts/heroic-gamescope.sh` | `~/.local/share/applications/heroic-gamescope.desktop` | yes | entry removed (was `proton-cachyos-slr`) |
 
 Add more apps to the `APPS=(...)` array at the top of the script + extend the in-script `if 'name' in name or 'name' in exe` dispatch in the Python block.
 
@@ -97,14 +97,14 @@ exec "/path/to/real/binary" --ozone-platform=x11 "$@"
 
 ```bash
 # Confirm shortcuts were repointed (Exe should be the wrapper path, LaunchOptions empty)
-python3 -c "import vdf; d=vdf.binary_load(open('/home/blaze/.steam/steam/userdata/<id>/config/shortcuts.vdf','rb')); [print(s.get('AppName'),'->',s.get('Exe'),'LaunchOpts=',s.get('LaunchOptions','')) for s in d.get('shortcuts',{}).values()]"
+python3 -c "import vdf; d=vdf.binary_load(open('~/.steam/steam/userdata/<id>/config/shortcuts.vdf','rb')); [print(s.get('AppName'),'->',s.get('Exe'),'LaunchOpts=',s.get('LaunchOptions','')) for s in d.get('shortcuts',{}).values()]"
 
 # Confirm Heroic removed from CompatToolMapping (regex precise; only the proton-cachyos-slr block)
-grep -c '"2385805048"' /home/blaze/.steam/steam/config/config.vdf  # 2 is OK (ShaderCacheSize + SizeOnDisk)
-grep -B1 -A4 'CompatToolMapping' /home/blaze/.steam/steam/config/config.vdf | grep '2385805048'  # should be empty
+grep -c '"2385805048"' ~/.steam/steam/config/config.vdf  # 2 is OK (ShaderCacheSize + SizeOnDisk)
+grep -B1 -A4 'CompatToolMapping' ~/.steam/steam/config/config.vdf | grep '2385805048'  # should be empty
 
 # Test wrapper with gamescope env (XWayland requires DISPLAY)
-DISPLAY=:0 /home/blaze/scripts/heroic-gamescope.sh --version  # should print nile sync, then hang waiting for UI; Ctrl-C
+DISPLAY=:0 ~/scripts/heroic-gamescope.sh --version  # should print nile sync, then hang waiting for UI; Ctrl-C
 ```
 
 ## Pitfall: shortcuts.vdf edit must use python-vdf, not byte patching
@@ -113,7 +113,7 @@ Steam's `shortcuts.vdf` is binary VDF (Steam's own format, not KeyValues text). 
 
 ## Pitfall: Steam `userdata/` placeholder `0/`
 
-`/home/blaze/.steam/steam/userdata/0/` is a placeholder Steam creates on first launch; it has no real user state. Iterating `userdata/*/config` naively picks it first. Filter to `dirname >= 1` AND require `shortcuts.vdf` to exist before patching.
+`~/.steam/steam/userdata/0/` is a placeholder Steam creates on first launch; it has no real user state. Iterating `userdata/*/config` naively picks it first. Filter to `dirname >= 1` AND require `shortcuts.vdf` to exist before patching.
 
 ## Pitfall: `grep -q '"$appid"'` is too broad in config.vdf
 
@@ -129,7 +129,7 @@ Discord's updater (log: `~/.config/discord/logs/*updater*rCURRENT.log`) can down
 
 ## Rollback
 
-`/home/blaze/scripts/rollback-electron-gamescope.sh` removes wrappers + .desktop files. The shortcuts.vdf and config.vdf edits are **not** rolled back — restore from the timestamped `*.bak-<epoch>` files created next to each patched file:
+`~/scripts/rollback-electron-gamescope.sh` removes wrappers + .desktop files. The shortcuts.vdf and config.vdf edits are **not** rolled back — restore from the timestamped `*.bak-<epoch>` files created next to each patched file:
 
 ```bash
 ls -lt ~/.steam/steam/userdata/*/config/shortcuts.vdf.bak-* | head -1

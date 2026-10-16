@@ -30,7 +30,7 @@ Ask Gemini a question or request analysis. Supports file references via `@` synt
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `prompt` | string | yes | Analysis request. Use `@filename` to include files. |
-| `model` | string | no | Model to use (default: `gemini-2.5-pro`). E.g., `gemini-2.5-flash`. |
+| `model` | string | no | Model to use (default: the CLI's current flagship model; check `mcpc @gemini` docs for valid snapshot names). |
 | `sandbox` | boolean | no | Run in isolated sandbox for risky operations (default: false) |
 | `changeMode` | boolean | no | Return structured edit suggestions (default: false) |
 
@@ -118,7 +118,7 @@ mcpc @gemini tools-call ask-gemini prompt:="@file.go review for bugs, performanc
 ## Best practices
 
 - Use `@filename` syntax to give Gemini file context
-- Use `gemini-2.5-flash` for faster, cheaper queries; `gemini-2.5-pro` for complex analysis
+- Use the faster/cheaper flash-tier model for simple queries; the pro-tier flagship for complex analysis (model snapshot names change — query the CLI, don't hardcode)
 - Enable `sandbox:=true` when testing potentially risky code
 - For brainstorming, let `methodology:="auto"` unless you need a specific framework
 - Use `changeMode:=true` when you want structured, applicable edit suggestions

@@ -52,7 +52,7 @@ beans list --json --ready
 beans update <id> -s in-progress
 ```
 
-When epic leaves are DELEGATED (worker agent, pi contract), size each wave
+When epic leaves are DELEGATED to a worker agent, size each wave
 to one structural move — one domain fold, one file merge — so it fits a
 single run. Before dispatch, pre-verify every symbol move with a consumer
 grep and paste the hit list into the contract; the worker then executes
