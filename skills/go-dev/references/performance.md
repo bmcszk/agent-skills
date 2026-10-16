@@ -1,4 +1,23 @@
 # Performance & Footguns
+
+## Go embedding (general rule, not DSL-specific)
+Embedding promotes the embedded struct's members onto the outer type. NEVER re-bind the host inside a method (`p := c.parts` is always wrong) — call promoted members on the receiver directly (`c.require`, `c.parsedFile`, `c.aClient()`). A receiver hop is justified ONLY when passing the host as a value to another function. Never build a bidirectional embedding cycle (base embeds sub-structs while sub-structs embed the base): promotion through a cycle compiles but reads as a structural error; shape it one-way (composite embeds state structs, state structs hold fields only).
+
+Before a receiver-wide rewrite, verify the moved binding is value-only:
+scan each body for `p` used WITHOUT a following dot (`[^[\w.]p\b(?!\s*\.)]`)
+— a value usage (passed as an argument) needs the binding kept; dot-only
+usages rewrite mechanically to receiver refs and `go vet` catches the rest.
+
+## Marker structs need real state or the unused linter kills them
+An empty domain struct added only to satisfy a layout rule (`type envParts
+struct{}`) fails `unused` unless something references it. Give it its natural
+domain state (the fields its builders write) and embed it in the composite —
+then the linter passes because real code reads and writes the fields, not
+because a silence block hid the type.
+
+## No lint-appeasement constructs
+`var _ = []any{ Type{} }` compile-assert blocks (and `var _ = time.Time{}`-style unused-import silencers) are dead noise: type safety is already proven by every method using the type. Delete the block and fix the import, not the symptom — the `unused` linter then names genuinely dead symbols for deletion instead of hiding them.
+
 # Performance
 
 ## Pre-allocate with Capacity

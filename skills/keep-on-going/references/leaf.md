@@ -71,10 +71,19 @@ A leaf is finished only when:
 - Every acceptance criterion in the body is `- [x]`.
 - The bean can be closed without surprising the user on review.
 
+The PoW's evidence block ends with a `Residual:` line — named leftovers or
+`none`. Closing without it is an incomplete PoW even when every gate ran.
+
 A leaf that hits an impossible gate (something you can't prove at
 all in this environment) is **not finished** — it's handed off.
 See [`approvals.md`](approvals.md) for how to record an impossible
 gate and scrap the bean honestly.
+
+When a user directive lands MID-EPIC (a new structural rule, a re-read of the
+skills): fold it into the running epic as the next wave, not a side channel —
+restate the rule in the next contract verbatim, write any standing part into
+the governing style skill, and note the epic-PoW delta. Side-channel fixes
+drift from the ledger and the epic closes without them.
 
 ## What this is not
 

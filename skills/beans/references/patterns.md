@@ -89,6 +89,27 @@ beans update myproj-xxxx -s todo
 beans update myproj-xxxx -s in-progress
 ```
 
+## Process-violation beans: root cause is the skipped step, not the symptom
+
+When a shipped deliverable violates standing rules (style skills never
+passed to the worker, comment rules breached), the cleanup bean records
+BOTH layers:
+
+- **Finding** — what shipped wrong, exact files.
+- **Root cause** — which lifecycle step was skipped (usually: no
+  `## Skills for coder` at triage, so the worker contract carried no rule
+  paths and gates could not catch style).
+
+Then close the loop on the artifact itself: triage read-only with the rules
+skill LOADED so triage produces per-line verdicts (delete vs keep, and a
+grep of sibling files to check whether the pattern is repo-wide local
+style — local style wins over the abstract rule), promote, and dispatch
+the coder with the skill path named as BINDING plus the verdict list.
+
+The cleanup bean's PoW must include the rule-level check (e.g. a narration
+grep returning 0), not just build/test gate colors — a style-cleanup bean
+that only proves "tests pass" has not demonstrated its own AC.
+
 ## Find blocked work
 
 ```bash

@@ -11,6 +11,10 @@ should always use it.
 
 ## Create
 
+Title is the POSITIONAL arg; `-t` takes a TYPE (`milestone|epic|bug|feature|task`):
+`beans create epic "My goal"` ✗ → `invalid type: epic`. Correct:
+`beans create "My goal" -t epic`.
+
 ```bash
 # Simple bug — starts in draft, needs triage before it can be claimed
 beans create "Fix login redirect bug" -t bug -s draft -p high
@@ -130,6 +134,18 @@ beans update myproj-a3x1 --blocked-by myproj-c9m3
 # Tag management
 beans update myproj-a3x1 --tag backend --tag security
 beans update myproj-a3x1 --remove-tag backend
+
+# Data-directory override — one box can carry TWO beans stores (repo-local
+# `.beans/` + a global one); plain `beans` silently uses whichever store its
+# config resolution finds from cwd, so creates can land in a different store
+# than the one `beans list` reads. Pin the store explicitly whenever both
+# exist:
+beans --beans-path /repo/.beans list --json
+beans --beans-path /repo/.beans create task "..." --parent <epic-id>
+
+# Parent type is validated: a task can only parent under milestone/epic/feature
+# (never under another task) — retype the parent with `beans update <id> -t epic`
+# if you created the epic as the wrong type.
 
 # Optimistic concurrency (safe concurrent updates)
 ETAG=$(beans show --etag-only myproj-a3x1)

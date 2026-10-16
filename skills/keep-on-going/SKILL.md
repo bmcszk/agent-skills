@@ -15,6 +15,64 @@ Finish work, not narrate it. The discipline is the unlazy discipline — gates, 
 
 `keep-on-going` is the **session wrapper** around [`beans`](../beans/SKILL.md). Beans is the storage + CLI; keep-on-going is the rule that says *one epic, looped, until reached*. When `beans prime` says "here's the project state," `keep-on-going` says "now drive it to completion, properly."
 
+## PLAN WHOLE THING FIRST (user binding)
+
+HARD sequence for ANY multi-step request. Implementation NEVER precedes the full tree:
+
+1. **PLAN first** — before any implementation, delegate the WHOLE-task plan
+   to the best available research agent (brainer subagent, or pi subagent
+   read-only). Output: goal, epic body, task list, 10-min subtask split,
+   deps/blockers, per-leaf skills. Present the tree to the user when the
+   request is ambiguous; proceed when it is not. The plan agent re-verifies
+   state against the live tree (`ls`, `wc -l`, `grep`) instead of trusting
+   the orchestrator's session brief — session memory runs commits behind,
+   and a plan built on stale filenames wastes the first wave.
+2. **BEANS LEDGER via CLI only** — create epic (`-t epic`, NOT feature, when
+   children are tasks) + tasks + subtasks with `beans create` drafts. NEVER
+   hand-write `.beans/*.md` — the CLI owns the format. Fill bodies via
+   `beans update --body-file` (composed in /tmp) or `--body-append` /
+   `--body-replace-*`. Every body carries the beans-skill sections: research
+   (root cause, local+online sources), scope, acceptance criteria,
+   `## Skills for coder`.
+3. **TRIAGE DELEGATED** — triage is done by a research subagent (brainer or
+   pi read-only), not by the orchestrator skimming inline. Promote
+   draft→todo only when the triaged body is complete (beans skill triage
+   contract). Wire `--blocked-by` + `--parent` at creation time.
+4. **THEN implement** — claim `todo` leaves in wave order (unlazy orchestrated
+   mode for multi-leaf: PLAN table + per-leaf gates), four passes, PoW, close,
+   `beans list --ready` heartbeat after every PR — claim next or state the
+   stop condition. Never end a turn with a ready child unclaimed silently.
+   When the user sets a quantitative target (file count, line cap, prefix
+   removal), encode the numbers as epic acceptance criteria and close with a
+   numeric audit (`ls <prefix>_*`, `wc -l`, test inventory) — partial progress
+   reads as not-done to the user, and "looks consolidated" is not a
+   checkable criterion.
+   Mid-epic user pushback ("the job is not close to finished") = RE-PLAN,
+   not defend: re-run the planning agent against the live tree with the
+   original requirements restated VERBATIM — paste the user's requirement text
+   into the plan context, never your paraphrase of an earlier round; each
+   re-approximation re-misses the same clause, and the next rejection cites
+   the same words back. Diff the plan's finding against what shipped,
+   register the delta as new beans, and only then resume the loop.
+   Single-user helpers surfaced mid-wave by the user get their placement
+   decided by the destination rule in the plan, not an interim parking spot:
+   "temporarily in the shared file" ships as permanent and reads as
+   misplacement at review.
+   A verification ask ("check we lost nothing") gets its own research-agent
+   pass plus an orchestrator-run script audit — delegated claims of
+   correctness are hypotheses, and a no-loss/parity verdict is only as
+   strong as the extractor that produced it.
+   When the user rejects a structural design choice (a DSL shape, a file
+   layout, an architecture), the replacement must be decided and SCRATCH-
+   VERIFIED in the same session before any wave dispatches: build the
+   candidate shape in a throwaway module, compile it, run the chain pattern
+   the user complained about through it. Dispatching waves against an
+   undecided replacement ships the rejected shape a second time.
+
+The failure class this section forbids: implementing first and creating the
+ledger mid-flight, hand-editing bean files, inline triage, ready children
+left unclaimed. Notice one mid-task → stop implementing, rebuild the tree.
+
 Use this skill when the cost of quiet incompleteness justifies the ledger — a feature, a refactor, a debugging expedition, a deployment. Don't use it for one-line fixes or factual replies; YAGNI applies to ledgers too.
 
 ---
@@ -95,6 +153,15 @@ to `todo` as research completes.
 Coding subtasks must also include **`## Skills for coder`**: skill
 paths discovered for that leaf (stack + task), so the coding agent
 loads the right guidance. See [`beans` triage](../beans/SKILL.md#triage--deep-research).
+
+The skill list is also the DELEGATION CONTRACT's list: a worker only
+knows what its kickoff context carries, so a leaf whose `## Skills for
+coder` names `coding-rules` must ship that path (plus "read fully
+before editing") into the worker's contract, and the skill's binding
+rules go in as checkable gate items. Paraphrasing a skill into task
+counts as passing it — a summarized rule loses the clauses the
+summarizer did not think to include, and the violation class returns
+under green gates (linters do not check comment style).
 
 See [`beans` Workflow Model](../beans/SKILL.md#workflow-model) for the
 full tree semantics.

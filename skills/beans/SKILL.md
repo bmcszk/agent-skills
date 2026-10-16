@@ -38,12 +38,25 @@ bean `type` values — the `type` is still `task` / `bug` / `feature` /
 
 | Level | What it represents | Bean `type` | Children |
 |---|---|---|---|
-| **Epic** | One GOAL. The outcome a session loops on until reached. | `feature` (or `bug` for a single-issue goal) | N tasks |
-| **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | N subtasks |
-| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | `task` | none |
+| **Epic** | One GOAL. The outcome a session loops on until reached. | `epic` (multi-epic program root: `milestone`) | N tasks |
+| **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | none — leaf |
+| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | `task` (parent `feature`) or AC checkboxes inside the owning task | none |
 
-The hierarchy is enforced by the `parent` field. A bean has **at most
-one** parent; epics have no parent (`beans list --no-parent`).
+The hierarchy is enforced by the `parent` field — and by the CLI, which
+REJECTS illegal parent/type combos at create time with an explicit error.
+Verified enforcement matrix (probe with one throwaway create per level
+before any bulk import; the CLI error is ground truth over any documented
+convention): `milestone` may have no parent; `epic` parent ∈ {milestone,
+none}; `feature` parent ∈ {milestone, epic}; `task` parent ∈ {milestone,
+epic, feature}; a `task` can NEVER be a parent. Where the CLI forbids an
+extra level, keep 10-minute granularity as countable acceptance-criteria
+checkboxes in the owning task instead of a separate bean.
+
+Bulk-import recipe (ids are CLI-generated, so never assume them): create
+ALL beans in pass 1 recording returned ids to a map; wire `--parent` /
+`--blocked-by` in pass 2 from the map. If any type/parent error rejects
+part of a batch, re-run as an idempotent repair script that reads the id
+map and skips already-created beans.
 
 ```
 epic (GOAL)
@@ -111,6 +124,14 @@ or human triaging it must:
 
    Do not hardcode a language or project pack. Re-discover per leaf.
    Coding subtasks without this section are not ready for `todo`.
+   Passing a skill means naming its PATH in the dispatch and instructing
+   the worker to read it fully before editing. Summarizing the skill's
+   rules into the task context is NOT passing it: the summary drops
+   whatever the summarizer did not think to include, and that gap is
+   how a purged rule class re-ships under green gates. Skill rules a
+   gate must verify get copied into the contract as explicit checkable
+   items — build/lint/gofmt stay green while style rules are violated,
+   so an unchecked style rule ships broken.
 6. **Identify blockers and dependencies** — `--blocked-by` on children
    that can't start yet.
 7. **Promote** — `beans update <id> -s todo` only when the body is
@@ -235,6 +256,17 @@ Outputs context about the project's current beans, priorities, and recommended n
 9. beans update <id> --body-append      → Add ## Proof of Work (commands + results + residual)
 10. beans update <id> -s completed      → Mark done (only after verify + proof are present)
 ```
+
+The orchestrator, not the worker, owns steps 7-10: a worker report is
+a claim. Re-run the gates yourself, read the diff, then write the PoW
+in the bean body — a completion recorded only in chat is not a
+completion in the tracker, and the next session cannot verify what the
+tracker does not contain.
+
+When a triage verdict arrives AFTER a fix pass already shipped, append
+it to the same bean body and run the delta as a follow-up pass under
+that bean. Do not open a second bean for the same scope, and do not
+drop the stricter verdicts because a first pass already went green.
 
 For epics, steps 8–9 are replaced by: comprehensive end-to-end tests +
 a `## Proof of Work` section that exercises the goal as a user would.
