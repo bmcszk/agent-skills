@@ -121,22 +121,24 @@ func TestService_CreateUser(t *testing.T) {
   struct that holds `*testing.T`, `require.New(t)`, and ALL test
   state — no local state variables in test funcs, no separate state
   structs.
-- LARGE DSL SHAPE (settled after four rejected topologies): ONE flat `parts`
+- LARGE DSL SHAPE (settled after five rejected topologies): ONE flat `parts`
   struct holding ALL state — core (T, require/assert, ledger) PLUS every domain's
-  fields. State never splits into per-domain structs, and no wrapping composite
-  fixture (rejected on sight). Each domain file declares a stateless marker
-  struct extending the base (`type <dom>Parts struct { parts }`) and a ctor
-  returning `*<dom>Parts` 3×; every builder is `func (p *parts) … *parts` in its
-  domain file, so mixed chains and `.and()` survive via promotion with zero
-  call-site churn. Self-typed generics (`parts[S]`) are NOT the fix for chain
-  typing — they break cross-domain chains.
-- Domain files own ctors that CONSTRUCT the base parts inline (`fx :=
-  &<dom>Parts{parts: parts{T: t, require: require.New(t)}}` + field init) —
-  never delegate to the base ctor, or core state stays nil. `newParts(t)` exists
-  once in the base file.
+  fields. State never splits into per-domain structs; no wrapping composite
+  fixture (rejected on sight); no per-domain wrapper structs either (rejected:
+  `type <dom>Parts struct { parts }` markers added ceremony, deleted same day).
+  Every builder is `func (p *parts) … *parts` in its domain file, so mixed
+  chains and `.and()` survive with zero call-site churn. Self-typed generics
+  (`parts[S]`) are NOT the fix for chain typing. They break cross-domain chains
+  (Go 1.27 generic methods don't rescue this either: a `*parts` receiver cannot
+  produce a sound domain-typed return; verified in scratch).
+- ONE constructor: `newParts(t)` in the base file constructs the whole parts
+  literal and returns `p, p, p`. Domain ctors per file are ceremony and are deleted.
+  Never split construction or delegate partial construction, or core state
+  stays nil.
 - Pairs: each domain primary is an exact-stem pair `X_test.go` ↔
   `X_parts_test.go`; extra feature files inside a domain share the domain parts
-  file.
+  file. A parts file is a pure method group on `*parts` (no struct, no ctor of
+  its own); a parts file with zero methods is deleted.
 - NEVER base-embeds-domains while domains-embed-base — that cycle reads as a
   structural error. Recipe: `references/fluent-testing-guideline.md`.
 - Tier differences live in the given-methods only: unit `given` builds

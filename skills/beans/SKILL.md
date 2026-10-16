@@ -47,7 +47,9 @@ REJECTS illegal parent/type combos at create time with an explicit error.
 Verified enforcement matrix (probe with one throwaway create per level
 before any bulk import; the CLI error is ground truth over any documented
 convention): `epic` parent ∈ {none}; `feature` parent ∈ {epic}; `task`
-parent ∈ {epic, feature}; a `task` can NEVER be a parent. Do NOT use the
+parent ∈ {epic, feature}; a `task` can NEVER be a parent. Probe any
+hierarchy claim before relying on it. A documented convention the CLI
+rejects poisons every recipe built on it. Do NOT use the
 `milestone` type (house rule: it is upstream CLI baggage, never create it);
 where a release grouping is genuinely needed, tag beans (`--tag rel-v1`)
 instead. Where the CLI forbids an

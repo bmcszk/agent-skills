@@ -84,7 +84,6 @@ skills): fold it into the running epic as the next wave, not a side channel —
 restate the rule in the next contract verbatim, write any standing part into
 the governing style skill, and note the epic-PoW delta. Side-channel fixes
 drift from the ledger and the epic closes without them.
-
 ## What this is not
 
 - It is not a checklist you tick once. Passes 2–4 are loops.

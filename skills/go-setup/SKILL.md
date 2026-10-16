@@ -252,7 +252,7 @@ dist/
 
 ---
 
-# CI/CD Example (GitHub Actions)
+## CI/CD Example (GitHub Actions)
 
 ```yaml
 name: CI
@@ -280,6 +280,11 @@ jobs:
       - name: Run all tests
         run: just test-all
 ```
+
+CI pitfalls:
+- `just` is NOT preinstalled on GitHub runners. Add `extractions/setup-just@v2` or call the underlying commands (`go vet`, `golangci-lint run`) directly; a workflow assuming `just` fails with `command not found` (exit 127) on the first run.
+- Before the first real code lands, guard recipes (`find . -name '*.go' | grep -q .` → skip with a message) and mark the lint/vet/test steps `continue-on-error`: golangci-lint exits non-zero on an empty module, which fails CI on a repo that is only docs and planning files.
+- Keep environment-specific checks (machine-local paths, personal tooling linters) in local git hooks, not CI. CI runners lack the home-dir state those checks probe.
 
 ---
 

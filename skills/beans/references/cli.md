@@ -148,6 +148,11 @@ beans --beans-path /repo/.beans create task "..." --parent <epic-id>
 # (never under another task) — retype the parent with `beans update <id> -t epic`
 # if you created the epic as the wrong type.
 
+# Post-fix verification: `beans update` echoes the id even when the write
+# no-ops (unknown id, wrong store). Confirm a PoW append or status flip
+# actually landed by grepping the body before trusting the echo:
+beans show <id> --body-only | grep -c 'Residual:'   # ≥1 means append landed
+
 # Optimistic concurrency (safe concurrent updates)
 ETAG=$(beans show --etag-only myproj-a3x1)
 beans update myproj-a3x1 --if-match "$ETAG" -s completed

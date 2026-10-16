@@ -68,6 +68,12 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    candidate shape in a throwaway module, compile it, run the chain pattern
    the user complained about through it. Dispatching waves against an
    undecided replacement ships the rejected shape a second time.
+   Design evolution under review converges through reversals, not a ladder:
+   a shape shipped, rejected, replaced, and re-merged weeks later is a real
+   outcome. Record each reversal in the ledger instead of treating the
+   newest directive as final, and keep the final-shape note in the
+   governing docs/skill current with every reversal so the next session
+   does not re-ship a superseded shape from stale guidance.
 
 The failure class this section forbids: implementing first and creating the
 ledger mid-flight, hand-editing bean files, inline triage, ready children

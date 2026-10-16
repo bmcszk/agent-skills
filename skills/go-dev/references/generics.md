@@ -91,6 +91,23 @@ func Keys[K comparable, V any](m map[K,V) []K {
 }
 ```
 
+## Generic methods (Go 1.27+)
+
+Go 1.27 allows type parameters on concrete methods: `func (l *List[E]) Map[R any](f func(E) R) List[R]`.
+Interface methods still may NOT declare type parameters, and a generic method
+cannot satisfy an interface method. The feature organizes code, it does not
+extend interface polymorphism.
+
+Fluent-builder chains are the case where the lack of a self-type still bites:
+- A base-receiver method cannot return the OUTER domain type (no `Self`);
+  a generic method on the base `func (p *base) step[S any]() S` can only
+  return the zero value of `S`. The receiver cannot produce a sound `S`
+  instance. Zero-value returns of pointer types are nil panics downstream.
+- Per-domain wrapper structs with domain-typed methods break mixed-domain
+  chains (a base-typed return degrades the chain after the first promoted
+  call). Keep every builder on the shared struct returning the shared
+  pointer; chains stay uniform and typed.
+
 ## Generics Decision Framework
 
 | Use Generics When | Don't Use Generics When |
@@ -99,6 +116,7 @@ func Keys[K comparable, V any](m map[K,V) []K {
 | Algorithm implementations | Database models |
 | Utility functions (Map, Filter) | HTTP handlers |
 | Reducing code duplication | When interfaces suffice |
+| Type-safe fluent DSL anchors via one shared struct | Preserving outer-typed returns from base-receiver fluent methods (no sound pattern exists) |
 
 ---
 

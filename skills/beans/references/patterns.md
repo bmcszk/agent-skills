@@ -56,7 +56,19 @@ beans create "Wire auth into API"     -t task -s draft --parent myproj-auth1
 
 **Rule:** each task is scoped so an entry-level subagent can complete it
 without asking questions. If one grows past ~3 acceptance criteria,
-split it into sibling tasks under the same epic.
+split it into sibling tasks under the same epic. 10-minute sub-work is
+NOT a child bean. The CLI rejects a task under a task, so it lives as AC
+checkboxes in the task body.
+
+## Retype an existing tree (house hierarchy changes)
+
+When a bean `type` is retired (house rules evolve), migrate existing data
+with the CLI, never by editing `.beans/*.md`: `beans update <id> -t <new-type>`
+per bean, then `beans check` on every affected store and re-verify one
+parent/child link per level (the link rules accept the new combo or they
+don't. Check. If a type was also documented, update the
+documentation and the data in the same change; a documented hierarchy that
+the live store contradicts sends the next triage down the old path.
 
 ## Found a bug: document, then triage
 
