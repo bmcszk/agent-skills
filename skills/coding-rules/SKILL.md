@@ -143,12 +143,3 @@ language idiom requires.
   usually an integration test in disguise: rewrite it against the real
   collaborator. Mocks stay only for what a unit test cannot run at all
   (network, clock, randomness, hardware), and stay thin.
-
-## Fluent test DSLs (pointers)
-
-Test-DSL constructor topology and redesign-pushback rules live with the
-Go fluent-testing skill: `go-fluent-testing/SKILL.md` and
-`references/fluent-testing-guideline.md`. The universal parts (structure
-through design, smallest change, user sign-off on structural probes) are
-covered by the sections above.
-
