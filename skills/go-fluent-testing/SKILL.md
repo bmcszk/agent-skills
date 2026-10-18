@@ -141,6 +141,11 @@ func TestService_CreateUser(t *testing.T) {
   its own); a parts file with zero methods is deleted.
 - NEVER base-embeds-domains while domains-embed-base — that cycle reads as a
   structural error. Recipe: `references/fluent-testing-guideline.md`.
+- Renaming files to exact-stem pairs: `git mv` per file, then RE-CHECK that no
+  other file still uses the old stem (`grep -rn old-stem *.go *.md`): renames
+  leave stale doc references and duplicate stems (a file of the same domain
+  name already existing) that gates never catch. Fold a small same-domain test
+  file into its pair's primary rather than leaving two stems for one domain.
 - Tier differences live in the given-methods only: unit `given` builds
   mocks; integration `given` starts containers; E2E `given` waits for
   compose services. The when/then shape is identical everywhere.

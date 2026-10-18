@@ -83,3 +83,11 @@ Deep-dive topics are split into focused reference files:
 Embedding promotes the embedded struct's members onto the outer type. NEVER re-bind the host inside a method (`p := c.parts` is always wrong): call promoted members on the receiver directly (`c.require`, `c.parsedFile`, `c.aClient()`). A hop is justified ONLY when passing the host as a value. Never build a bidirectional cycle (base embeds sub-structs while sub-structs embed base) — shape promotion one-way. Full rules: references/performance.md §Go embedding.
 
 No `var _ = []any{ Type{} }` compile-assert blocks (or `var _` unused-import silencers) — dead noise; delete and let `unused` name genuinely dead symbols. Full rule: references/performance.md §No lint-appeasement constructs.
+
+## Design acceptance is a gate
+
+Gates (build/vet/lint/tests/parity) verify code correctness: none of them verifies the user accepts the design. A structural/topology change (file layout, struct shapes, DSL patterns) gets user sign-off on ONE probe file before mass application: wave-by-wave shipping of an unconfirmed pattern converts every review into a rewrite. Each stored design rule carries its as-of date; when the user signals the shape is wrong, re-read the rule from scratch instead of re-applying the stored one.
+
+## Fluent-chain shape (Go DSL structs)
+
+A fluent builder chain survives promotion only while every builder returns the SAME concrete type. Prefer ONE struct holding all state with methods on `*parts`-style receivers returning that pointer: mixed-domain chains and `.and()` links then work with zero call-site churn. Before adding wrapper structs, generic self-types, or per-domain return types, prototype the WORST chain in a scratch module (`go mod init` + one test) and check cross-domain links compile: self-typed generics (`parts[S]`) break chains the moment a method from another domain is called, and a `*parts` receiver cannot soundly return a domain-typed `S` (zero value = nil). Go 1.27 generic methods don't fix this. Wrapper-marker structs (stateless `type X struct { base }`) add ctor ceremony without behavior; if state is already flat, they get deleted on the next simplification pass.

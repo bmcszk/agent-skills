@@ -83,7 +83,20 @@ When a user directive lands MID-EPIC (a new structural rule, a re-read of the
 skills): fold it into the running epic as the next wave, not a side channel —
 restate the rule in the next contract verbatim, write any standing part into
 the governing style skill, and note the epic-PoW delta. Side-channel fixes
-drift from the ledger and the epic closes without them.
+drift from the ledger and the epic closes without them. When the directive
+RE-SCOPES the whole program ("1:1 functionality, not 1:1 code shape"), stop
+in-flight workers first (revert claim to prior status), record the rule in
+the milestone bean's `## DECIDED` section, then re-derive each queued bean's
+scope from the new rule before re-dispatching: a contract written under the
+old scope wastes a full worker run.
+
+Scope the re-derivation with a live call-graph audit, not the bean's own
+citations: grep the reference codebase for each symbol the bean plans to
+port and count game callers (both directions: a symbol called only by
+another ported symbol still counts). Beans written before a scope rule
+inherit stale premises; their ACs cite scaffolding the rule now cuts.
+Re-derive the AC list from the call-graph, not from the old bean text, and
+delete (not patch) AC lines whose premise the audit refuted.
 ## What this is not
 
 - It is not a checklist you tick once. Passes 2–4 are loops.

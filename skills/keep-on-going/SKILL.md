@@ -74,6 +74,15 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    newest directive as final, and keep the final-shape note in the
    governing docs/skill current with every reversal so the next session
    does not re-ship a superseded shape from stale guidance.
+   A structural rejection gets the SIGN-OFF PROBE before any wave: build the
+   candidate shape on ONE file, show the diff, and let the user accept the
+   pattern: mass-applying an unconfirmed pattern converts every review round
+   into a full rewrite (ten reversals in one review cycle came exactly from
+   wave-first shipping). During a long design churn, a session-end sweep is
+   mandatory: PR title/body re-synced to HEAD, touched beans terminal, epic
+   title non-empty, governing docs/skill re-read for superseded shape claims.
+   the tracker and docs must describe the shape that EXISTS, not the one
+   shipped three reversals ago.
 
 The failure class this section forbids: implementing first and creating the
 ledger mid-flight, hand-editing bean files, inline triage, ready children
@@ -226,6 +235,118 @@ For the full approval format, see
 
 ## Stop conditions
 
+NEVER-STOP RULE (user binding):
+
+Never stop. Stop ONLY if human intervention is really needed: and before
+escalating, ask yourself: **do I actually need a human?** I probably already
+have instructions (this skill, the epic body, prior user directives, the
+session ledger). Search those first. Most "I need a decision" moments are
+research gaps, not decision gaps.
+
+- Problems found mid-loop → fix them proactively and continue working;
+  surface them in the ledger, don't pause for permission.
+- If the epic finishes, make ONE clear statement to the human: "epic X is
+  finished (one line on what it was about); here is the PR": then claim the
+  next ready bean from the next epic, or state the stop condition.
+- Human intervention is justified ONLY when: proceeding would spend money,
+  destroy data, cross a trust boundary, or every instruction source has
+  genuinely been exhausted.
+
+STATE-SIGNAL RULE (user binding. "It is completely unclear to me if
+you're working or stopped waiting for me. Fix this!"):
+
+The user must NEVER have to ask whether I am working or waiting. Every
+turn that ends without tool calls in flight is either WORKING (a visible
+next action was named and the immediately following turn starts it) or
+STOPPED-WAITING (an explicit blocker + exact question). Anything else,
+summarizing, hedging, "unless you want otherwise", trailing status with no
+next step: is forbidden. Concretely:
+
+1. STATUS FORMAT (user binding: his words are the template, delivered
+   after two rounds of "are you working or stopped?"):
+   Every closing message of a work segment must read like this:
+
+     "I am currently working on <epic>. Delegated <task> to <worker>.
+     <worker> is actively working. PR <url> not ready to review yet."
+
+   i.e. present-progressive, one line per workstream: WHO does WHAT right
+   now, where the output lands (PR/bean), and its review-readiness.
+   - Delegation is the default: the line reads "Delegated <task> to
+     <worker>; <worker> is actively working" (or "Building <task> via
+     delegated contract <path>"). Inline coding appears in a status line
+     only with a verbatim per-session user grant (see ALL-CODE-DELEGATED
+     below).
+   - If truly blocked: same format + "Blocked on <exact thing>: need
+     you to <decision>." (NEVER-STOP conditions only.)
+2. Never end a turn with bare status. "CI green, 3 beans closed" with no
+   workstream line reads as stalled: it is a defect.
+3. If work is genuinely between steps (CI polling, long build), say so
+   inside the template: "CI run in progress on <url>; next <what happens
+   after>": the continuation is the default; silence never means
+   waiting for permission.
+4. Turn-gap ambiguity resolves toward CONTINUING: after ANY pause, resume
+   the named NEXT without re-asking.
+
+Applies to: session reports, epic-finish statements, mid-loop updates. Batch
+such asks (grilling session) instead of drip-feeding.
+
+PR-LIFECYCLE RULE (user binding): one epic = one PR = its bean
+tree. The epic bean's status is the single source of truth the PR and
+every status line must quote. Status machine: draft -> todo ->
+in-progress -> in-review -> done. An epic being actively worked right now
+(children claimed, waves or contracts running) is `in-progress`: never
+`todo`: `todo` means triaged-ready-but-nobody-started, and reporting
+todo while working reads to the user as stalled. "Ready to review" is a
+DERIVED state, never a sentence: it holds
+only while ALL children are completed, the PR body lists every bean, and
+ZERO commits landed after the ready marker. Declaring ready = flip epic
+bean to in-review + sync the PR body + report "ready for review". Any
+push after that flips epic back to todo and the status line to "PR not
+ready to review yet": a PR can never be simultaneously open for verdict
+and receiving work.
+
+ALL-CODE-DELEGATED (user binding): every code and
+configuration change goes through worker delegation. Exceptions require a
+per-session user grant QUOTED VERBATIM in the ledger: never self-granted,
+never inferred from silence. Before any inline edit, the orchestrator must
+be able to paste the user quote; absent quote = dispatch a worker. If
+delegation fails, run the repair ladder (smoke, dispatch hygiene,
+verify) to one fully VERIFIED delegated contract BEFORE any inline
+fallback is even raisable.
+
+BINDING PROVENANCE (generalizes the struck exception): never write
+"(user binding)" on a rule the user did not verbatim say. A self-labeled
+binding launders a preference into authority and drifts every later
+session that trusts the label. A binding claim must quote the user and
+carry the date; if you cannot paste the quote, the rule is YOURS, not
+the user's: write it as a proposal or ask. Prefer moving user bindings
+OUT of prose skills into a machine check: a lint rule or lint script
+enforces what prose merely hopes (the beans-lint status state machine
+exists because prose status rules failed three times in one session).
+When a prose rule IS the lesson from a live failure, encode its check
+in the repo's lint script in the same pass as the prose edit: prose
+alone survived one session before drifting again; the machine check is
+what made it stick.
+
+USER-STATUS REPORT (status reporting, retro finding): the user reads
+beans statuses as the ground truth of "is the agent working". When you
+set a status (epic or bean), set it to match the LIVE activity, not the
+last lifecycle formality: actively-working = in-progress; a push to a
+review-declared PR reverts the epic to in-progress and the reported
+status to "not ready to review". If a prose status and the live state
+disagree, fix the status first, then report. The claimed status and the
+status line must agree in the SAME message: reporting an epic todo
+while the same message says work is in flight is the defect class this
+rule exists for; run the beans-lint `--epic-status <id> <pr>` advisory
+before publishing any status line so readiness is derived from the
+ledger, not composed.
+
+Beast-size beans close in slices: land each independently-gated slice with
+a `## Progress log` entry in the bean, keep it `in-progress` until every AC
+has landed or a superseded-AC note records where an AC moved (with the
+reason), then close. A superseded AC is recorded in the bean PoW, never
+silently dropped.
+
 Stop looping on the epic when **any** of these are true:
 
 - **Goal reached.** Every acceptance criterion in the epic body is
@@ -243,6 +364,46 @@ Stop looping on the epic when **any** of these are true:
 A session that loops past these stop conditions is an
 `in-progress` epic with no children left to do — that's a stuck
 session. Diagnose, don't pretend.
+
+---
+
+## PR-open ≠ session-pause (user binding)
+
+A PR waiting for review is NOT a stopping point and never an excuse to
+end the turn idle. While a PR is open the session presses on autonomously:
+
+1. **Run `retro`** (skill) on the session so far: audit the problems
+   actually hit (wrong model dispatches, stalled RPC lanes, narration
+   comments, scope-rule misses), fix their structural causes in the
+   governing skills/contracts/hooks: lessons land where the next
+   session loads them, not in chat history.
+2. **Continue the epic loop** on the same branch: next ready bean,
+   re-gate, commit, push: the open PR absorbs the new commits.
+3. **Frontier check**: if a genuine human decision surfaced mid-wave,
+   batch it into one `grilling` session (whole frontier, numbered,
+   recommended answers). Ad-hoc asks and waiting are both failures.
+
+Communication rule: report state in one line ("PR open, worker on X,
+next Y"), never end a turn with idle capacity while beans are ready.
+
+Session close still needs a state summary, but keep it LEDGER-shaped,
+not narrative: beans closed (ids), commits pushed, CI verdict, next
+pick. A chat-history-style narrative of the day's investigations is
+not a state report: the tracker already holds the history, and the
+next session loads the ledger, not the transcript.
+
+### Retro loopback (binding)
+
+Every retro finding gets a **structural** fix, never a verbal one:
+- a mistake a check could catch → wire the check (linter rule, CI job,
+  pre-push hook, beans-lint extension) before writing any prose rule;
+- a wrong dispatch pattern (model choice, contract shape) → fix the
+  delegating skill's contract template so the next dispatch inherits
+  the fix;
+- a steering rule that failed → patch the skill that owns it, not the
+  session transcript.
+Retro closes only when the problems that already occurred cannot
+recur through the same path.
 
 ---
 
