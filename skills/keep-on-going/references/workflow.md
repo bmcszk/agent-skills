@@ -160,36 +160,11 @@ The session is done when one of:
 A session that ends with the epic still `in-progress` and no
 children to work on is a stuck session. Diagnose; don't pretend.
 
-## 8. Press-on rule (user directive, binding)
+## 8. Press-on and status reporting
 
-Never end a turn waiting on the user when no HUMAN decision is pending.
-Green gates + open PR + standing orders (epic → branch → PR loop) =
-proceed: merge, claim the next ready bean, or start the next epic, and
-report the new state. "Awaiting your review/word" with nothing to decide
-reads as stalling. The ONLY pause points are: a decision outside recorded
-scope rules (run the `grilling` protocol: whole frontier, numbered,
-recommended answers), a destructive op (force-push, shared-branch rebase),
-or a genuinely ambiguous scope. Everything else runs without asking.
-
-## 9. Status report per workstream
-
-At every session close or push, publish one status line per workstream,
-present-progressive, worker named, PR readiness derived from the epic
-bean rather than asserted:
-
-```
-I am currently working on <epic>. Delegated <task> to <worker>.
-<worker> is actively working. PR <url> not ready to review yet.
-```
-
-Derive readiness from the machine check, not from what you declared
-earlier:
-
-```bash
-python3 scripts/beans-lint.py --epic-status <epic-id> <pr-number>
-```
-
-When the check or the epic bean disagrees with what you were about to
-say, fix the bean status first, then quote it. An epic you are actively
-working (waves or contracts running) is `in-progress`, never `todo`.
-`todo` reads as nobody-started and the user reads it as stalled.
+Press-on and status rules are normative in SKILL.md ("Status and state
+rules"): never end a turn waiting without a pending human decision; one
+present-progressive status line per workstream; epic/PR readiness
+derived via `scripts/beans-lint.py --epic-status <epic-id> <pr-number>`,
+never asserted. Pause only for: a decision outside recorded scope rules
+(grilling protocol), a destructive op, or genuinely ambiguous scope.

@@ -84,91 +84,51 @@ When rules conflict, safety wins first, then local consistency, then good practi
 
 ## Guards and gates: honest work only (user rule)
 
-Rules are language-agnostic; tool names in the examples are Go ecosystem instances of the class.
+Rules are language-agnostic; tool names in the examples are Go instances
+of the class.
 
 Never work around a guard, gate, hook, or check: fix the work the gate
-is rejecting. Concretely, in any language and repo:
+rejects.
 
-- Never delete, skip, weaken, or comment out a test to make a suite pass.
-  A test that fails because the world changed gets UPDATED to the new
-  correct expectation with the reason recorded: never removed silently.
+- Never delete, skip, weaken, or comment out a test to make a suite
+  pass. A test failing because the world changed gets updated to the new
+  correct expectation, with the reason recorded.
 - Never turn off a lint rule, remove a linter from config, or narrow a
   check's scope so the violation stops being reported.
-- Never use a suppression marker (`// nolint`, `//gosec:ignore`,
-  `@ts-ignore`, `# noqa`, `#[allow]`, `#[expect]`, or your language's
-  equivalent) to silence a gate. If the tool flags a real problem, fix the code. If it flags a
-  false positive, fix the code so the tool agrees: or raise the
-  config change as an explicit, recorded decision (never a drive-by).
-- Never bypass hooks (`--no-verify`, `HUSKY=0`, a disabled CI step, or
-  your stack's equivalent) or restructure a command so the gate does not
-  run.
-- A red gate is INFORMATION: report the exact output, fix the root
-  cause, re-run. Working around the gate hides the problem from the
-  next session and the next reviewer: the defect ships anyway.
-- If a guard itself is wrong (blocks legitimate work), surface that as
-  a decision for the user (grilling session) with the evidence; do not
-  neutralize it unilaterally.
-- The honest fix for a complexity lint on table subtests is restructuring:
-  split each subtest case into its own top-level test function (Go
-  example: each `t.Run` becomes `TestX_SubtestName`; a bare `{ }` block
-  preserves variable scope during the split). Every assertion survives, the linter passes, no suppression
-  marker. Do the restructure at the moment you would have typed the
-  nolint: a marker first with cleanup scheduled never happens.
-- Calibration exclusions go in the linter CONFIG as explicit recorded
-  decisions, never as drive-bys: when a test spy must implement a fixed
-  upstream interface whose signature carries a bool flag or unused
-  parameter (e.g. an SDL event consumer), the rule is calibrated for
-  production dispatch code and mis-fires on the stub. Add a scoped
-  `exclusions` rule (test-file path filter + the specific linter + message
-  text; Go example: path `_test\.go$` + linter `revive` + `text:`) with a comment stating WHY the signature is
-  fixed, and match on the message text: a `text:` exclusion that
-  doesn't match the linter's actual message silently fixes nothing
-  (verify with one lint run after editing config). Config-level `text`
-  exclusions beat per-call-site helper gymnastics (boolToInt tables,
-  string-slicing dispatch) that trade one lint hit for three worse
-  ones.
-- Example (Go, linter `revive`): `unnecessary-format` fires on
-  `fmt.Errorf` with NO format verbs: convert to `errors.New` and drop the
-  `fmt` import only when no other call site uses it. Converting one call to `errors.New`
-  while `fmt` stays imported is fine; converting the import when a
-  remaining call still needs it is a build break.
-
-## File structure
-
-Order top-level declarations like this:
-
-1. Imports
-2. Constants
-3. Variables
-4. Structs or classes, public first
-5. Constructors, public first
-6. Methods, public first
-
-Keep this order when the language allows it, and adapt only where the language idiom requires.
-
+- Never silence a gate with a suppression marker (`nolint`, `@ts-ignore`,
+  `# noqa`, `#[allow]`, or your language's equivalent). Real problem:
+  fix the code. False positive: fix the code so the tool agrees, or
+  raise the config change as an explicit recorded decision.
+- Never bypass hooks (`--no-verify`, `HUSKY=0`, a disabled CI step) or
+  restructure a command so a gate does not run.
+- A red gate is information: report the exact output, fix the root
+  cause, re-run.
+- A guard that blocks legitimate work goes to the user as a decision
+  with evidence; never neutralize it unilaterally.
+- Complexity lint on table subtests: split each case into its own
+  top-level test function (Go: `t.Run` case becomes
+  `TestX_SubtestName`). Restructure at the moment you would have typed
+  the suppression marker.
+- Calibration exclusions live in linter config as explicit recorded
+  decisions, never drive-bys: scope them (test-file path filter +
+  specific linter + exact message text), comment why the signature is
+  fixed, and verify with one lint run that the exclusion matches.
 
 ## Unit tests: black box, three sections, no mocks (user rule)
 
-- **Black box through public API.** Test a unit by calling its public
-  functions and methods and asserting on observable results. Testing
-  private helpers is allowed ONLY when the user explicitly asks for it.
-  If a private function seems to need direct testing, that is a design
-  signal: either its behavior is already covered through a public
-  entry point, or it is doing too much.
-- **Given / When / Then in every test.** Each test reads as three
-  sections: GIVEN the initial state, WHEN the action under test runs,
-  THEN the expected result holds. Express the structure through the
-  code's own design (arrange-act-assert layout, builder or fixture
-  functions named for the phase); when the language or test style
-  cannot carry it structurally, mark the sections with comments. A
-  test whose three phases cannot be pointed out is not finished.
-- **Avoid mocks.** Prefer testing real behavior over mocked
-  collaborators. If a unit test needs a mock to pass, that is usually
-  a signal the interaction belongs in an integration test: rewrite the
-  case as an integration test against the real collaborator instead of
-  stubbing it. Mocks stay acceptable only for things you cannot run in
-  a unit test at all (network, clock, randomness, hardware); keep even
-  those thin.
+- Test through the public API only; private helpers only when the user
+  explicitly asks. A private function that seems to need direct testing
+  is a design signal: either a public entry point already covers it, or
+  it does too much.
+- Every test reads as given / when / then (initial state, action under
+  test, expected result). Carry the structure through the code's design
+  when possible; comment the sections when the language or test style
+  cannot. A test whose three phases cannot be pointed out is not
+  finished.
+- Avoid mocks: test real behavior. A unit test that needs a mock is
+  usually an integration test in disguise: rewrite it against the real
+  collaborator. Mocks stay only for what a unit test cannot run at all
+  (network, clock, randomness, hardware), and stay thin.
 
 ## Fluent test DSLs (pointers)
 

@@ -235,117 +235,57 @@ For the full approval format, see
 
 ## Stop conditions
 
-NEVER-STOP RULE (user binding):
+## Stop conditions
 
-Never stop. Stop ONLY if human intervention is really needed: and before
-escalating, ask yourself: **do I actually need a human?** I probably already
-have instructions (this skill, the epic body, prior user directives, the
-session ledger). Search those first. Most "I need a decision" moments are
-research gaps, not decision gaps.
+Stop ONLY if a human decision is genuinely required, and check cheaper
+sources first: this skill, the epic body, prior user directives, the
+ledger. Most "I need a decision" moments are research gaps, not decision
+gaps. Fix mid-loop problems proactively and record them in the ledger.
+When the epic finishes, state it in one line, then claim the next ready
+bean or state the stop condition. Stop only for: spending money,
+destroying data, crossing a trust boundary, or exhausted instruction
+sources.
 
-- Problems found mid-loop → fix them proactively and continue working;
-  surface them in the ledger, don't pause for permission.
-- If the epic finishes, make ONE clear statement to the human: "epic X is
-  finished (one line on what it was about); here is the PR": then claim the
-  next ready bean from the next epic, or state the stop condition.
-- Human intervention is justified ONLY when: proceeding would spend money,
-  destroy data, cross a trust boundary, or every instruction source has
-  genuinely been exhausted.
+## Status and state rules
 
-STATE-SIGNAL RULE (user binding. "It is completely unclear to me if
-you're working or stopped waiting for me. Fix this!"):
+Work status must never be ambiguous. Every turn ends either WORKING (a
+named next action follows) or STOPPED-WAITING (exact blocker + exact
+question). Never end a turn with bare status; never stop for permission
+when no human decision is pending.
 
-The user must NEVER have to ask whether I am working or waiting. Every
-turn that ends without tool calls in flight is either WORKING (a visible
-next action was named and the immediately following turn starts it) or
-STOPPED-WAITING (an explicit blocker + exact question). Anything else,
-summarizing, hedging, "unless you want otherwise", trailing status with no
-next step: is forbidden. Concretely:
+1. One status line per workstream, present-progressive:
+   "Working on <epic>. Delegated <task> to <worker>; PR <url> not ready
+   to review yet." Inline coding in a status line requires a verbatim
+   per-session user grant (see ALL-CODE-DELEGATED).
+2. Blocked: same line + "Blocked on <thing>: need you to <decision>".
+   Between steps (CI polling): say what happens next. Silence never
+   means waiting for permission.
+3. PR lifecycle (one epic = one PR): status machine draft -> todo ->
+   in-progress -> in-review -> done. An actively worked epic is
+   `in-progress`, never `todo`. "Ready to review" is derived: all
+   children completed, PR body lists every bean, zero commits after the
+   ready marker. A push after that reverts the epic to in-progress.
+   Run `scripts/beans-lint.py --epic-status <epic> <pr>` before any
+   status line.
+4. ALL-CODE-DELEGATED: every code/config change goes through worker
+   delegation. Exceptions need the user's verbatim quote in the ledger;
+   absent quote = dispatch a worker. Failed delegation runs the repair
+   ladder before any inline fallback.
+5. Never label a rule "(user binding)" without the user's verbatim
+   quote and date; otherwise write it as a proposal. Prefer machine
+   checks over prose rules: put the check in a lint script in the same
+   pass.
+6. Beast-size beans close in slices: each independently-gated slice
+   adds a `## Progress log` entry; a superseded AC is recorded in the
+   bean PoW, never silently dropped.
+7. A retro finding gets a structural fix (lint rule, hook, contract
+   template), not a verbal one. Retro closes only when the problem
+   cannot recur through the same path.
 
-1. STATUS FORMAT (user binding: his words are the template, delivered
-   after two rounds of "are you working or stopped?"):
-   Every closing message of a work segment must read like this:
-
-     "I am currently working on <epic>. Delegated <task> to <worker>.
-     <worker> is actively working. PR <url> not ready to review yet."
-
-   i.e. present-progressive, one line per workstream: WHO does WHAT right
-   now, where the output lands (PR/bean), and its review-readiness.
-   - Delegation is the default: the line reads "Delegated <task> to
-     <worker>; <worker> is actively working" (or "Building <task> via
-     delegated contract <path>"). Inline coding appears in a status line
-     only with a verbatim per-session user grant (see ALL-CODE-DELEGATED
-     below).
-   - If truly blocked: same format + "Blocked on <exact thing>: need
-     you to <decision>." (NEVER-STOP conditions only.)
-2. Never end a turn with bare status. "CI green, 3 beans closed" with no
-   workstream line reads as stalled: it is a defect.
-3. If work is genuinely between steps (CI polling, long build), say so
-   inside the template: "CI run in progress on <url>; next <what happens
-   after>": the continuation is the default; silence never means
-   waiting for permission.
-4. Turn-gap ambiguity resolves toward CONTINUING: after ANY pause, resume
-   the named NEXT without re-asking.
-
-Applies to: session reports, epic-finish statements, mid-loop updates. Batch
-such asks (grilling session) instead of drip-feeding.
-
-PR-LIFECYCLE RULE (user binding): one epic = one PR = its bean
-tree. The epic bean's status is the single source of truth the PR and
-every status line must quote. Status machine: draft -> todo ->
-in-progress -> in-review -> done. An epic being actively worked right now
-(children claimed, waves or contracts running) is `in-progress`: never
-`todo`: `todo` means triaged-ready-but-nobody-started, and reporting
-todo while working reads to the user as stalled. "Ready to review" is a
-DERIVED state, never a sentence: it holds
-only while ALL children are completed, the PR body lists every bean, and
-ZERO commits landed after the ready marker. Declaring ready = flip epic
-bean to in-review + sync the PR body + report "ready for review". Any
-push after that flips epic back to todo and the status line to "PR not
-ready to review yet": a PR can never be simultaneously open for verdict
-and receiving work.
-
-ALL-CODE-DELEGATED (user binding): every code and
-configuration change goes through worker delegation. Exceptions require a
-per-session user grant QUOTED VERBATIM in the ledger: never self-granted,
-never inferred from silence. Before any inline edit, the orchestrator must
-be able to paste the user quote; absent quote = dispatch a worker. If
-delegation fails, run the repair ladder (smoke, dispatch hygiene,
-verify) to one fully VERIFIED delegated contract BEFORE any inline
-fallback is even raisable.
-
-BINDING PROVENANCE (generalizes the struck exception): never write
-"(user binding)" on a rule the user did not verbatim say. A self-labeled
-binding launders a preference into authority and drifts every later
-session that trusts the label. A binding claim must quote the user and
-carry the date; if you cannot paste the quote, the rule is YOURS, not
-the user's: write it as a proposal or ask. Prefer moving user bindings
-OUT of prose skills into a machine check: a lint rule or lint script
-enforces what prose merely hopes (the beans-lint status state machine
-exists because prose status rules failed three times in one session).
-When a prose rule IS the lesson from a live failure, encode its check
-in the repo's lint script in the same pass as the prose edit: prose
-alone survived one session before drifting again; the machine check is
-what made it stick.
-
-USER-STATUS REPORT (status reporting, retro finding): the user reads
-beans statuses as the ground truth of "is the agent working". When you
-set a status (epic or bean), set it to match the LIVE activity, not the
-last lifecycle formality: actively-working = in-progress; a push to a
-review-declared PR reverts the epic to in-progress and the reported
-status to "not ready to review". If a prose status and the live state
-disagree, fix the status first, then report. The claimed status and the
-status line must agree in the SAME message: reporting an epic todo
-while the same message says work is in flight is the defect class this
-rule exists for; run the beans-lint `--epic-status <id> <pr>` advisory
-before publishing any status line so readiness is derived from the
-ledger, not composed.
-
-Beast-size beans close in slices: land each independently-gated slice with
-a `## Progress log` entry in the bean, keep it `in-progress` until every AC
-has landed or a superseded-AC note records where an AC moved (with the
-reason), then close. A superseded AC is recorded in the bean PoW, never
-silently dropped.
+An open PR is not a pause: run the session retro, claim the next ready
+bean on the same branch, and batch human questions into one grilling
+session. Session close is ledger-shaped: beans closed, commits pushed,
+CI verdict, next pick.
 
 Stop looping on the epic when **any** of these are true:
 
