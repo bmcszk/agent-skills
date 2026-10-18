@@ -125,6 +125,16 @@ that only proves "tests pass" has not demonstrated its own AC.
 beans list --json --is-blocked
 ```
 
+## Slice close-out on a big task
+
+When a task's ACs are too big for one burst, claim it `in-progress`, land
+each independently-green slice as its own commit, and append a
+`## Progress log` entry to the bean body per slice (what landed, gates
+colors, what remains). The bean stays `in-progress`: a task closes only
+when every AC checkbox is real or a superseded-AC note records where an
+AC moved and why. A partial close buries which parity evidence exists; the
+log keeps the next session's entry point exact.
+
 ## Group work into releases (tags, not `milestone` beans)
 
 The CLI ships a `milestone` type; house rule: never create one. Tag-based

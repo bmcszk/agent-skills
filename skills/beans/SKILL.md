@@ -402,6 +402,9 @@ Process and CLI hygiene — not the closure rules, which live in
 | Leave beans in `in-progress` when done | Always close with `-s completed` or `-s scrapped` |
 | Open two active epics in one session | Pick one GOAL per session, loop on it until reached |
 | Find a bug and patch it immediately | `beans create -t bug -s draft`, document evidence, triage, then claim |
+| Close work and leave state artifacts behind | Before ending a session: PR title/body match HEAD, every touched bean terminal (`completed`/`scrapped`), epic titles non-empty, no orphan drafts |
+| Set bean statuses without the CLI or leave `todo` epics that already shipped | Session-end sweep: `beans list`, close or scrap every bean the shipped work covers; an epic's status mirrors the work, not the plan |
+| Append `--body-append` PoW before checking the worker's claims | Parent re-runs gates + reads the diff FIRST; PoW records YOUR gate output, not the worker's report |
 
 ---
 

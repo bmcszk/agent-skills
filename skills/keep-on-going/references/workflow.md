@@ -60,6 +60,14 @@ pure moves. If a wave overruns its budget and dies mid-edit, revert the
 partial tree and re-dispatch the wave split in two — a partial multi-file
 fold that does not build is not worth repairing.
 
+Keep ONE dispatch ledger for the session (contract path, output path,
+attempt, killed-by-whom) and reconcile every late background notification
+against it before acting: a completion notification for a run you already
+replaced is stale, and an unledgered kill makes the late exit look like
+fresh news. After a worker dies mid-run, audit `git status` BEFORE
+re-dispatching: the work often landed in the tree even when the report
+never did; gates + diff decide, not the report.
+
 Update the body as you go:
 
 ```bash
@@ -151,3 +159,12 @@ The session is done when one of:
 
 A session that ends with the epic still `in-progress` and no
 children to work on is a stuck session. Diagnose; don't pretend.
+
+## 8. Press-on and status reporting
+
+Press-on and status rules are normative in SKILL.md ("Status and state
+rules"): never end a turn waiting without a pending human decision; one
+present-progressive status line per workstream; epic/PR readiness
+derived via `scripts/beans-lint.py --epic-status <epic-id> <pr-number>`,
+never asserted. Pause only for: a decision outside recorded scope rules
+(grilling protocol), a destructive op, or genuinely ambiguous scope.

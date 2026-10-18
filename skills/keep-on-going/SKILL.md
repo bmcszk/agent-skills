@@ -74,6 +74,15 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    newest directive as final, and keep the final-shape note in the
    governing docs/skill current with every reversal so the next session
    does not re-ship a superseded shape from stale guidance.
+   A structural rejection gets the SIGN-OFF PROBE before any wave: build the
+   candidate shape on ONE file, show the diff, and let the user accept the
+   pattern: mass-applying an unconfirmed pattern converts every review round
+   into a full rewrite (ten reversals in one review cycle came exactly from
+   wave-first shipping). During a long design churn, a session-end sweep is
+   mandatory: PR title/body re-synced to HEAD, touched beans terminal, epic
+   title non-empty, governing docs/skill re-read for superseded shape claims.
+   the tracker and docs must describe the shape that EXISTS, not the one
+   shipped three reversals ago.
 
 The failure class this section forbids: implementing first and creating the
 ledger mid-flight, hand-editing bean files, inline triage, ready children
@@ -226,6 +235,58 @@ For the full approval format, see
 
 ## Stop conditions
 
+## Stop conditions
+
+Stop ONLY if a human decision is genuinely required, and check cheaper
+sources first: this skill, the epic body, prior user directives, the
+ledger. Most "I need a decision" moments are research gaps, not decision
+gaps. Fix mid-loop problems proactively and record them in the ledger.
+When the epic finishes, state it in one line, then claim the next ready
+bean or state the stop condition. Stop only for: spending money,
+destroying data, crossing a trust boundary, or exhausted instruction
+sources.
+
+## Status and state rules
+
+Work status must never be ambiguous. Every turn ends either WORKING (a
+named next action follows) or STOPPED-WAITING (exact blocker + exact
+question). Never end a turn with bare status; never stop for permission
+when no human decision is pending.
+
+1. One status line per workstream, present-progressive:
+   "Working on <epic>. Delegated <task> to <worker>; PR <url> not ready
+   to review yet." Inline coding in a status line requires a verbatim
+   per-session user grant (see ALL-CODE-DELEGATED).
+2. Blocked: same line + "Blocked on <thing>: need you to <decision>".
+   Between steps (CI polling): say what happens next. Silence never
+   means waiting for permission.
+3. PR lifecycle (one epic = one PR): status machine draft -> todo ->
+   in-progress -> in-review -> done. An actively worked epic is
+   `in-progress`, never `todo`. "Ready to review" is derived: all
+   children completed, PR body lists every bean, zero commits after the
+   ready marker. A push after that reverts the epic to in-progress.
+   Run `scripts/beans-lint.py --epic-status <epic> <pr>` before any
+   status line.
+4. ALL-CODE-DELEGATED: every code/config change goes through worker
+   delegation. Exceptions need the user's verbatim quote in the ledger;
+   absent quote = dispatch a worker. Failed delegation runs the repair
+   ladder before any inline fallback.
+5. Never label a rule "(user binding)" without the user's verbatim
+   quote and date; otherwise write it as a proposal. Prefer machine
+   checks over prose rules: put the check in a lint script in the same
+   pass.
+6. Beast-size beans close in slices: each independently-gated slice
+   adds a `## Progress log` entry; a superseded AC is recorded in the
+   bean PoW, never silently dropped.
+7. A retro finding gets a structural fix (lint rule, hook, contract
+   template), not a verbal one. Retro closes only when the problem
+   cannot recur through the same path.
+
+An open PR is not a pause: run the session retro, claim the next ready
+bean on the same branch, and batch human questions into one grilling
+session. Session close is ledger-shaped: beans closed, commits pushed,
+CI verdict, next pick.
+
 Stop looping on the epic when **any** of these are true:
 
 - **Goal reached.** Every acceptance criterion in the epic body is
@@ -243,6 +304,46 @@ Stop looping on the epic when **any** of these are true:
 A session that loops past these stop conditions is an
 `in-progress` epic with no children left to do — that's a stuck
 session. Diagnose, don't pretend.
+
+---
+
+## PR-open ≠ session-pause (user binding)
+
+A PR waiting for review is NOT a stopping point and never an excuse to
+end the turn idle. While a PR is open the session presses on autonomously:
+
+1. **Run `retro`** (skill) on the session so far: audit the problems
+   actually hit (wrong model dispatches, stalled RPC lanes, narration
+   comments, scope-rule misses), fix their structural causes in the
+   governing skills/contracts/hooks: lessons land where the next
+   session loads them, not in chat history.
+2. **Continue the epic loop** on the same branch: next ready bean,
+   re-gate, commit, push: the open PR absorbs the new commits.
+3. **Frontier check**: if a genuine human decision surfaced mid-wave,
+   batch it into one `grilling` session (whole frontier, numbered,
+   recommended answers). Ad-hoc asks and waiting are both failures.
+
+Communication rule: report state in one line ("PR open, worker on X,
+next Y"), never end a turn with idle capacity while beans are ready.
+
+Session close still needs a state summary, but keep it LEDGER-shaped,
+not narrative: beans closed (ids), commits pushed, CI verdict, next
+pick. A chat-history-style narrative of the day's investigations is
+not a state report: the tracker already holds the history, and the
+next session loads the ledger, not the transcript.
+
+### Retro loopback (binding)
+
+Every retro finding gets a **structural** fix, never a verbal one:
+- a mistake a check could catch → wire the check (linter rule, CI job,
+  pre-push hook, beans-lint extension) before writing any prose rule;
+- a wrong dispatch pattern (model choice, contract shape) → fix the
+  delegating skill's contract template so the next dispatch inherits
+  the fix;
+- a steering rule that failed → patch the skill that owns it, not the
+  session transcript.
+Retro closes only when the problems that already occurred cannot
+recur through the same path.
 
 ---
 

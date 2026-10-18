@@ -1418,3 +1418,11 @@ func TestExecuteFile_SingleRequest(t *testing.T) {
 ---
 
 **These standards are MANDATORY for all E2E tests. No exceptions.**
+
+## Test-DSL constructors (user rule, mirrored from coding-rules)
+
+ONE base struct `parts` holds ALL DSL state, and there is exactly ONE constructor. `newParts(t)` in the base file constructs the whole parts literal and returns `p, p, p`. No composite/god fixture type, no state split across domain structs, no embedding cycle (base embedding domains was rejected as circular; a wrapping fixture type was rejected as a stupid pattern), and NO per-domain wrapper structs either: a stateless `type <dom>Parts struct { parts }` plus its ctor is ceremony with zero behavior; the user deleted the whole set the same day it shipped. Every `*_parts_test.go` file is a pure method group of `func (p *parts) … *parts` builders; a parts file with zero methods is deleted, not kept for symmetry. Keep ALL builders returning the base `*parts`: promotion keeps mixed-domain chains and `.and()` intact, while self-typed generics (`parts[S]`) break every cross-domain chain link (each link needs one concrete type; a `*parts` receiver cannot soundly return a domain-typed `S`; it would return nil). Scratch-compile the candidate topology in a throwaway module (struct + ctor + one mixed-domain chain) before touching the real corpus, and get the user's sign-off on the probe before mass-applying.
+
+## Redesign pushback (lifecycle)
+
+When the user rejects a delivered structure, the fix deletes the rejected abstraction and returns to the simplest shape, and does not patch the abstraction's naming or wiring. Before restructuring a working fluent DSL at all, inventory what the current shape already guarantees (chain typing, mixed-domain access) and price the churn in chain sites, and reject a redesign that trades one complaint for a thousand-site mechanical diff unless the user explicitly asked for the type model. A green gate never excuses a re-added narration comment: audit the diff for added `//` lines before reporting done.

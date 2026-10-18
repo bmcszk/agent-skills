@@ -82,6 +82,38 @@ Write down briefly:
 
 When rules conflict, safety wins first, then local consistency, then good practice, then minimal change.
 
+## Guards and gates: honest work only (user rule)
+
+Rules are language-agnostic; tool names in the examples are Go instances
+of the class.
+
+Never work around a guard, gate, hook, or check: fix the work the gate
+rejects.
+
+- Never delete, skip, weaken, or comment out a test to make a suite
+  pass. A test failing because the world changed gets updated to the new
+  correct expectation, with the reason recorded.
+- Never turn off a lint rule, remove a linter from config, or narrow a
+  check's scope so the violation stops being reported.
+- Never silence a gate with a suppression marker (`nolint`, `@ts-ignore`,
+  `# noqa`, `#[allow]`, or your language's equivalent). Real problem:
+  fix the code. False positive: fix the code so the tool agrees, or
+  raise the config change as an explicit recorded decision.
+- Never bypass hooks (`--no-verify`, `HUSKY=0`, a disabled CI step) or
+  restructure a command so a gate does not run.
+- A red gate is information: report the exact output, fix the root
+  cause, re-run.
+- A guard that blocks legitimate work goes to the user as a decision
+  with evidence; never neutralize it unilaterally.
+- Complexity lint on table subtests: split each case into its own
+  top-level test function (Go: `t.Run` case becomes
+  `TestX_SubtestName`). Restructure at the moment you would have typed
+  the suppression marker.
+- Calibration exclusions live in linter config as explicit recorded
+  decisions, never drive-bys: scope them (test-file path filter +
+  specific linter + exact message text), comment why the signature is
+  fixed, and verify with one lint run that the exclusion matches.
+
 ## File structure
 
 Order top-level declarations like this:
@@ -93,11 +125,21 @@ Order top-level declarations like this:
 5. Constructors, public first
 6. Methods, public first
 
-Keep this order when the language allows it, and adapt only where the language idiom requires.
+Keep this order when the language allows it, and adapt only where the
+language idiom requires.
 
+## Unit tests: black box, three sections, no mocks (user rule)
 
-## Test-DSL constructors (fluent DSL, user rule)
-ONE base struct `parts` holds ALL DSL state — no composite/god fixture type, no state split across domain structs, no embedding cycle (base embedding domains was rejected as circular; a wrapping fixture type was rejected as a stupid pattern). Every `*_parts_test.go` file = its OWN struct extending the base (`type <dom>Parts struct { parts }`), then a ctor returning THAT struct pointer 3×, then methods — a parts file whose ctor returns bare `*parts` reads as missing its struct. The domain ctor CONSTRUCTS the parts core inline — NEVER `return newParts(t)` delegation. Keep ALL builders on the base `*parts` returning `*parts`: promotion keeps mixed-domain chains and `.and()` intact while domain structs stay stateless markers. Do NOT add self-typed generics (`parts[S]`) to preserve chain typing — promoted methods returning `*parts` already keep chains working, while self-types break every cross-domain chain link (each link needs one concrete type). Scratch-compile the candidate topology in a throwaway module (struct + ctor + one mixed-domain chain) before touching the real corpus.
-
-## Redesign pushback (lifecycle)
-When the user rejects a delivered structure, the fix is to DELETE the rejected abstraction and return to the simplest shape, not to patch the abstraction's naming or wiring. Before restructuring a working fluent DSL at all, inventory what the current shape already guarantees (chain typing, mixed-domain access) and price the churn in chain sites — reject a redesign that trades one complaint for a thousand-site mechanical diff unless the user explicitly asked for the type model. A green gate never excuses a re-added narration comment: audit the diff for added `//` lines before reporting done.
+- Test through the public API only; private helpers only when the user
+  explicitly asks. A private function that seems to need direct testing
+  is a design signal: either a public entry point already covers it, or
+  it does too much.
+- Every test reads as given / when / then (initial state, action under
+  test, expected result). Carry the structure through the code's design
+  when possible; comment the sections when the language or test style
+  cannot. A test whose three phases cannot be pointed out is not
+  finished.
+- Avoid mocks: test real behavior. A unit test that needs a mock is
+  usually an integration test in disguise: rewrite it against the real
+  collaborator. Mocks stay only for what a unit test cannot run at all
+  (network, clock, randomness, hardware), and stay thin.
