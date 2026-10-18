@@ -114,6 +114,20 @@ rejects.
   specific linter + exact message text), comment why the signature is
   fixed, and verify with one lint run that the exclusion matches.
 
+## File structure
+
+Order top-level declarations like this:
+
+1. Imports
+2. Constants
+3. Variables
+4. Structs or classes, public first
+5. Constructors, public first
+6. Methods, public first
+
+Keep this order when the language allows it, and adapt only where the
+language idiom requires.
+
 ## Unit tests: black box, three sections, no mocks (user rule)
 
 - Test through the public API only; private helpers only when the user
