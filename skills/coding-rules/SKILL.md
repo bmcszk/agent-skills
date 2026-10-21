@@ -78,9 +78,14 @@ Write down briefly:
 - Follow the patterns already in the file and the repository.
 - Use the project's formatters, linters, and tests.
 
+## Visibility
+
+- Start each symbol at the tightest visibility the task allows (private, unexported, or module-internal) and widen only when a caller outside that boundary needs it.
+- Export or make public only for real outside callers, not for possible future use.
+
 ## Conflict order
 
-When rules conflict, safety wins first, then local consistency, then good practice, then minimal change.
+When rules conflict, safety wins first, then local consistency, then the rules in this skill, then minimal change. This skill outranks ponytail-style laziness or YAGNI-only shortcuts when those would violate a rule here.
 
 ## Guards and gates: honest work only (user rule)
 
@@ -116,17 +121,20 @@ rejects.
 
 ## File structure
 
-Order top-level declarations like this:
+Order top-level declarations like this when the language allows it (adapt only where the idiom requires):
 
 1. Imports
 2. Constants
 3. Variables
-4. Structs or classes, public first
-5. Constructors, public first
-6. Methods, public first
+4. Structs or classes
+5. Constructors
+6. Methods
 
-Keep this order when the language allows it, and adapt only where the
-language idiom requires.
+Within a category, rank placement (stronger wins):
+
+1. **Call order:** caller above callee; the file reads top to bottom in invocation order.
+2. **Public before private:** only when call order does not already place the symbols — public before private at that level. Does not justify exporting more (see Visibility).
+3. **Newer toward bottom:** when call order still does not decide, put newer code toward the bottom of the file or section.
 
 ## Unit tests: black box, three sections, no mocks (user rule)
 
