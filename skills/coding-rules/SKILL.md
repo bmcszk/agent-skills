@@ -46,7 +46,7 @@ Write down briefly:
 - Do not narrate, restate the code, or add obvious TODOs.
 - When refactoring a block you touch, delete narration comments ("call X now", "this returns Y") in the same pass — a refactor that ships new structure under old narration leaves the file lying about itself.
 - A doc comment that restates the function's name and signature is narration ("writeTempConfig writes YAML to a temp file and returns its path") — delete it; keep only the clause naming an invisible contract (fresh instance, isolation, wire format, poll-vs-sleep rationale).
-- A fluent or DSL call chain that already names its phases (given/when/then, arrange/act/assert) needs no phase-marker comments — the marker duplicates the name one line above it. Local style can override: when sibling files across the repo carry the markers, either purge repo-wide in one scoped round or leave all of them; purging only the files you touch splits the convention.
+- Phase-marker comments in tests (`// given`, `// when`, `// then`, or arrange/act/assert equivalents) are required structure, not narration. Keep them; add them when the three phases are not obvious from the test layout alone. This outranks "no comments by default" and "delete narration comments" when those rules would remove or skip the markers.
 
 ## Duplication
 
@@ -59,7 +59,7 @@ Write down briefly:
 - A style refactor proves behavior-unchanged with the repo's own gates before push (build + linter + full test suite), reports the diff as a per-file net LOC delta, and touches no test files when the task says impl-only — existing tests then bound the design, so read what they assert BEFORE choosing a shape.
 - When a test asserts error text a dedupe changed, restore the missing part instead of editing the test (wrap with `%w` and append the exact suffix the test greps for).
 - Commit each file/batch separately and keep the gates green between commits; push once to one PR — a broken intermediate commit breaks bisect, and CI watches the branch so local green between commits is what you control.
-- Survey mechanically before reading files: functions over ~50 lines, sibling branches ending in the same finalize-and-return block, repeated call-then-wrap-err prologues, underscore-prefixed names, narration comments. Then read only the flagged files.
+- Survey mechanically before reading files: functions over ~50 lines, sibling branches ending in the same finalize-and-return block, repeated call-then-wrap-err prologues, underscore-prefixed names, narration comments (not test phase markers: given/when/then, arrange/act/assert). Then read only the flagged files.
 - Batch the round as one delegation with the file list, the survey hits, and the repo's protected invariants named per file (review-hardened logic, load-bearing error strings) — the delegate applies per-file changes, gates after each batch, and reports per-file net LOC deltas; re-run every gate yourself before trusting its report.
 - When the user picks a subset of the skill's rules for the round (e.g. 'only comments + intent separation'), scope the round to exactly those rules and name the chosen rules in the delegation; a second pass over the same files is cheap, reverting an out-of-scope reshuffle is not.
 - On 'fix every file one by one', have the delegate commit one file per commit in a stated order (simplest first) — batched commits blur which change broke a gate, and the user reads history per file.
@@ -144,9 +144,8 @@ Within a category, rank placement (stronger wins):
   it does too much.
 - Every test reads as given / when / then (initial state, action under
   test, expected result). Carry the structure through the code's design
-  when possible; comment the sections when the language or test style
-  cannot. A test whose three phases cannot be pointed out is not
-  finished.
+  when possible; keep the phase-marker comments (see Comments). A test
+  whose three phases cannot be pointed out is not finished.
 - Avoid mocks: test real behavior. A unit test that needs a mock is
   usually an integration test in disguise: rewrite it against the real
   collaborator. Mocks stay only for what a unit test cannot run at all
