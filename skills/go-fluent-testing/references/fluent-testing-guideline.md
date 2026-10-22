@@ -2,6 +2,22 @@
 
 This document provides comprehensive standards for writing fluent E2E tests using the Given/When/Then pattern. All E2E tests MUST follow these exact patterns and rules.
 
+## Given/When/Then phase roles (Extremely important)
+
+Hard rules — fluent **and** classic:
+
+| Phase | Role | Allowed | Forbidden |
+|---|---|---|---|
+| **given** | Set the stage | Configure state, start deps, seed data — setup **explicit** | Asserts, expects, outcome checks; the action under test |
+| **when** | Exercise | Usually **one** fluent call: trigger only what this test covers | Asserts, validation, extra setup unrelated to the trigger |
+| **then** | Verify | **All** asserts, expects, outcome checks | Actions under test, new setup |
+
+Naming a method `…Successfully()` does not change the rule: if it asserts,
+it is chained only under `then.`, never `given.` or `when.`. In `then.`,
+assert the **when** action and its outcomes — not setup already done in
+`given.` (e.g. do not call `videoUploadedSuccessfully()` after upload
+lives only under `given.`).
+
 ## Fluent Test Builder Pattern
 **Based on TVN-cue-crab reference implementation - use fluent interfaces for readable test composition:**
 
@@ -60,16 +76,18 @@ func (p *parts) noError() *parts {
 **Clean, readable test structure with fluent chaining:**
 
 ```go
+// Retrieval is under test; upload in given is setup only.
 func TestVideoUploadAndRetrieval(t *testing.T) {
     videoFilePath := "./assets/test-video.mp4"
     given, when, then := newParts(t)
 
-    when.
+    given.
         uploadVideoFile(videoFilePath, "E2E Test Video")
 
+    when.
+        getVideoByID(given.videoID)
+
     then.
-        videoUploadedSuccessfully().and().
-        getVideoByID(then.videoID).and().
         videoFoundSuccessfully()
 }
 
@@ -79,14 +97,13 @@ func TestAssetEventProcessing(t *testing.T) {
 
     given.
         uploadVideoFile(videoFilePath, "Asset Event E2E Test Video").and().
-        videoUploadedSuccessfully().and().
         getVideoByID(given.videoID)
 
     when.
-        sendAssetEvent("ACTIVATE", given.videoID).and().
-        messageSentSuccessfully()
+        sendAssetEvent("ACTIVATE", given.videoID)
 
     then.
+        messageSentSuccessfully().and().
         videoHasStatus("ready").and().
         videoHasAssets(2).and().
         noError()
@@ -146,6 +163,21 @@ func TestAPI_ResourceCreation(t *testing.T) {
         createResourceViaAPI().and().
         resourceCreatedSuccessfully()  // WRONG: validation in when section
 }
+
+// ❌ FORBIDDEN: Asserts in given
+func TestAPI_ResourceCreation(t *testing.T) {
+    given, when, then := newParts(t)
+
+    given.
+        setupResourceScenario().and().
+        resourceCreatedSuccessfully()  // WRONG: assert belongs in then
+
+    when.
+        createResourceViaAPI()
+
+    then.
+        responseContainsExpectedData()
+}
 ```
 
 ### 2. Fluent Method Chaining Format
@@ -171,7 +203,9 @@ then.
 ```go
 // ✅ CORRECT: .and() at end of line, continuation on next line
 when.
-    executeHTTPRequest("/api/resource").and().
+    executeHTTPRequest("/api/resource")
+
+then.
     validateResponseCode(201)
 
 // ✅ CORRECT: Multiple validations chained
@@ -179,6 +213,11 @@ then.
     responseCodeIs(200).and().
     responseContains("success").and().
     noError()
+
+// ❌ FORBIDDEN: validation chained under when
+when.
+    executeHTTPRequest("/api/resource").and().
+    validateResponseCode(201)  // WRONG: validation belongs in then
 
 // ❌ FORBIDDEN: .and() at start of line
 when.
@@ -1062,35 +1101,35 @@ func newParts(t *testing.T) (*parts, *parts, *parts) {
 **Use method chaining for readable test workflows:**
 
 ```go
-// Clean, readable test with fluent chaining
+// Retrieval is under test; upload in given is setup only.
 func TestVideoUploadAndRetrieval(t *testing.T) {
     videoFilePath := "./assets/test-video.mp4"
     given, when, then := newParts(t)
 
-    when.
+    given.
         uploadVideoFile(videoFilePath, "E2E Test Video")
 
+    when.
+        getVideoByID(given.videoID)
+
     then.
-        videoUploadedSuccessfully().and().
-        getVideoByID(then.videoID).and().
         videoFoundSuccessfully()
 }
 
-// Complex workflow with multiple steps
+// Event processing under test; upload and fetch in given are setup only.
 func TestAssetEventProcessing(t *testing.T) {
     videoFilePath := "./assets/test-video.mp4"
     given, when, then := newParts(t)
 
     given.
         uploadVideoFile(videoFilePath, "Asset Event E2E Test Video").and().
-        videoUploadedSuccessfully().and().
         getVideoByID(given.videoID)
 
     when.
-        sendAssetEvent("ACTIVATE", given.videoID).and().
-        messageSentSuccessfully()
+        sendAssetEvent("ACTIVATE", given.videoID)
 
     then.
+        messageSentSuccessfully().and().
         videoHasStatus("ready").and().
         videoHasAssets(2).and().
         noError()
