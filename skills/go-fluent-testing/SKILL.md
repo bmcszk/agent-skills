@@ -22,6 +22,20 @@ for the DSL: parts struct, `newParts(t)`, `.and()` at END of line,
 all state in parts, no direct helper calls in Test funcs, t.Run
 promotion, fixtures over inline strings.
 
+## Extremely important — Given/When/Then roles
+
+Hard rules for **every** tier (fluent and classic):
+
+- **given** — set the stage only: initial state, dependencies, data.
+  All setup must be explicit. **No asserts.** Not the action under test.
+- **when** — usually a **one-liner**: trigger **only** what this test
+  exercises. No asserts, no outcome checks, no validation.
+- **then** — **all** asserts, expects, and outcome checks. Nothing else.
+
+Assert helpers (e.g. `videoUploadedSuccessfully`) belong in **then**,
+never chained under `given` or `when`. In **then**, assert the **when**
+action and its outcomes — not setup already established in **given**.
+
 ## Choose the tier
 
 | Tier | Directory | Package | Dependencies | Speed |
@@ -98,9 +112,10 @@ func TestService_CreateUser(t *testing.T) {
 ```
 
 Classic rules: the three comments in order, one each; setup only under
-`// given`, calls only under `// when`, assertions only under
-`// then`; no section skipped; state stays local to the test func (the
-parts-struct rule does not apply here).
+`// given` (no assertions), calls only under `// when` (prefer one call
+— the action under test; no assertions), assertions only under
+`// then` (every assert lives here); no section skipped; state stays
+local to the test func (the parts-struct rule does not apply here).
 
 ## Fluent pattern (integration & E2E; units when repo is fluent)
 
@@ -165,6 +180,10 @@ func TestService_CreateUser(t *testing.T) {
 - NEVER use direct helper function calls inside fluent Test funcs —
   everything flows through given/when/then methods (classic units:
   setup under `// given` instead)
-- NEVER put validation in the when section (either style)
+- NEVER assert or validate in `given` or `when` (classic: not under
+  `// given` or `// when`; fluent: not on `given.` or `when.` chains)
+- NEVER chain multiple actions in `when` unless the test truly
+  exercises them as one unit — default is a **one-liner**
+- NEVER put asserts outside `then` (classic `// then`; fluent `then.`)
 - NEVER use build tags, `//nolint`, or skip/delete tests
 - NEVER leave containers running or skip cleanup (integration/E2E)
