@@ -31,18 +31,20 @@ import (
 
 type parts struct {
     *testing.T
-    responseCode int
-    responseBody []byte
-    videoID      string
-    checks       *checks
+    responseCode  int
+    responseBody  []byte
+    videoID       string
+    videoFilePath string
+    checks        *checks
 }
 
 func newParts(t *testing.T) (*parts, *parts, *parts) {
     t.Helper()
 
     parts := &parts{
-        T:      t,
-        checks: newChecks(),
+        T:             t,
+        videoFilePath: "./assets/test-video.mp4",
+        checks:        newChecks(),
     }
 
     // Setup test environment
@@ -56,8 +58,13 @@ func (p *parts) and() *parts {
     return p
 }
 
-func (p *parts) uploadVideoFile(filename, title string) *parts {
-    // Implementation
+func (p *parts) aVideoFile(path string) *parts {
+    p.videoFilePath = path
+    return p
+}
+
+func (p *parts) uploadVideoFile(title string) *parts {
+    // Implementation reads p.videoFilePath
     return p
 }
 
@@ -78,11 +85,10 @@ func (p *parts) noError() *parts {
 ```go
 // Retrieval is under test; upload in given is setup only.
 func TestVideoUploadAndRetrieval(t *testing.T) {
-    videoFilePath := "./assets/test-video.mp4"
     given, when, then := newParts(t)
 
     given.
-        uploadVideoFile(videoFilePath, "E2E Test Video")
+        uploadVideoFile("E2E Test Video")
 
     when.
         getVideoByID(given.videoID)
@@ -92,11 +98,10 @@ func TestVideoUploadAndRetrieval(t *testing.T) {
 }
 
 func TestAssetEventProcessing(t *testing.T) {
-    videoFilePath := "./assets/test-video.mp4"
     given, when, then := newParts(t)
 
     given.
-        uploadVideoFile(videoFilePath, "Asset Event E2E Test Video").and().
+        uploadVideoFile("Asset Event E2E Test Video").and().
         getVideoByID(given.videoID)
 
     when.
@@ -1103,11 +1108,10 @@ func newParts(t *testing.T) (*parts, *parts, *parts) {
 ```go
 // Retrieval is under test; upload in given is setup only.
 func TestVideoUploadAndRetrieval(t *testing.T) {
-    videoFilePath := "./assets/test-video.mp4"
     given, when, then := newParts(t)
 
     given.
-        uploadVideoFile(videoFilePath, "E2E Test Video")
+        uploadVideoFile("E2E Test Video")
 
     when.
         getVideoByID(given.videoID)
@@ -1118,11 +1122,10 @@ func TestVideoUploadAndRetrieval(t *testing.T) {
 
 // Event processing under test; upload and fetch in given are setup only.
 func TestAssetEventProcessing(t *testing.T) {
-    videoFilePath := "./assets/test-video.mp4"
     given, when, then := newParts(t)
 
     given.
-        uploadVideoFile(videoFilePath, "Asset Event E2E Test Video").and().
+        uploadVideoFile("Asset Event E2E Test Video").and().
         getVideoByID(given.videoID)
 
     when.
