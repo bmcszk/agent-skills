@@ -122,7 +122,8 @@ are all checked and every child is `completed` (or `scrapped`).
 4. PROVE      run the verification commands, observe the result,
               append ## Proof of Work with commands + results +
               Residual: none
-5. CLOSE      beans update <id> -s completed
+5. CLOSE      cross-review first for risky leaves (see below),
+              then beans update <id> -s completed
 6. AUDIT      did the parent epic move closer to done? are there
               unblocked children to claim? loop or stop
 ```
@@ -141,10 +142,10 @@ proof gate. Steps 3, 6 are judgment work.
   ("merge with dirty tree stops and changes nothing"). A vague goal
   like "make it faster" or "make it look good" is not triaged yet.
   Two more body fields while triaging: how done gets measured
-  (the baseline number a first bean must capture before any
-  improvement bean claims it), and what the coder must not touch
-  without asking. For visual beans, put reference screenshots or
-  sketches in the body before flipping to todo.
+  (the first bean captures the baseline number and writes it into
+  the parent body; later beans cite it), and what the coder must
+  not touch without asking. For visual beans, put reference
+  screenshots or sketches in the body before flipping to todo.
 - **Claim:** one bean, one agent, one time. Don't co-claim.
 - **Proof:** `## Proof of Work` is required **before** `-s completed`
   is legal. It must list the commands run, the observed result, and
@@ -207,8 +208,9 @@ shallow diff and a confident bug.
    integration, portability, performance, evidence. Fix those.
 
    The bean's tests cover how the feature breaks, written in pass 1:
-   the empty case, the error case, two things happening at once.
-   No new test at close for a "works on the happy path only" change.
+   the empty case, the error path, two things happening at once.
+   A change that only works on the happy path is not done. Writing
+   a test at close does not fix it; go back to pass 1.
 
    A **new** bug found in live tests, another path, or unrelated
    behaviour is not pass-3 work. Stop. `beans create -t bug -s draft`,
@@ -322,13 +324,17 @@ session. Diagnose, don't pretend.
 
 ## Cross-review for risky leaves
 
-A leaf whose failure would destroy data, break users, or take down CI
-gets one review before close, by a second agent running a different
-model than the one that wrote the change. A different vendor catches
-different mistakes. The reviewer sees the diff and the acceptance
-criteria, not the author's reasoning. Findings become draft beans with
-evidence, never chat remarks. Small or reversible leaves skip this:
-the four passes and the gates already cover them.
+A leaf that deletes or migrates data, touches auth, payments, or CI
+config, or changes a public API gets one review before close, by a
+second agent on a different model than the one that wrote the change.
+If no other model is available, a fresh agent on the same model.
+Unsure whether the leaf is risky? Review it. The reviewer sees the
+diff and the acceptance criteria, not the author's reasoning.
+Findings become draft beans with evidence, never chat remarks.
+A clean review appends "reviewed by <agent>, no findings" to the
+bean's `## Proof of Work`, so the PoW proves the review ran.
+The four passes and the gates stay in force either way; this review
+covers what an author misses about their own change.
 
 ---
 
