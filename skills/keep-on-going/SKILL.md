@@ -136,6 +136,15 @@ proof gate. Steps 3, 6 are judgment work.
   claim it. Triage must research the affected code, the relevant
   docs, prior art, online sources when in-repo evidence isn't
   enough. Cite sources in the body.
+  Write acceptance criteria anyone can check:
+  a number ("window opens in under 0.5s") or an observed behavior
+  ("merge with dirty tree stops and changes nothing"). A vague goal
+  like "make it faster" or "make it look good" is not triaged yet.
+  Two more body fields while triaging: how done gets measured
+  (the baseline number a first bean must capture before any
+  improvement bean claims it), and what the coder must not touch
+  without asking. For visual beans, put reference screenshots or
+  sketches in the body before flipping to todo.
 - **Claim:** one bean, one agent, one time. Don't co-claim.
 - **Proof:** `## Proof of Work` is required **before** `-s completed`
   is legal. It must list the commands run, the observed result, and
@@ -189,11 +198,17 @@ Every claim runs four passes before close. Skipping a pass ships a
 shallow diff and a confident bug.
 
 1. **Implement the complete deliverable.** No placeholders. No "TODO
-   later." No deferred remainder.
+   later." No deferred remainder. Tests for the break cases (empty
+   input, error path, concurrent events) ship with the deliverable,
+   not after.
 2. **Re-read as a domain expert.** Replace the cheap version of each
    part. "This works" is not the bar; "this is how I'd write it" is.
 3. **Hunt defects** in the **claimed bean's own change**. Correctness,
    integration, portability, performance, evidence. Fix those.
+
+   The bean's tests cover how the feature breaks, written in pass 1:
+   the empty case, the error case, two things happening at once.
+   No new test at close for a "works on the happy path only" change.
 
    A **new** bug found in live tests, another path, or unrelated
    behaviour is not pass-3 work. Stop. `beans create -t bug -s draft`,
@@ -232,8 +247,6 @@ For the full approval format, see
 [`references/approvals.md`](references/approvals.md).
 
 ---
-
-## Stop conditions
 
 ## Stop conditions
 
@@ -304,6 +317,18 @@ Stop looping on the epic when **any** of these are true:
 A session that loops past these stop conditions is an
 `in-progress` epic with no children left to do — that's a stuck
 session. Diagnose, don't pretend.
+
+---
+
+## Cross-review for risky leaves
+
+A leaf whose failure would destroy data, break users, or take down CI
+gets one review before close, by a second agent running a different
+model than the one that wrote the change. A different vendor catches
+different mistakes. The reviewer sees the diff and the acceptance
+criteria, not the author's reasoning. Findings become draft beans with
+evidence, never chat remarks. Small or reversible leaves skip this:
+the four passes and the gates already cover them.
 
 ---
 
