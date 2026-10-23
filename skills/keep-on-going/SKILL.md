@@ -122,7 +122,8 @@ are all checked and every child is `completed` (or `scrapped`).
 4. PROVE      run the verification commands, observe the result,
               append ## Proof of Work with commands + results +
               Residual: none
-5. CLOSE      beans update <id> -s completed
+5. CLOSE      cross-review first for risky leaves (see below),
+              then beans update <id> -s completed
 6. AUDIT      did the parent epic move closer to done? are there
               unblocked children to claim? loop or stop
 ```
@@ -136,6 +137,15 @@ proof gate. Steps 3, 6 are judgment work.
   claim it. Triage must research the affected code, the relevant
   docs, prior art, online sources when in-repo evidence isn't
   enough. Cite sources in the body.
+  Write acceptance criteria anyone can check:
+  a number ("window opens in under 0.5s") or an observed behavior
+  ("merge with dirty tree stops and changes nothing"). A vague goal
+  like "make it faster" or "make it look good" is not triaged yet.
+  Two more body fields while triaging: how done gets measured
+  (the first bean captures the baseline number and writes it into
+  the parent body; later beans cite it), and what the coder must
+  not touch without asking. For visual beans, put reference
+  screenshots or sketches in the body before flipping to todo.
 - **Claim:** one bean, one agent, one time. Don't co-claim.
 - **Proof:** `## Proof of Work` is required **before** `-s completed`
   is legal. It must list the commands run, the observed result, and
@@ -189,11 +199,18 @@ Every claim runs four passes before close. Skipping a pass ships a
 shallow diff and a confident bug.
 
 1. **Implement the complete deliverable.** No placeholders. No "TODO
-   later." No deferred remainder.
+   later." No deferred remainder. Tests for the break cases (empty
+   input, error path, concurrent events) ship with the deliverable,
+   not after.
 2. **Re-read as a domain expert.** Replace the cheap version of each
    part. "This works" is not the bar; "this is how I'd write it" is.
 3. **Hunt defects** in the **claimed bean's own change**. Correctness,
    integration, portability, performance, evidence. Fix those.
+
+   The bean's tests cover how the feature breaks, written in pass 1:
+   the empty case, the error path, two things happening at once.
+   A change that only works on the happy path is not done. Writing
+   a test at close does not fix it; go back to pass 1.
 
    A **new** bug found in live tests, another path, or unrelated
    behaviour is not pass-3 work. Stop. `beans create -t bug -s draft`,
@@ -232,8 +249,6 @@ For the full approval format, see
 [`references/approvals.md`](references/approvals.md).
 
 ---
-
-## Stop conditions
 
 ## Stop conditions
 
@@ -304,6 +319,22 @@ Stop looping on the epic when **any** of these are true:
 A session that loops past these stop conditions is an
 `in-progress` epic with no children left to do — that's a stuck
 session. Diagnose, don't pretend.
+
+---
+
+## Cross-review for risky leaves
+
+A leaf that deletes or migrates data, touches auth, payments, or CI
+config, or changes a public API gets one review before close, by a
+second agent on a different model than the one that wrote the change.
+If no other model is available, a fresh agent on the same model.
+Unsure whether the leaf is risky? Review it. The reviewer sees the
+diff and the acceptance criteria, not the author's reasoning.
+Findings become draft beans with evidence, never chat remarks.
+A clean review appends "reviewed by <agent>, no findings" to the
+bean's `## Proof of Work`, so the PoW proves the review ran.
+The four passes and the gates stay in force either way; this review
+covers what an author misses about their own change.
 
 ---
 
