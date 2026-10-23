@@ -278,12 +278,9 @@ The orchestrator, not the worker, owns steps 7-10: a worker report is
    style rules are not machine-checked. Closing on verdict counts alone ships
    an invalid close the user will reopen.
 
- Repo beans-lint scripts (e.g. `just beans-lint`) enforce requirements the
- CLI itself does not: triage-evidence sections on `todo` beans, `## Libraries`
- on coding beans, claim evidence on `in-progress` beans, and `## Skills for
- coder` paths that EXIST ON DISK — `ls` every skill path before writing it
- into a body. Run the repo lint after any bean mutation, before declaring a
- tree clean.
+ A repo can add its own beans lint that checks more than the CLI does.
+ If it has one, run it after every bean change. Check that a skill path
+ exists on disk before writing it into a bean body.
 
  A mis-typed bean (a `task` that needs children) converts IN PLACE with
  `beans update <id> -t epic` — id, body, and history survive. Scrap-and-
