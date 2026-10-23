@@ -136,16 +136,18 @@ Within a category, rank placement (stronger wins):
 2. **Public before private:** only when call order does not already place the symbols — public before private at that level. Does not justify exporting more (see Visibility).
 3. **Newer toward bottom:** when call order still does not decide, put newer code toward the bottom of the file or section.
 
-## Unit tests: black box, three sections, no mocks (user rule)
+## Unit tests: black box, given/when/then, no mocks (user rule)
 
 - Test through the public API only; private helpers only when the user
   explicitly asks. A private function that seems to need direct testing
   is a design signal: either a public entry point already covers it, or
   it does too much.
-- Every test reads as given / when / then (initial state, action under
-  test, expected result). Carry the structure through the code's design
-  when possible; keep the phase-marker comments (see Comments). A test
-  whose three phases cannot be pointed out is not finished.
+- Every test reads as given / when / then. `given` is optional setup.
+  `when` is mandatory: the action under test. `then` is mandatory:
+  the asserted result. If you cannot point at the `when` or the
+  `then`, the test is rewritten from scratch, not patched. Carry the
+  structure through the code's design when possible; keep the
+  phase-marker comments (see Comments).
 - Avoid mocks: test real behavior. A unit test that needs a mock is
   usually an integration test in disguise: rewrite it against the real
   collaborator. Mocks stay only for what a unit test cannot run at all
