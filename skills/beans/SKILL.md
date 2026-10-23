@@ -47,7 +47,7 @@ REJECTS illegal parent/type combos at create time with an explicit error.
 Verified enforcement matrix (probe with one throwaway create per level
 before any bulk import; the CLI error is ground truth over any documented
 convention): `epic` parent ∈ {none}; `feature` parent ∈ {epic}; `task`
-parent ∈ {epic, feature}; a `task` can NEVER be a parent. Probe any
+parent ∈ {epic, feature}; a `task` can NEVER be a parent. If a flat task later genuinely needs bean children, convert it in place — `beans update <id> -t epic` flips the type and preserves id/history (verified 2026-10-23), making child creation legal. Probe any
 hierarchy claim before relying on it. A documented convention the CLI
 rejects poisons every recipe built on it. Do NOT use the
 `milestone` type (house rule: it is upstream CLI baggage, never create it);
@@ -266,10 +266,27 @@ Outputs context about the project's current beans, priorities, and recommended n
 ```
 
 The orchestrator, not the worker, owns steps 7-10: a worker report is
-a claim. Re-run the gates yourself, read the diff, then write the PoW
-in the bean body — a completion recorded only in chat is not a
-completion in the tracker, and the next session cannot verify what the
-tracker does not contain.
+ a claim. Re-run the gates yourself, read the diff, then write the PoW
+ in the bean body — a completion recorded only in chat is not a
+   completion in the tracker, and the next session cannot verify what the
+   tracker does not contain. For every-file tasks, the PoW states the live
+   file count, the verdict count, and the command that proves the two sets
+   match. Count parity plus green gates prove coverage, not substance.
+   Before closing a sweep, re-read the diff of every fixed file and
+   spot-read some clean ones. A worker can stamp verdicts while breaking
+   the style rules, and gates stay green because style is not
+   machine-checked. A close on verdict counts alone gets reopened.
+
+ A repo can add its own beans lint that checks more than the CLI does.
+ If it has one, run it after every bean change.
+
+ Check that a skill path exists on disk before writing it into a bean
+ body.
+
+ A mis-typed bean (a `task` that needs children) converts IN PLACE with
+ `beans update <id> -t epic`. Id, body, and history survive. Scrap and
+ recreate orphans the audit trail, so reserve scrapping for goals that
+ are genuinely dead.
 
 When a triage verdict arrives AFTER a fix pass already shipped, append
 it to the same bean body and run the delta as a follow-up pass under

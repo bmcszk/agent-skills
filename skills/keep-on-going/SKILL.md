@@ -281,8 +281,8 @@ when no human decision is pending.
    `in-progress`, never `todo`. "Ready to review" is derived: all
    children completed, PR body lists every bean, zero commits after the
    ready marker. A push after that reverts the epic to in-progress.
-   Run `scripts/beans-lint.py --epic-status <epic> <pr>` before any
-   status line.
+   If the repo ships a beans lint script, run it before any status
+   line.
 4. ALL-CODE-DELEGATED: every code/config change goes through worker
    delegation. Exceptions need the user's verbatim quote in the ledger;
    absent quote = dispatch a worker. Failed delegation runs the repair
