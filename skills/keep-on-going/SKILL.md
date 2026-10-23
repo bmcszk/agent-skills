@@ -268,8 +268,9 @@ named next action follows) or STOPPED-WAITING (exact blocker + exact
 question). Never end a turn with bare status; never stop for permission
 when no human decision is pending.
 
-1. One status line per workstream, present-progressive:
-   "Working on <epic>. Delegated <task> to <worker>; PR <url> not ready
+1. One status line per workstream, present-progressive, using EPIC AND
+   TASK TITLES, never ids: ids mean nothing to the user. "Working on
+   <epic title>. Delegated <task title> to <worker>; PR <url> not ready
    to review yet." Inline coding in a status line requires a verbatim
    per-session user grant (see ALL-CODE-DELEGATED).
 2. Blocked: same line + "Blocked on <thing>: need you to <decision>".
@@ -358,10 +359,10 @@ Communication rule: report state in one line ("PR open, worker on X,
 next Y"), never end a turn with idle capacity while beans are ready.
 
 Session close still needs a state summary, but keep it LEDGER-shaped,
-not narrative: beans closed (ids), commits pushed, CI verdict, next
-pick. A chat-history-style narrative of the day's investigations is
-not a state report: the tracker already holds the history, and the
-next session loads the ledger, not the transcript.
+not narrative: beans closed (by title, not id), commits pushed, CI
+verdict, next pick. A chat-history-style narrative of the day's
+investigations is not a state report: the tracker already holds the
+history, and the next session loads the ledger, not the transcript.
 
 ### Retro loopback (binding)
 
