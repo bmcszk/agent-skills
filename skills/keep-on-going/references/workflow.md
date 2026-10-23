@@ -165,6 +165,5 @@ children to work on is a stuck session. Diagnose; don't pretend.
 Press-on and status rules are normative in SKILL.md ("Status and state
 rules"): never end a turn waiting without a pending human decision; one
 present-progressive status line per workstream; epic/PR readiness
-derived via `scripts/beans-lint.py --epic-status <epic-id> <pr-number>`,
-never asserted. Pause only for: a decision outside recorded scope rules
+derived via the repo's beans lint when it has one, never asserted. Pause only for: a decision outside recorded scope rules
 (grilling protocol), a destructive op, or genuinely ambiguous scope.

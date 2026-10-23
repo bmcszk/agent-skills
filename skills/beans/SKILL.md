@@ -269,23 +269,24 @@ The orchestrator, not the worker, owns steps 7-10: a worker report is
  a claim. Re-run the gates yourself, read the diff, then write the PoW
  in the bean body — a completion recorded only in chat is not a
    completion in the tracker, and the next session cannot verify what the
-   tracker does not contain. For every-file tasks, the PoW must include the
-   live file count, unique verdict count, and the command or artifact that
-   proves the sets match — and count parity plus green gates prove COVERAGE
-   only, never substance. Before closing a sweep, personally re-read the diff
-   of every FIXED file (spot-read CLEANs too): a worker can stamp per-file
-   verdicts while violating the style rules, and gates stay green because
-   style rules are not machine-checked. Closing on verdict counts alone ships
-   an invalid close the user will reopen.
+   tracker does not contain. For every-file tasks, the PoW states the live
+   file count, the verdict count, and the command that proves the two sets
+   match. Count parity plus green gates prove coverage, not substance.
+   Before closing a sweep, re-read the diff of every fixed file and
+   spot-read some clean ones. A worker can stamp verdicts while breaking
+   the style rules, and gates stay green because style is not
+   machine-checked. A close on verdict counts alone gets reopened.
 
  A repo can add its own beans lint that checks more than the CLI does.
- If it has one, run it after every bean change. Check that a skill path
- exists on disk before writing it into a bean body.
+ If it has one, run it after every bean change.
+
+ Check that a skill path exists on disk before writing it into a bean
+ body.
 
  A mis-typed bean (a `task` that needs children) converts IN PLACE with
- `beans update <id> -t epic` — id, body, and history survive. Scrap-and-
- recreate orphans the audit trail; reserve scrapping for goals that are
- genuinely dead.
+ `beans update <id> -t epic`. Id, body, and history survive. Scrap and
+ recreate orphans the audit trail, so reserve scrapping for goals that
+ are genuinely dead.
 
 When a triage verdict arrives AFTER a fix pass already shipped, append
 it to the same bean body and run the delta as a follow-up pass under
