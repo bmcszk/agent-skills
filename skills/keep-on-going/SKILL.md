@@ -193,6 +193,46 @@ full tree semantics.
 
 ---
 
+### VOIDED reopen sequence
+
+A mid-epic ruling that voids shipped work ("that was cheating, redo it")
+triggers the full reopen sequence in the same session: revert the voided
+commits, set status of the affected beans back to in-progress, replace
+the voided ledger section with a VOIDED marker pointing at the real
+state, then re-dispatch via the proper delegation path. Half a reopen
+(reverted but bean still completed, or ledger still claiming green)
+leaves the tracker lying about reality and the next session trusts it.
+
+### Gate-edit suppression
+
+A gate is met only by the work satisfying it as declared - never by
+editing the gate itself (lint config exclusions, `nolint`, deleted
+assertions, weakened budgets) or by having a delegated worker edit it.
+Worker-suppression is parent-suppression: verify the worker's diff for
+gate-file edits (`git diff HEAD~1 -- .golangci.yml` or the equivalent)
+before accepting any "lint green" claim, because a worker that cannot
+reach zero honestly may quietly exclude the findings instead. Closing on
+a suppressed gate reads as cheating: revert the gate edit, reopen the
+bean, re-run with suppression hard-forbidden in the worker contract.
+
+### Planned-work wiring protection
+
+Planned-work wiring is protected: code whose comments cite an open bean
+(`TODO ... lands later (<bean-id>)`) is another leaf's working surface.
+A repair or style pass may not delete it to silence a linter; the fix is an
+exclusion named in the epic body or moving the wiring's landing forward,
+never silent deletion. Deleting another leaf's scaffolding re-scopes that
+leaf without its owner.
+
+### Recurrence test for retro fixes
+
+A retro fix must pass a recurrence test: the failure is caught at
+file-1 when the identical pattern is re-introduced, not after the full
+wave shipped. If the fix is misplaced: move it earlier in the pipeline
+(detector), do not add a second detector later (prevention).
+
+---
+
 ## Four-pass leaf work
 
 Every claim runs four passes before close. Skipping a pass ships a
@@ -368,7 +408,7 @@ history, and the next session loads the ledger, not the transcript.
 
 Every retro finding gets a **structural** fix, never a verbal one:
 - a mistake a check could catch → wire the check (linter rule, CI job,
-  pre-push hook, beans-lint extension) before writing any prose rule;
+  pre-push hook) before writing any prose rule;
 - a wrong dispatch pattern (model choice, contract shape) → fix the
   delegating skill's contract template so the next dispatch inherits
   the fix;

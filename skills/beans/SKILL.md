@@ -199,6 +199,11 @@ Recipe: [`references/patterns.md`](references/patterns.md#found-a-bug-document-t
 
 ---
 
+
+
+See [`Reopen pattern (user finding contradicts completed bean)`](references/reopen-pattern.md) for details.
+
+See [`Bean creation for code-fix tasks (ALL-CODE-DELEGATED)`](references/all-code-delegated.md) for details.
 ## CLI Commands
 
 Every subcommand and flag is documented in
@@ -218,26 +223,14 @@ For the on-disk file format (YAML frontmatter, filename convention,
 field schema) see [`references/bean-file-format.md`](references/bean-file-format.md).
 The CLI owns that file - never hand-edit `.beans/*.md`.
 
----
+### Write-back comments (audit verdicts, review notes)
 
-## Bean File Format
+There is NO `beans comment` subcommand. Attach a dated note to a bean with
+the CLI:
 
-Beans are Markdown files in `.beans/` with YAML frontmatter. The CLI
-owns the format; full schema and example in
-[`references/bean-file-format.md`](references/bean-file-format.md).
-
----
-
-## Workflow Patterns
-
-The recipes live in [`references/patterns.md`](references/patterns.md):
-**Start work on a bean** (claim → implement → check off → PoW → close)
-and **Create an epic with tasks and subtasks** (the canonical draft-first
-tree shape). Find-blocked is a one-liner in that file.
-
----
-
-## Agent Workflow
+```bash
+beans update <id> --body-append "## AUDIT (brainer 2026-10-24, scope): verdict + evidence"
+```
 
 ### Prime Context
 
@@ -292,7 +285,7 @@ it to the same bean body and run the delta as a follow-up pass under
 that bean. Do not open a second bean for the same scope, and do not
 drop the stricter verdicts because a first pass already went green.
 
-For epics, steps 8–9 are replaced by: end-to-end tests +
+For epics, steps 8–9 are replaced by: comprehensive end-to-end tests +
 a `## Proof of Work` section that exercises the goal as a user would.
 See **Closure gates (binding)** below.
 
@@ -349,7 +342,7 @@ cannot verify, leave the bean `in-progress` and say so.
 #### 2. Epic closure
 
 **An epic cannot be closed while any of its tasks or subtasks are still
-open, and cannot be closed without the passing tests + `## Proof of
+open, and cannot be closed without comprehensive tests + `## Proof of
 Work`.** Two-part gate:
 
 - **No open children.** Every task and subtask under the epic must be
@@ -362,7 +355,7 @@ Work`.** Two-part gate:
   # Empty output → safe to close the epic.
   ```
 
-- **Full tests + `## Proof of Work`.** The epic's proof is
+- **Comprehensive tests + `## Proof of Work`.** The epic's proof is
   *integration-level*: not just "the unit tests passed", but evidence
   the goal as a whole was reached end-to-end. Append a `## Proof of
   Work` section whose commands cover:
@@ -378,7 +371,7 @@ not proven. If a gate cannot be run (no e2e harness exists for this
 project), write that explicitly into `## Proof of Work` under
 `Residual:` with the reason - silent omission is a violation.
 
-Closing an epic with open children, or without passing tests +
+Closing an epic with open children, or without comprehensive tests +
 Proof of Work, is a process violation - same category as closing a
 task without `## Proof of Work`.
 
@@ -421,6 +414,8 @@ Process and CLI hygiene - not the closure rules, which live in
 | Close work and leave state artifacts behind | Before ending a session: PR title/body match HEAD, every touched bean terminal (`completed`/`scrapped`), epic titles non-empty, no orphan drafts |
 | Set bean statuses without the CLI or leave `todo` epics that already shipped | Session-end sweep: `beans list`, close or scrap every bean the shipped work covers; an epic's status mirrors the work, not the plan |
 | Append `--body-append` PoW before checking the worker's claims | Parent re-runs gates + reads the diff FIRST; PoW records YOUR gate output, not the worker's report |
+| Hand-edit `.beans/*.md` to attach a comment | `beans update --body-append "## LABEL (context): ..."` - no comment subcommand exists; the CLI owns the file |
+| Create with only `-d` and fix the title later | Pass the title positionally at create - the filename slug is permanent, later `--title` edits don't rename it |
 
 ---
 
@@ -433,20 +428,3 @@ Process and CLI hygiene - not the closure rules, which live in
 ---
 
 > **Remember:** Always `beans prime` first. Use `--json` for scripts. Close your beans.
-
-## When to Use
-This skill is applicable when managing project tasks, bugs, or features using the Beans CLI issue tracker.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
-
-### Delegation Patterns
-
-When dispatching to subagents (especially free/small models):
-
-- **Short prompts.** One goal, exact commands, file paths. Inline design loses fidelity.
-- **Externalize plans.** Put >2 design decisions in `plan.md`, reference by path. Don't paste 4KB of design into the task.
-- **One stall = change tactic.** Hangs and text-only returns are signals - do NOT retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
-- **Bypass rtk for diagnostics.** Use raw commands when reading exact errors or lint positions.
