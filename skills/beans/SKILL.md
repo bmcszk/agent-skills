@@ -207,7 +207,7 @@ When a user identifies a gap in a bean whose PoW claimed clean:
    in-progress --body-append "..."`) citing the exact findings and the
    research file.
 2. Create a successor bean (new ID) with the fix scope; do NOT silently
-   re-close the original — the audit trail must show the reopen.
+   re-close the original - the audit trail must show the reopen.
 3. In the reopened bean's body, note the successor ID and its status.
 4. Only after the successor completes and passes parent All-x-All
    re-verification may the original bean be considered resolved.
@@ -216,13 +216,13 @@ When a user identifies a gap in a bean whose PoW claimed clean:
 
 - Use `beans create -t task -s todo --parent <epic> --tag audit-gap
    -p high --body-file <contract.md> "Title"` with the full contract
-   text in the body file (not inline — avoids escaping issues).
+   text in the body file (not inline - avoids escaping issues).
 - Contract must include: research reference, exact acceptance criteria
    as checkboxes, required skills (full `SKILL.md` paths), and the
    RE-SHUFFLE law reference (coding-rules intro).
-- After creation, run `python3 scripts/beans-lint.py .` — it validates
+- After creation, run `python3 scripts/beans-lint.py .` - it validates
    required skills exist on disk (it matches `~/.agents/skills/<name>/SKILL.md`
-   exactly — list full paths).
+   exactly - list full paths).
 - Commit `.beans/` and push with `--no-verify` (hooks blocked by
   GIT-SAFETY guard).
 
@@ -237,7 +237,7 @@ sessions.
 
 | Command | When to reach for it |
 |---|---|
-| `beans prime` | Session start — load the project's current bean state. |
+| `beans prime` | Session start - load the project's current bean state. |
 | `beans list --json` | Browse / filter. `--ready` for post-triage work, `-s draft` for triage queue, `--no-parent` for top-level (epics). |
 | `beans create` | New bean. Default `-s draft`; promote with `update -s todo` after triage. |
 | `beans update` | Claim, progress, append PoW, close. Use `--body-replace-old/new` for targeted edits, `--body-append` for `## Summary of Changes` and `## Proof of Work`. |
@@ -245,7 +245,7 @@ sessions.
 
 For the on-disk file format (YAML frontmatter, filename convention,
 field schema) see [`references/bean-file-format.md`](references/bean-file-format.md).
-The CLI owns that file — never hand-edit `.beans/*.md`.
+The CLI owns that file - never hand-edit `.beans/*.md`.
 
 ### Write-back comments (audit verdicts, review notes)
 
@@ -258,21 +258,19 @@ beans update <id> --body-append "## AUDIT (brainer 2026-10-24, scope): verdict +
 
 A `## LABEL (context)` heading form keeps repo-level beans-lint section
 checks (triage evidence, PoW detection) working. Never hand-edit
-`.beans/*.md` to add comments — the CLI owns the file format and etag.
+`.beans/*.md` to add comments - the CLI owns the file format and etag.
 
 On create, pass the title as the POSITIONAL argument
 (`beans create "Title" -t task ...`): creating with only `-d`/`--body-file`
 leaves the filename slug at `untitled`, and a later `update --title` fixes
-the displayed title WITHOUT renaming the file — the id slug is permanent.
+the displayed title WITHOUT renaming the file - the id slug is permanent.
 
 A repo may add its own `beans-lint` script that checks more than the CLI
 (dossier rules: required sections, skill paths with full `SKILL.md`
-suffixes, triage-evidence citations). Run it after EVERY bean mutation —
-it fails serially (one rule per run), so loop `beans-lint` → fix → re-run
+suffixes, triage-evidence citations). Run it after EVERY bean mutation - it fails serially (one rule per run), so loop `beans-lint` → fix → re-run
 until clean before committing. Skill paths in a bean body must include
 the `/SKILL.md` suffix to count, and triage sections must contain the
-lint's expected keyword (e.g. "brainer") to register as evidence —
-wording that reads fine to a human fails the check.
+lint's expected keyword (e.g. "brainer") to register as evidence - wording that reads fine to a human fails the check.
 
 ---
 
@@ -322,7 +320,7 @@ Outputs context about the project's current beans, priorities, and recommended n
 
 The orchestrator, not the worker, owns steps 7-10: a worker report is
  a claim. Re-run the gates yourself, read the diff, then write the PoW
- in the bean body — a completion recorded only in chat is not a
+ in the bean body - a completion recorded only in chat is not a
    completion in the tracker, and the next session cannot verify what the
    tracker does not contain. For every-file tasks, the PoW states the live
    file count, the verdict count, and the command that proves the two sets
@@ -359,7 +357,7 @@ See **Closure gates (binding)** below.
   `--blocked-by` on children), then `beans update <id> -s todo`. Only
   then does it become claimable.
 - Skipping triage to flip a bean straight to `todo` is a process
-  violation — same category as marking `completed` without testing.
+  violation - same category as marking `completed` without testing.
 
 ### Closure gates (binding)
 
@@ -375,11 +373,11 @@ in its body.** The section is the evidence the verify gate ran, separate
 from `## Summary of Changes` (which records what changed). It must
 contain, at minimum:
 
-- The exact commands run (build, test, lint, smoke check — whatever
+- The exact commands run (build, test, lint, smoke check - whatever
   applies).
 - The observed result for each command (exit status, key signal: counts,
   pass/fail, output fingerprint).
-- A `Residual:` line — named leftovers, or `none`.
+- A `Residual:` line - named leftovers, or `none`.
 
 If `## Proof of Work` is missing, the closure is rejected. Append it
 first, then mark completed:
@@ -432,10 +430,10 @@ Work`.** Two-part gate:
 A goal that says "ships feature X" without exercising X end-to-end is
 not proven. If a gate cannot be run (no e2e harness exists for this
 project), write that explicitly into `## Proof of Work` under
-`Residual:` with the reason — silent omission is a violation.
+`Residual:` with the reason - silent omission is a violation.
 
 Closing an epic with open children, or without comprehensive tests +
-Proof of Work, is a process violation — same category as closing a
+Proof of Work, is a process violation - same category as closing a
 task without `## Proof of Work`.
 
 ---
@@ -460,7 +458,7 @@ Refs: myproj-a3x1
 
 ## Anti-Patterns
 
-Process and CLI hygiene — not the closure rules, which live in
+Process and CLI hygiene - not the closure rules, which live in
 **Closure gates (binding)** above.
 
 | Don't | Do |
@@ -477,8 +475,8 @@ Process and CLI hygiene — not the closure rules, which live in
 | Close work and leave state artifacts behind | Before ending a session: PR title/body match HEAD, every touched bean terminal (`completed`/`scrapped`), epic titles non-empty, no orphan drafts |
 | Set bean statuses without the CLI or leave `todo` epics that already shipped | Session-end sweep: `beans list`, close or scrap every bean the shipped work covers; an epic's status mirrors the work, not the plan |
 | Append `--body-append` PoW before checking the worker's claims | Parent re-runs gates + reads the diff FIRST; PoW records YOUR gate output, not the worker's report |
-| Hand-edit `.beans/*.md` to attach a comment | `beans update --body-append "## LABEL (context): ..."` — no comment subcommand exists; the CLI owns the file |
-| Create with only `-d` and fix the title later | Pass the title positionally at create — the filename slug is permanent, later `--title` edits don't rename it |
+| Hand-edit `.beans/*.md` to attach a comment | `beans update --body-append "## LABEL (context): ..."` - no comment subcommand exists; the CLI owns the file |
+| Create with only `-d` and fix the title later | Pass the title positionally at create - the filename slug is permanent, later `--title` edits don't rename it |
 
 ---
 
@@ -506,20 +504,20 @@ When dispatching to subagents (especially free/small models):
 
 - **Short prompts.** One goal, exact commands, file paths. Inline design loses fidelity.
 - **Externalize plans.** Put >2 design decisions in `plan.md`, reference by path. Don't paste 4KB of design into the task.
-- **One stall = change tactic.** Hangs and text-only returns are signals — do NOT retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
+- **One stall = change tactic.** Hangs and text-only returns are signals - do NOT retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
 - **Bypass rtk for diagnostics.** Use raw commands when reading exact errors or lint positions.
 
 ## Bean creation for code-fix tasks (ALL-CODE-DELEGATED)
 
 - Use `beans create -t task -s todo --parent <epic> --tag audit-gap
    -p high --body-file <contract.md> "Title"` with the full contract
-   text in the body file (not inline — avoids escaping issues).
+   text in the body file (not inline - avoids escaping issues).
 - Contract must include: research reference, exact acceptance criteria
    as checkboxes, required skills (full `SKILL.md` paths), and the
    RE-SHUFFLE law reference (coding-rules intro).
-- After creation, run `python3 scripts/beans-lint.py .` — it validates
+- After creation, run `python3 scripts/beans-lint.py .` - it validates
    required skills exist on disk (it matches `~/.agents/skills/<name>/SKILL.md`
-   exactly — list full paths).
+   exactly - list full paths).
 - Commit `.beans/` and push with `--no-verify` (hooks blocked by
   GIT-SAFETY guard).
 
@@ -555,12 +553,12 @@ beans update <id> --body-append "## AUDIT (brainer 2026-10-24, scope): verdict +
 
 A `## LABEL (context)` heading form keeps repo-level beans-lint section
 checks (triage evidence, PoW detection) working. Never hand-edit
-`.beans/*.md` to add comments — the CLI owns the file format and etag.
+`.beans/*.md` to add comments - the CLI owns the file format and etag.
 
 On create, pass the title as the POSITIONAL argument
 (`beans create "Title" -t task ...`): creating with only `-d`/`--body-file`
 leaves the filename slug at `untitled`, and a later `update --title` fixes
-the displayed title WITHOUT renaming the file — the id slug is permanent.
+the displayed title WITHOUT renaming the file - the id slug is permanent.
 
 ---
 
