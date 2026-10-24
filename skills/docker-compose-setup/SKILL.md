@@ -1,7 +1,7 @@
 ---
 name: docker-compose-setup
-description: Docker Compose project setup for Go applications with E2E testing isolation, multi-file strategies, and optional Podman/Kubernetes/DevOps support
-license: MIT
+description: >-
+  Use when setting up or debugging a Docker Compose project for a Go application with E2E test isolation, multi-file compose strategies, or Podman and Kubernetes variants.
 metadata:
   audience: developers
   workflow: infrastructure
@@ -9,9 +9,9 @@ metadata:
   technologies: docker, docker-compose, podman, kubernetes, go
 ---
 
-## What I do
+## What this skill sets up
 
-Comprehensive Docker Compose setup for Go applications following 2026 best practices.
+Complete Docker Compose setup for Go applications following current best practices.
 
 ## Core Capabilities
 
@@ -29,12 +29,12 @@ Comprehensive Docker Compose setup for Go applications following 2026 best pract
 
 Specialized topics are split into focused reference files:
 
-- [Multi-Stage Dockerfile](references/dockerfile.md) — Production & development Dockerfiles, dependency caching, distroless runtime
-- [Docker Compose](references/compose.md) — Base structure, dev override, migration pattern, healthchecks
-- [E2E Testing & CI/CD](references/ci-cd.md) — Dual compose strategy, test runner, GitHub Actions, GitLab CI
-- [Best Practices & IaC](references/iac.md) — Docker Compose rules, multi-file strategy, healthcheck reference
-- [Podman](references/podman.md) — Compatibility, commands, quadlet systemd integration
-- [Kubernetes](references/kubernetes.md) — Kind, Minikube, Skaffold configurations
+- [Multi-Stage Dockerfile](references/dockerfile.md) - Production & development Dockerfiles, dependency caching, distroless runtime
+- [Docker Compose](references/compose.md) - Base structure, dev override, migration pattern, healthchecks
+- [E2E Testing & CI/CD](references/ci-cd.md) - Dual compose strategy, test runner, GitHub Actions, GitLab CI
+- [Best Practices & IaC](references/iac.md) - Docker Compose rules, multi-file strategy, healthcheck reference
+- [Podman](references/podman.md) - Compatibility, commands, quadlet systemd integration
+- [Kubernetes](references/kubernetes.md) - Kind, Minikube, Skaffold configurations
 
 ## Critical Rules
 

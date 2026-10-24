@@ -16,10 +16,10 @@ metadata:
 
 Deep-dive topics are split into focused reference files:
 
-- [Embedding & Loading](references/embedding-loading.md) — covers Embedding Assets with embed.FS, Loading Images, Resource Manager (ebitengine-resource)
-- [Sprite Sheets & Tile Maps](references/sprites-tilemaps.md) — covers Sprite Sheets, Tile Maps
-- [Procedural Generation & Save Data](references/procedural-saves.md) — covers Procedural Generation, Save Data (gdata)
-- [Asset Organization & Loading Screens](references/organization.md) — covers Asset Organization, Loading Screen Pattern
+- [Embedding & Loading](references/embedding-loading.md) - covers Embedding Assets with embed.FS, Loading Images, Resource Manager (ebitengine-resource)
+- [Sprite Sheets & Tile Maps](references/sprites-tilemaps.md) - covers Sprite Sheets, Tile Maps
+- [Procedural Generation & Save Data](references/procedural-saves.md) - covers Procedural Generation, Save Data (gdata)
+- [Asset Organization & Loading Screens](references/organization.md) - covers Asset Organization, Loading Screen Pattern
 
 ## Anti-Patterns
 

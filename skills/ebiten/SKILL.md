@@ -1,6 +1,7 @@
 ---
 name: ebiten
-description: Ebitengine (Ebiten v2) 2D game development in Go. Game loop, input, rendering, ECS, physics, audio, deployment.
+description: >-
+  Use when building a 2D game with Ebitengine (Ebiten v2) in Go: game loop, input, rendering, ECS, physics, audio, or deployment.
 metadata:
   risk: none
   source: official
@@ -8,7 +9,7 @@ metadata:
 ---
 # Ebitengine (Ebiten v2)
 
-> **Go 2D game engine skill** — covers the full Ebitengine API and ecosystem. Routes to sub-skills by domain.
+> **Go 2D game engine skill** - covers the full Ebitengine API and ecosystem. Routes to sub-skills by domain.
 
 Ebitengine is a dead simple 2D game library for Go. Cross-platform: desktop (Windows/macOS/Linux), mobile (iOS/Android), WebAssembly, and Nintendo Switch.
 

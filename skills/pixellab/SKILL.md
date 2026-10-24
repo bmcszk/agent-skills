@@ -110,8 +110,8 @@ mcpc connect ~/.mcpc/mcp.json:pixellab @pixellab
 
 ## Best practices
 
-- Be descriptive in `description` fields — include style, color, perspective, size
+- Be descriptive in `description` fields - include style, color, perspective, size
 - Use `mcpc @pixellab tools-call get_<type>` to poll for completion on long-running jobs
 - Use `mcpc @pixellab tools-call list_<type>` to check existing assets before creating duplicates
 - `delete_<type>` requires `confirm:=true` for safety
-- All create operations consume credits — use `list_*` first to avoid waste
+- All create operations consume credits - use `list_*` first to avoid waste

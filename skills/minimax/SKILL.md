@@ -13,8 +13,8 @@ metadata:
 
 Provides two AI-powered capabilities:
 
-1. **Web search** — Google-like search for real-time or external information
-2. **Image understanding** — Analyze, describe, or extract information from images (local files or URLs)
+1. **Web search** - Google-like search for real-time or external information
+2. **Image understanding** - Analyze, describe, or extract information from images (local files or URLs)
 
 ## Setup
 
@@ -32,7 +32,7 @@ Search the web for real-time information. Works like Google Search.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `query` | string | yes | Search query — aim for 3-5 keywords. For time-sensitive topics, include the date. |
+| `query` | string | yes | Search query - aim for 3-5 keywords. For time-sensitive topics, include the date. |
 
 **Returns:** JSON with `organic` results (title, link, snippet, date) and `related_searches`.
 
@@ -101,6 +101,6 @@ mcpc @minimax tools-call understand_image prompt:="Extract text from this screen
 ## Best practices
 
 - **Search queries:** Use 3-5 specific keywords. Include dates for time-sensitive queries.
-- **Image prompts:** Be specific about what to analyze — list numbered points for structured output.
+- **Image prompts:** Be specific about what to analyze - list numbered points for structured output.
 - **Rephrasing:** If search returns no useful results, rephrase with different keywords.
 - **File paths:** Always strip `@` prefix from paths before passing as `image_source`.

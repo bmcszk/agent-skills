@@ -1,12 +1,12 @@
 ---
 name: beans
-description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics, or query project state from the CLI. Keywords: beans, task management, issue tracker, create task, close task, list tasks, bug tracking, project management, draft triage, epic task subtask, found a bug.'
+description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics, or query project state from the CLI.'
 metadata:
   risk: none
   source: community
   date_added: '2026-05-12'
 ---
-# Beans — Task Management
+# Beans - Task Management
 
 > CLI-based, flat-file issue tracker. Tasks live in `.beans/` as Markdown files, version-controlled alongside your code.
 
@@ -33,21 +33,21 @@ section before creating beans.
 ### Tree structure
 
 Every bean lives in a three-level tree. Names below are conventions, not
-bean `type` values — the `type` is still `task` / `bug` / `feature` /
+bean `type` values - the `type` is still `task` / `bug` / `feature` /
 `idea`.
 
 | Level | What it represents | Bean `type` | Children |
 |---|---|---|---|
 | **Epic** | One GOAL. The outcome a session loops on until reached. | `epic` (multi-epic program root: parentless `epic`) | N tasks |
-| **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | none — leaf |
-| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | AC checkboxes inside the owning task (NOT a bean — the CLI rejects a task under a task) | none |
+| **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | none - leaf |
+| **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | AC checkboxes inside the owning task (NOT a bean - the CLI rejects a task under a task) | none |
 
-The hierarchy is enforced by the `parent` field — and by the CLI, which
+The hierarchy is enforced by the `parent` field - and by the CLI, which
 REJECTS illegal parent/type combos at create time with an explicit error.
 Verified enforcement matrix (probe with one throwaway create per level
 before any bulk import; the CLI error is ground truth over any documented
 convention): `epic` parent ∈ {none}; `feature` parent ∈ {epic}; `task`
-parent ∈ {epic, feature}; a `task` can NEVER be a parent. If a flat task later genuinely needs bean children, convert it in place — `beans update <id> -t epic` flips the type and preserves id/history (verified 2026-10-23), making child creation legal. Probe any
+parent ∈ {epic, feature}; a `task` can NEVER be a parent. If a flat task later genuinely needs bean children, convert it in place - `beans update <id> -t epic` flips the type and preserves id/history (verified against the CLI), making child creation legal. Probe any
 hierarchy claim before relying on it. A documented convention the CLI
 rejects poisons every recipe built on it. Do NOT use the
 `milestone` type (house rule: it is upstream CLI baggage, never create it);
@@ -69,7 +69,7 @@ epic (GOAL)
 └─ task
 ```
 
-Subtasks are NOT beans (the CLI rejects a task under a task) — split a
+Subtasks are NOT beans (the CLI rejects a task under a task) - split a
 task by adding acceptance-criteria checkboxes to its body, or create a
 `feature` grouping when a requirement genuinely needs child beans.
 
@@ -92,32 +92,32 @@ draft  →  todo  →  in-progress  →  completed
                  ↘  scrapped
 ```
 
-- **`draft`** — needs triage. Research it before promoting. The body
+- **`draft`** - needs triage. Research it before promoting. The body
   holds the question, links, unknowns, and the result of triage research.
-- **`todo`** — actionable. Triage answered: scope is clear, acceptance
+- **`todo`** - actionable. Triage answered: scope is clear, acceptance
   criteria are written, references exist. Ready to claim.
-- **`in-progress`** — claimed. Exactly one agent or human at a time.
-- **`completed`** — verified. Body has `## Summary of Changes` + `##
+- **`in-progress`** - claimed. Exactly one agent or human at a time.
+- **`completed`** - verified. Body has `## Summary of Changes` + `##
   Proof of Work`.
-- **`scrapped`** — killed. Body has `## Reasons for Scrapping`.
+- **`scrapped`** - killed. Body has `## Reasons for Scrapping`.
 
 `beans list --ready` returns `todo` and `in-progress` beans. If you
-find yourself about to claim a `draft`, you skipped triage — go back.
+find yourself about to claim a `draft`, you skipped triage - go back.
 
 ### Triage = deep research
 
 A `draft` bean is a hypothesis. Before flipping to `todo`, the agent
 or human triaging it must:
 
-1. **Re-read the original request** — what is actually being asked?
-2. **Deep research** — read the affected code, relevant docs, spec,
+1. **Re-read the original request** - what is actually being asked?
+2. **Deep research** - read the affected code, relevant docs, spec,
    prior art. Use online research (web search, Context7, vendor docs)
    when in-repo evidence isn't enough. Cite sources in the body.
-3. **Scope the work** — split into tasks / subtasks. A requirement
+3. **Scope the work** - split into tasks / subtasks. A requirement
    that is one fat bean is a smell; it should be an epic + children.
-4. **Write acceptance criteria** — `- [ ]` checkboxes an outside
+4. **Write acceptance criteria** - `- [ ]` checkboxes an outside
    reviewer can independently verify.
-5. **Discover skills for the coding agent** — when the leaf will be
+5. **Discover skills for the coding agent** - when the leaf will be
    implemented by a coder, scan the project's and the user's skill roots
    (`.agents/skills/`, `~/.agents/skills/`, and any agent-specific
    skill directory the runtime uses)
@@ -127,7 +127,7 @@ or human triaging it must:
    ```markdown
    ## Skills for coder
 
-   - `~/.agents/skills/<name>/SKILL.md` — why this leaf needs it
+   - `~/.agents/skills/<name>/SKILL.md` - why this leaf needs it
    ```
 
    Do not hardcode a language or project pack. Re-discover per leaf.
@@ -138,11 +138,11 @@ or human triaging it must:
    whatever the summarizer did not think to include, and that gap is
    how a purged rule class re-ships under green gates. Skill rules a
    gate must verify get copied into the contract as explicit checkable
-   items — build/lint/gofmt stay green while style rules are violated,
+   items - build/lint/gofmt stay green while style rules are violated,
    so an unchecked style rule ships broken.
-6. **Identify blockers and dependencies** — `--blocked-by` on children
+6. **Identify blockers and dependencies** - `--blocked-by` on children
    that can't start yet.
-7. **Promote** — `beans update <id> -s todo` only when the body is
+7. **Promote** - `beans update <id> -s todo` only when the body is
    research-backed, acceptance criteria exist, skills for coder are
    listed when coding will happen, and the bean is small enough to claim.
 
@@ -155,32 +155,31 @@ Triage is done by the **best available research subagent**, not by
 whoever happens to be around and not by the main session skimming the
 ticket:
 
-- **Pick the strongest available model dynamically at triage time** —
-  query the agent runtime's own model-selection mechanism (its model
+- **Pick the strongest available model dynamically at triage time** - query the agent runtime's own model-selection mechanism (its model
   list, router, or provider catalog) for the best currently-reachable
   reasoning model, and delegate to it. Do not hardcode a model name:
   the best choice changes over time and what is reachable varies per
   setup.
 - The triage subagent works **read-only on the repo** (research, not
   implementation) and writes its findings into the bean body.
-- Triage output contract — the draft body must end up with:
-  1. **Root cause / answer to the open question** — with file:line
+- Triage output contract - the draft body must end up with:
+  1. **Root cause / answer to the open question** - with file:line
      references or cited URLs; "unknown" is not a triage result.
-  2. **Local research** — affected code paths, configs, contracts read
+  2. **Local research** - affected code paths, configs, contracts read
      and summarized with paths.
-  3. **Online research** — upstream docs/issues/specs consulted when
+  3. **Online research** - upstream docs/issues/specs consulted when
      in-repo evidence is insufficient; links recorded.
-  4. **Scope** — tasks/subtasks split, ~10-min granularity at the
+  4. **Scope** - tasks/subtasks split, ~10-min granularity at the
      bottom, with blockers wired via `--blocked-by`.
-  5. **Acceptance criteria** — `- [ ]` checkboxes, independently
+  5. **Acceptance criteria** - `- [ ]` checkboxes, independently
      verifiable.
-  6. **Skills for coder** — when the leaf is for a coding agent:
+  6. **Skills for coder** - when the leaf is for a coding agent:
      `## Skills for coder` with discovered skill paths (see triage
      step 5). Skip only for pure docs/ops leaves with no code edits.
 
 Only when these are in the body may the triager run
 `beans update <id> -s todo`. A `todo` bean whose body lacks root cause
-or acceptance criteria is a triage failure — send it back to `draft`.
+or acceptance criteria is a triage failure - send it back to `draft`.
 A coding leaf without `## Skills for coder` is also a triage failure.
 
 ### Found a bug (binding)
@@ -190,9 +189,9 @@ A coding leaf without `## Skills for coder` is also a triage failure.
 Do not patch first. Do not jump to `todo` or `in-progress`. Do not "just fix it" because the test caught it.
 
 1. **Stop coding.** Keep the evidence (httpyac logs, worker logs, failing test output).
-2. **Document** — `beans create "<short title>" -t bug -s draft`. Body: what failed, expected vs actual, ids, times, stack, evidence paths.
-3. **Triage** — deep research (code, contract, docs). Write acceptance criteria. Split if needed. Then `beans update <id> -s todo`.
-4. **Claim** — only after triage: `beans update <id> -s in-progress`. Then implement.
+2. **Document** - `beans create "<short title>" -t bug -s draft`. Body: what failed, expected vs actual, ids, times, stack, evidence paths.
+3. **Triage** - deep research (code, contract, docs). Write acceptance criteria. Split if needed. Then `beans update <id> -s todo`.
+4. **Claim** - only after triage: `beans update <id> -s in-progress`. Then implement.
 
 A live mismatch is still a `draft` until triage says it is a real, scoped, actionable bug. Wrong env, empty data, or an unsupported type is not a silent code change.
 
@@ -209,7 +208,7 @@ sessions.
 
 | Command | When to reach for it |
 |---|---|
-| `beans prime` | Session start — load the project's current bean state. |
+| `beans prime` | Session start - load the project's current bean state. |
 | `beans list --json` | Browse / filter. `--ready` for post-triage work, `-s draft` for triage queue, `--no-parent` for top-level (epics). |
 | `beans create` | New bean. Default `-s draft`; promote with `update -s todo` after triage. |
 | `beans update` | Claim, progress, append PoW, close. Use `--body-replace-old/new` for targeted edits, `--body-append` for `## Summary of Changes` and `## Proof of Work`. |
@@ -217,7 +216,7 @@ sessions.
 
 For the on-disk file format (YAML frontmatter, filename convention,
 field schema) see [`references/bean-file-format.md`](references/bean-file-format.md).
-The CLI owns that file — never hand-edit `.beans/*.md`.
+The CLI owns that file - never hand-edit `.beans/*.md`.
 
 ---
 
@@ -267,7 +266,7 @@ Outputs context about the project's current beans, priorities, and recommended n
 
 The orchestrator, not the worker, owns steps 7-10: a worker report is
  a claim. Re-run the gates yourself, read the diff, then write the PoW
- in the bean body — a completion recorded only in chat is not a
+ in the bean body - a completion recorded only in chat is not a
    completion in the tracker, and the next session cannot verify what the
    tracker does not contain. For every-file tasks, the PoW states the live
    file count, the verdict count, and the command that proves the two sets
@@ -293,7 +292,7 @@ it to the same bean body and run the delta as a follow-up pass under
 that bean. Do not open a second bean for the same scope, and do not
 drop the stricter verdicts because a first pass already went green.
 
-For epics, steps 8–9 are replaced by: comprehensive end-to-end tests +
+For epics, steps 8–9 are replaced by: end-to-end tests +
 a `## Proof of Work` section that exercises the goal as a user would.
 See **Closure gates (binding)** below.
 
@@ -304,7 +303,7 @@ See **Closure gates (binding)** below.
   `--blocked-by` on children), then `beans update <id> -s todo`. Only
   then does it become claimable.
 - Skipping triage to flip a bean straight to `todo` is a process
-  violation — same category as marking `completed` without testing.
+  violation - same category as marking `completed` without testing.
 
 ### Closure gates (binding)
 
@@ -320,11 +319,11 @@ in its body.** The section is the evidence the verify gate ran, separate
 from `## Summary of Changes` (which records what changed). It must
 contain, at minimum:
 
-- The exact commands run (build, test, lint, smoke check — whatever
+- The exact commands run (build, test, lint, smoke check - whatever
   applies).
 - The observed result for each command (exit status, key signal: counts,
   pass/fail, output fingerprint).
-- A `Residual:` line — named leftovers, or `none`.
+- A `Residual:` line - named leftovers, or `none`.
 
 If `## Proof of Work` is missing, the closure is rejected. Append it
 first, then mark completed:
@@ -350,7 +349,7 @@ cannot verify, leave the bean `in-progress` and say so.
 #### 2. Epic closure
 
 **An epic cannot be closed while any of its tasks or subtasks are still
-open, and cannot be closed without comprehensive tests + `## Proof of
+open, and cannot be closed without the passing tests + `## Proof of
 Work`.** Two-part gate:
 
 - **No open children.** Every task and subtask under the epic must be
@@ -363,7 +362,7 @@ Work`.** Two-part gate:
   # Empty output → safe to close the epic.
   ```
 
-- **Comprehensive tests + `## Proof of Work`.** The epic's proof is
+- **Full tests + `## Proof of Work`.** The epic's proof is
   *integration-level*: not just "the unit tests passed", but evidence
   the goal as a whole was reached end-to-end. Append a `## Proof of
   Work` section whose commands cover:
@@ -377,10 +376,10 @@ Work`.** Two-part gate:
 A goal that says "ships feature X" without exercising X end-to-end is
 not proven. If a gate cannot be run (no e2e harness exists for this
 project), write that explicitly into `## Proof of Work` under
-`Residual:` with the reason — silent omission is a violation.
+`Residual:` with the reason - silent omission is a violation.
 
-Closing an epic with open children, or without comprehensive tests +
-Proof of Work, is a process violation — same category as closing a
+Closing an epic with open children, or without passing tests +
+Proof of Work, is a process violation - same category as closing a
 task without `## Proof of Work`.
 
 ---
@@ -405,7 +404,7 @@ Refs: myproj-a3x1
 
 ## Anti-Patterns
 
-Process and CLI hygiene — not the closure rules, which live in
+Process and CLI hygiene - not the closure rules, which live in
 **Closure gates (binding)** above.
 
 | Don't | Do |
@@ -449,5 +448,5 @@ When dispatching to subagents (especially free/small models):
 
 - **Short prompts.** One goal, exact commands, file paths. Inline design loses fidelity.
 - **Externalize plans.** Put >2 design decisions in `plan.md`, reference by path. Don't paste 4KB of design into the task.
-- **One stall = change tactic.** Hangs and text-only returns are signals — do NOT retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
+- **One stall = change tactic.** Hangs and text-only returns are signals - do NOT retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
 - **Bypass rtk for diagnostics.** Use raw commands when reading exact errors or lint positions.

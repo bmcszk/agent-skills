@@ -1,4 +1,4 @@
-# Workflow — One Epic Session
+# Workflow - One Epic Session
 
 A linear recipe for the loop described in the parent `SKILL.md`. Use
 this when you've just claimed an epic and need to drive it forward
@@ -28,7 +28,7 @@ Read the epic body. It has:
 ## 2. Walk the tree top-down for triage
 
 Triage moves beans from `draft` to `todo`. Always triage the parent
-before its children — a task whose epic isn't ready is wasted work.
+before its children - a task whose epic isn't ready is wasted work.
 
 ```text
 epic (draft) → research the goal, set acceptance criteria → todo
@@ -53,11 +53,11 @@ beans update <id> -s in-progress
 ```
 
 When epic leaves are DELEGATED to a worker agent, size each wave
-to one structural move — one domain fold, one file merge — so it fits a
+to one structural move - one domain fold, one file merge - so it fits a
 single run. Before dispatch, pre-verify every symbol move with a consumer
 grep and paste the hit list into the contract; the worker then executes
 pure moves. If a wave overruns its budget and dies mid-edit, revert the
-partial tree and re-dispatch the wave split in two — a partial multi-file
+partial tree and re-dispatch the wave split in two - a partial multi-file
 fold that does not build is not worth repairing.
 
 Keep ONE dispatch ledger for the session (contract path, output path,
@@ -109,8 +109,8 @@ beans list --json --parent <epic-id> --no-status completed --no-status scrapped
 
 Two outcomes:
 
-- **Empty** — every child is done. Move to step 6.
-- **Non-empty** — there are still children. Pick the next ready one,
+- **Empty** - every child is done. Move to step 6.
+- **Non-empty** - there are still children. Pick the next ready one,
   go to step 3. Or: if the remaining work exceeds what the epic can
   absorb, scrap or split the epic.
 

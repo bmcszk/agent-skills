@@ -70,11 +70,11 @@ workflow:
 
 ### Gotchas
 
-- `gh-pages` must hold ONLY generated artifacts — an orphan branch, not a
+- `gh-pages` must hold ONLY generated artifacts - an orphan branch, not a
   copy of the source tree; anything else ships repo files to the web.
 - Seed the branch yourself before the first workflow run (`git checkout
   --orphan gh-pages` locally, commit `badges/coverage.json` with a
-  placeholder, push) — otherwise the shields endpoint 404s and the badge
+  placeholder, push) - otherwise the shields endpoint 404s and the badge
   renders "not found" until CI succeeds.
 - `--allow-empty` on the badge commit: repeated coverage can be identical;
   without the flag the push no-ops and the next run fails on `git commit`.
@@ -93,13 +93,12 @@ workflow:
   repos/<owner>/<repo>/actions/permissions/workflow -F
   default_workflow_permissions=write -F can_approve_pull_request_reviews=false`.
 - Verify the loop once by hand: curl the raw gh-pages JSON, then the
-  shields endpoint — a 200 with a stale/placeholder payload is still a
+  shields endpoint - a 200 with a stale/placeholder payload is still a
   broken badge.
 - Least-privilege shape that passes Scorecard's Token-Permissions: keep
   the test job `contents: read` and split badge publishing into a separate
   `needs: test` job holding the single `contents: write` (artifact handoff:
   upload `coverage.json` in the test job, download + push in the publisher).
   Job-level write on the shared test job scores 0.
-- Only the newest-Go leg publishes. Never run the badge push on PRs —
-  gate on default branch, or every PR update rewrites the live badge with
+- Only the newest-Go leg publishes. Never run the badge push on PRs - gate on default branch, or every PR update rewrites the live badge with
   unmerged numbers.

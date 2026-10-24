@@ -1,6 +1,6 @@
 ---
 name: context7
-description: 'Fetch up-to-date documentation for any library, framework, SDK, API, or CLI tool via Context7 (mcpc). Use when you need current version-accurate docs, code examples, or API references — training data may be outdated. Prefer this over web search for library documentation queries. Keywords: context7, documentation, library docs, API reference, up-to-date docs, version-accurate, code examples.'
+description: 'Fetch up-to-date documentation for any library, framework, SDK, API, or CLI tool via Context7 (mcpc). Use when you need current version-accurate docs, code examples, or API references - training data may be outdated. Prefer this over web search for library documentation queries. Keywords: context7, documentation, library docs, API reference, up-to-date docs, version-accurate, code examples.'
 license: MIT
 metadata:
   audience: developers
@@ -11,7 +11,7 @@ metadata:
 
 ## What this does
 
-Fetches current, version-accurate documentation and code examples for any programming library, framework, SDK, API, CLI tool, or cloud service. Use this even for well-known libraries — training data may not reflect recent changes.
+Fetches current, version-accurate documentation and code examples for any programming library, framework, SDK, API, CLI tool, or cloud service. Use this even for well-known libraries - training data may not reflect recent changes.
 
 Prefer this over web search for library documentation queries.
 
@@ -31,7 +31,7 @@ Resolves a package/product name to a Context7-compatible library ID. **MUST call
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `query` | string | yes | The question or task — used to rank results by relevance |
+| `query` | string | yes | The question or task - used to rank results by relevance |
 | `libraryName` | string | yes | Official library name with proper punctuation (e.g., "Next.js", "Three.js") |
 
 **Returns:** List of matching libraries with IDs (format: `/org/project`), descriptions, snippet counts, reputation scores, and version info.
@@ -47,7 +47,7 @@ Retrieves documentation and code examples for a resolved library ID.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `libraryId` | string | yes | Context7 library ID from `resolve-library-id` (e.g., `/vercel/next.js`) |
-| `query` | string | yes | Specific question — include relevant details for better results |
+| `query` | string | yes | Specific question - include relevant details for better results |
 
 ## Workflow
 

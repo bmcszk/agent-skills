@@ -9,9 +9,9 @@ metadata:
   technologies: go, architecture, project-structure
 ---
 
-## What I do
+## What this skill covers
 
-I help with Go project initialization and setup:
+covers Go project initialization and setup:
 - Project structure decisions
 - Library selection
 - Architecture planning
@@ -32,11 +32,11 @@ Use this skill when:
 
 Detailed structure guides are split into focused reference files:
 
-- [CLI / TUI Applications](references/cli.md) — Simple CLI, supporting packages, TUI with Bubble Tea
-- [Single Service](references/service.md) — Basic service, service with database, service layer responsibilities
-- [Monorepo](references/monorepo.md) — go.work, multi-service justfile, CI
-- [Mixed](references/mixed.md) — Combined CLI + service + shared packages layout
-- [Recommended Libraries](references/libraries.md) — Core, CLI/TUI, database, concurrency, testing, build tools
+- [CLI / TUI Applications](references/cli.md) - Simple CLI, supporting packages, TUI with Bubble Tea
+- [Single Service](references/service.md) - Basic service, service with database, service layer responsibilities
+- [Monorepo](references/monorepo.md) - go.work, multi-service justfile, CI
+- [Mixed](references/mixed.md) - Combined CLI + service + shared packages layout
+- [Recommended Libraries](references/libraries.md) - Core, CLI/TUI, database, concurrency, testing, build tools
 
 ## Common Commands
 
