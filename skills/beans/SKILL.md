@@ -199,6 +199,330 @@ Recipe: [`references/patterns.md`](references/patterns.md#found-a-bug-document-t
 
 ---
 
+
+## Reopen pattern (user finding contradicts completed bean)
+
+When a user identifies a gap in a bean whose PoW claimed clean:
+1. Append a `REOPENED` section to the bean's body (CLI `beans update -s
+   in-progress --body-append "..."`) citing the exact findings and the
+   research file.
+2. Create a successor bean (new ID) with the fix scope; do NOT silently
+   re-close the original — the audit trail must show the reopen.
+3. In the reopened bean's body, note the successor ID and its status.
+4. Only after the successor completes and passes parent All-x-All
+   re-verification may the original bean be considered resolved.
+
+## Bean creation for code-fix tasks (ALL-CODE-DELEGATED)
+
+- Use `beans create -t task -s todo --parent <epic> --tag audit-gap
+   -p high --body-file <contract.md> "Title"` with the full contract
+   text in the body file (not inline — avoids escaping issues).
+- Contract must include: research reference, exact acceptance criteria
+   as checkboxes, required skills (full `SKILL.md` paths), and the
+   RE-SHUFFLE law reference (coding-rules intro).
+- After creation, run `python3 scripts/beans-lint.py .` — it validates
+   required skills exist on disk (it matches `~/.agents/skills/<name>/SKILL.md`
+   exactly — list full paths).
+- Commit `.beans/` and push with `--no-verify` (hooks blocked by
+  GIT-SAFETY guard).
+
+---
+
+## CLI Commands
+
+Every subcommand and flag is documented in
+[`references/cli.md`](references/cli.md). This section is a quick
+top-of-mind index for the four commands an agent uses in 95% of
+sessions.
+
+| Command | When to reach for it |
+|---|---|
+| `beans prime` | Session start — load the project's current bean state. |
+| `beans list --json` | Browse / filter. `--ready` for post-triage work, `-s draft` for triage queue, `--no-parent` for top-level (epics). |
+| `beans create` | New bean. Default `-s draft`; promote with `update -s todo` after triage. |
+| `beans update` | Claim, progress, append PoW, close. Use `--body-replace-old/new` for targeted edits, `--body-append` for `## Summary of Changes` and `## Proof of Work`. |
+| `beans show` | Inspect. `--body-only` for piping, `--etag-only` for safe concurrent updates. |
+
+For the on-disk file format (YAML frontmatter, filename convention,
+field schema) see [`references/bean-file-format.md`](references/bean-file-format.md).
+The CLI owns that file — never hand-edit `.beans/*.md`.
+
+### Write-back comments (audit verdicts, review notes)
+
+There is NO `beans comment` subcommand. Attach a dated note to a bean with
+the CLI:
+
+```bash
+beans update <id> --body-append "## AUDIT (brainer 2026-10-24, scope): verdict + evidence"
+```
+
+A `## LABEL (context)` heading form keeps repo-level beans-lint section
+checks (triage evidence, PoW detection) working. Never hand-edit
+`.beans/*.md` to add comments — the CLI owns the file format and etag.
+
+On create, pass the title as the POSITIONAL argument
+(`beans create "Title" -t task ...`): creating with only `-d`/`--body-file`
+leaves the filename slug at `untitled`, and a later `update --title` fixes
+the displayed title WITHOUT renaming the file — the id slug is permanent.
+
+A repo may add its own `beans-lint` script that checks more than the CLI
+(dossier rules: required sections, skill paths with full `SKILL.md`
+suffixes, triage-evidence citations). Run it after EVERY bean mutation —
+it fails serially (one rule per run), so loop `beans-lint` → fix → re-run
+until clean before committing. Skill paths in a bean body must include
+the `/SKILL.md` suffix to count, and triage sections must contain the
+lint's expected keyword (e.g. "brainer") to register as evidence —
+wording that reads fine to a human fails the check.
+
+---
+
+## Bean File Format
+
+Beans are Markdown files in `.beans/` with YAML frontmatter. The CLI
+owns the format; full schema and example in
+[`references/bean-file-format.md`](references/bean-file-format.md).
+
+---
+
+## Workflow Patterns
+
+The recipes live in [`references/patterns.md`](references/patterns.md):
+**Start work on a bean** (claim → implement → check off → PoW → close)
+and **Create an epic with tasks and subtasks** (the canonical draft-first
+tree shape). Find-blocked is a one-liner in that file.
+
+---
+
+## Agent Workflow
+
+### Prime Context
+
+```bash
+beans prime
+```
+
+Outputs context about the project's current beans, priorities, and recommended next actions. Agents should run this at session start.
+
+### Agent Task Lifecycle
+
+```
+1. beans prime                          → Get project context
+2. beans list --json -s draft           → Find beans awaiting triage
+3. Research the draft, scope it, write  → Triage the bean
+   acceptance criteria, then promote
+   with `beans update <id> -s todo`
+4. beans list --json --ready            → Find actionable work
+5. beans update <id> -s in-progress     → Claim the task
+6. ... implement the change ...
+7. beans update <id> --body-replace-*   → Check off acceptance criteria
+8. VERIFY: run the project's tests/build/lint and observe results   ← gate
+9. beans update <id> --body-append      → Add ## Proof of Work (commands + results + residual)
+10. beans update <id> -s completed      → Mark done (only after verify + proof are present)
+```
+
+The orchestrator, not the worker, owns steps 7-10: a worker report is
+ a claim. Re-run the gates yourself, read the diff, then write the PoW
+ in the bean body — a completion recorded only in chat is not a
+   completion in the tracker, and the next session cannot verify what the
+   tracker does not contain. For every-file tasks, the PoW states the live
+   file count, the verdict count, and the command that proves the two sets
+   match. Count parity plus green gates prove coverage, not substance.
+   Before closing a sweep, re-read the diff of every fixed file and
+   spot-read some clean ones. A worker can stamp verdicts while breaking
+   the style rules, and gates stay green because style is not
+   machine-checked. A close on verdict counts alone gets reopened.
+
+ A repo can add its own beans lint that checks more than the CLI does.
+ If it has one, run it after every bean change.
+
+ Check that a skill path exists on disk before writing it into a bean
+ body.
+
+ A mis-typed bean (a `task` that needs children) converts IN PLACE with
+ `beans update <id> -t epic`. Id, body, and history survive. Scrap and
+ recreate orphans the audit trail, so reserve scrapping for goals that
+ are genuinely dead.
+
+When a triage verdict arrives AFTER a fix pass already shipped, append
+it to the same bean body and run the delta as a follow-up pass under
+that bean. Do not open a second bean for the same scope, and do not
+drop the stricter verdicts because a first pass already went green.
+
+For epics, steps 8–9 are replaced by: comprehensive end-to-end tests +
+a `## Proof of Work` section that exercises the goal as a user would.
+See **Closure gates (binding)** below.
+
+### Triage-to-claim (binding)
+
+- A `draft` is **not** in `beans list --ready`. You cannot claim it.
+- To work on it: triage first (research, scope, acceptance criteria,
+  `--blocked-by` on children), then `beans update <id> -s todo`. Only
+  then does it become claimable.
+- Skipping triage to flip a bean straight to `todo` is a process
+  violation — same category as marking `completed` without testing.
+
+### Closure gates (binding)
+
+Two rules. Both apply to every `beans update -s completed` call. A bean
+that fails either rule stays in `in-progress` (or `draft`/`todo` if
+triage never finished); `scrapped` is the only honest exit when the
+work cannot be completed.
+
+#### 1. Task / subtask closure
+
+**A task or subtask cannot be closed without a `## Proof of Work` section
+in its body.** The section is the evidence the verify gate ran, separate
+from `## Summary of Changes` (which records what changed). It must
+contain, at minimum:
+
+- The exact commands run (build, test, lint, smoke check — whatever
+  applies).
+- The observed result for each command (exit status, key signal: counts,
+  pass/fail, output fingerprint).
+- A `Residual:` line — named leftovers, or `none`.
+
+If `## Proof of Work` is missing, the closure is rejected. Append it
+first, then mark completed:
+
+```bash
+beans update myproj-a3x1 --body-append "## Proof of Work
+
+\
+make vet   → 0\n\
+make test  → PASS (unit + integration + e2e, 148s)\n\
+make lint  → 0 issues (452 → 0)
+
+Residual: none."
+
+beans update myproj-a3x1 -s completed
+```
+
+The verify gate that produces the proof is itself binding. "I think it
+works" is not completion. Run the project's tests/build/lint and
+observe the result. If the gate is red, fix the root cause; if you
+cannot verify, leave the bean `in-progress` and say so.
+
+#### 2. Epic closure
+
+**An epic cannot be closed while any of its tasks or subtasks are still
+open, and cannot be closed without comprehensive tests + `## Proof of
+Work`.** Two-part gate:
+
+- **No open children.** Every task and subtask under the epic must be
+  `completed` or `scrapped` before the epic itself can move to
+  `completed`. Check with:
+
+  ```bash
+  # Find any non-terminal child of the epic
+  beans list --json --parent myproj-epic --no-status completed --no-status scrapped
+  # Empty output → safe to close the epic.
+  ```
+
+- **Comprehensive tests + `## Proof of Work`.** The epic's proof is
+  *integration-level*: not just "the unit tests passed", but evidence
+  the goal as a whole was reached end-to-end. Append a `## Proof of
+  Work` section whose commands cover:
+
+  - The full test suite (unit + integration + e2e, where they exist).
+  - Any end-to-end / smoke checks that exercise the goal as a user
+    would (browser, CLI invocation, API roundtrip, etc.).
+  - For build/deploy epics, the live artifact and its reachable URL or
+    version.
+
+A goal that says "ships feature X" without exercising X end-to-end is
+not proven. If a gate cannot be run (no e2e harness exists for this
+project), write that explicitly into `## Proof of Work` under
+`Residual:` with the reason — silent omission is a violation.
+
+Closing an epic with open children, or without comprehensive tests +
+Proof of Work, is a process violation — same category as closing a
+task without `## Proof of Work`.
+
+---
+
+### No Proof of Work, no `completed`
+
+Applies to **every** bean type. The two subsections above define *what
+counts as proof* for tasks/subtasks vs epics; this is the underlying
+rule that no bean escapes.
+
+### Commit Message Convention
+
+Include bean IDs in commit messages:
+
+```
+feat(auth): add OAuth PKCE support
+
+Refs: myproj-a3x1
+```
+
+---
+
+## Anti-Patterns
+
+Process and CLI hygiene — not the closure rules, which live in
+**Closure gates (binding)** above.
+
+| Don't | Do |
+|-------|-----|
+| Skip `beans prime` at session start | Always run `beans prime` first |
+| Use `beans list` without `--json` in scripts | Always use `--json` for machine-readable output |
+| Edit `.beans/` files directly without CLI | Use CLI commands for consistency |
+| Ignore etag for concurrent updates | Use `--if-match` for safe concurrent edits |
+| Use `--body-file` for small changes | Use `--body-replace-old/new` for targeted edits |
+| Forget to update status when starting work | Set `-s in-progress` when claiming a task |
+| Leave beans in `in-progress` when done | Always close with `-s completed` or `-s scrapped` |
+| Open two active epics in one session | Pick one GOAL per session, loop on it until reached |
+| Find a bug and patch it immediately | `beans create -t bug -s draft`, document evidence, triage, then claim |
+| Close work and leave state artifacts behind | Before ending a session: PR title/body match HEAD, every touched bean terminal (`completed`/`scrapped`), epic titles non-empty, no orphan drafts |
+| Set bean statuses without the CLI or leave `todo` epics that already shipped | Session-end sweep: `beans list`, close or scrap every bean the shipped work covers; an epic's status mirrors the work, not the plan |
+| Append `--body-append` PoW before checking the worker's claims | Parent re-runs gates + reads the diff FIRST; PoW records YOUR gate output, not the worker's report |
+| Hand-edit `.beans/*.md` to attach a comment | `beans update --body-append "## LABEL (context): ..."` — no comment subcommand exists; the CLI owns the file |
+| Create with only `-d` and fix the title later | Pass the title positionally at create — the filename slug is permanent, later `--title` edits don't rename it |
+
+---
+
+## References
+
+- **Repo:** https://github.com/hmans/beans
+- **Releases:** https://github.com/hmans/beans/releases
+- **Docs (Context7):** https://context7.com/hmans/beans/llms.txt
+
+---
+
+> **Remember:** Always `beans prime` first. Use `--json` for scripts. Close your beans.
+
+## When to Use
+This skill is applicable when managing project tasks, bugs, or features using the Beans CLI issue tracker.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+### Delegation Patterns
+
+When dispatching to subagents (especially free/small models):
+
+- **Short prompts.** One goal, exact commands, file paths. Inline design loses fidelity.
+- **Externalize plans.** Put >2 design decisions in `plan.md`, reference by path. Don't paste 4KB of design into the task.
+- **One stall = change tactic.** Hangs and text-only returns are signals — do NOT retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
+- **Bypass rtk for diagnostics.** Use raw commands when reading exact errors or lint positions.
+
+## Bean creation for code-fix tasks (ALL-CODE-DELEGATED)
+
+- Use `beans create -t task -s todo --parent <epic> --tag audit-gap
+   -p high --body-file <contract.md> "Title"` with the full contract
+   text in the body file (not inline — avoids escaping issues).
+- Contract must include: research reference, exact acceptance criteria
+   as checkboxes, required skills (full `SKILL.md` paths), and the
+   RE-SHUFFLE law reference (coding-rules intro).
+- After creation, run `python3 scripts/beans-lint.py .` — it validates
+   required skills exist on disk (it matches `~/.agents/skills/<name>/SKILL.md`
+   exactly — list full paths).
+- Commit `.beans/` and push with `--no-verify` (hooks blocked by
+  GIT-SAFETY guard).
+
 ## CLI Commands
 
 Every subcommand and flag is documented in
@@ -217,6 +541,26 @@ sessions.
 For the on-disk file format (YAML frontmatter, filename convention,
 field schema) see [`references/bean-file-format.md`](references/bean-file-format.md).
 The CLI owns that file - never hand-edit `.beans/*.md`.
+
+---
+
+### Write-back comments (audit verdicts, review notes)
+
+There is NO `beans comment` subcommand. Attach a dated note to a bean with
+the CLI:
+
+```bash
+beans update <id> --body-append "## AUDIT (brainer 2026-10-24, scope): verdict + evidence"
+```
+
+A `## LABEL (context)` heading form keeps repo-level beans-lint section
+checks (triage evidence, PoW detection) working. Never hand-edit
+`.beans/*.md` to add comments — the CLI owns the file format and etag.
+
+On create, pass the title as the POSITIONAL argument
+(`beans create "Title" -t task ...`): creating with only `-d`/`--body-file`
+leaves the filename slug at `untitled`, and a later `update --title` fixes
+the displayed title WITHOUT renaming the file — the id slug is permanent.
 
 ---
 
