@@ -188,6 +188,13 @@ counts as passing it — a summarized rule loses the clauses the
 summarizer did not think to include, and the violation class returns
 under green gates (linters do not check comment style).
 
+Planned-work wiring is protected: code whose comments cite an open bean
+(`TODO ... lands later (<bean-id>)`) is another leaf's working surface. A
+repair or style pass may not delete it to silence a linter; the fix is an
+exclusion named in the epic plan or moving the wiring's landing forward,
+never silent deletion. Deleting another leaf's scaffolding re-scopes that
+leaf without its owner.
+
 See [`beans` Workflow Model](../beans/SKILL.md#workflow-model) for the
 full tree semantics.
 
@@ -375,7 +382,12 @@ Every retro finding gets a **structural** fix, never a verbal one:
 - a steering rule that failed → patch the skill that owns it, not the
   session transcript.
 Retro closes only when the problems that already occurred cannot
-recur through the same path.
+recur through the same path. The recurrence test is concrete: replay the
+failure against the earliest point where the new rule would fire. If the
+rule first fires at the review stage (after the full wave shipped), the fix
+is mis-placed: move it earlier, to the canary or the contract, until replay
+shows it catching the failure at file 1. A fix that only works at full-wave
+scale is a detector, not a prevention.
 
 ---
 
