@@ -9,9 +9,9 @@ metadata:
   technologies: go, chromedp, htmx
 ---
 
-## What I do
+## What this skill covers
 
-Browser testing with chromedp for HTMX applications.
+browser testing with chromedp for HTMX applications.
 
 ## When to use me
 

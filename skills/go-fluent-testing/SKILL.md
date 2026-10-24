@@ -1,6 +1,6 @@
 ---
 name: go-fluent-testing
-description: 'Go testing with the fluent Given/When/Then DSL across all test tiers: unit (mocks, blackbox), integration (testcontainers, real deps), and E2E (docker-compose, HTTP). ONE methodology — parts struct, newParts(t), .and() chaining, all state in parts. Canonical rules in references/fluent-testing-guideline.md. Use when writing or reviewing ANY Go test: unit, integration, E2E, or choosing the tier for a new test. Keywords: go test, fluent testing, given when then, parts struct, testcontainers, docker-compose, unit test, integration test, e2e test, testify, mocking, blackbox.'
+description: 'Go testing with the fluent Given/When/Then DSL across all test tiers: unit (mocks, blackbox), integration (testcontainers, real deps), and E2E (docker-compose, HTTP). ONE methodology - parts struct, newParts(t), .and() chaining, all state in parts. Canonical rules in references/fluent-testing-guideline.md. Use when writing or reviewing ANY Go test: unit, integration, E2E, or choosing the tier for a new test. Keywords: go test, fluent testing, given when then, parts struct, testcontainers, docker-compose, unit test, integration test, e2e test, testify, mocking, blackbox.'
 license: MIT
 metadata:
   audience: developers
@@ -9,9 +9,9 @@ metadata:
   technologies: go, testify, testcontainers, docker-compose
 ---
 
-## What I do
+## What this skill covers
 
-All Go testing — unit, integration, and E2E — in one fluent
+all Go testing - unit, integration, and E2E - in one fluent
 Given/When/Then methodology. One DSL, one parts struct, three tiers.
 
 ## MANDATORY Reference
@@ -22,19 +22,19 @@ for the DSL: parts struct, `newParts(t)`, `.and()` at END of line,
 all state in parts, no direct helper calls in Test funcs, t.Run
 promotion, fixtures over inline strings.
 
-## Extremely important — Given/When/Then roles
+## Extremely important - Given/When/Then roles
 
 Hard rules for **every** tier (fluent and classic):
 
-- **given** — set the stage only: initial state, dependencies, data.
+- **given** - set the stage only: initial state, dependencies, data.
   All setup must be explicit. **No asserts.** Not the action under test.
-- **when** — usually a **one-liner**: trigger **only** what this test
+- **when** - usually a **one-liner**: trigger **only** what this test
   exercises. No asserts, no outcome checks, no validation.
-- **then** — **all** asserts, expects, and outcome checks. Nothing else.
+- **then** - **all** asserts, expects, and outcome checks. Nothing else.
 
 Assert helpers (e.g. `videoUploadedSuccessfully`) belong in **then**,
 never chained under `given` or `when`. In **then**, assert the **when**
-action and its outcomes — not setup already established in **given**.
+action and its outcomes - not setup already established in **given**.
 
 ## Choose the tier
 
@@ -47,16 +47,16 @@ action and its outcomes — not setup already established in **given**.
 Decision rule: test business logic through public APIs → **unit**;
 test a component against a real dependency → **integration**; test a
 complete user workflow or API contract across services → **E2E**.
-Browser-checking a frontend needs chromedp — see the `go-browser-tests`
-skill; migrating an existing suite — see the `go-fluent-test-migration`
+Browser-checking a frontend needs chromedp - see the `go-browser-tests`
+skill; migrating an existing suite - see the `go-fluent-test-migration`
 skill.
 
-## Unit rules (blackbox — CRITICAL)
+## Unit rules (blackbox - CRITICAL)
 
 - **Package** `<name>_test` (e.g. `handlers_test`); test ONLY exported
   functions/methods; never touch unexported fields or private funcs.
   This blackbox rule applies to BOTH unit styles below.
-- **No I/O**: no DB, no HTTP, no filesystem — mock every dependency
+- **No I/O**: no DB, no HTTP, no filesystem - mock every dependency
   via constructor injection (define a small interface at the consumer).
 - **Speed** <10ms per test; **naming** `TestComponent_Scenario`.
 - **Never**: `wantErr bool` (split into separate tests), build tags,
@@ -64,14 +64,14 @@ skill.
 
 ## Unit styles: fluent OR classic
 
-Unit tests accept two layouts — pick per repo convention, keep one per
+Unit tests accept two layouts - pick per repo convention, keep one per
 repo, never mix within a package:
 
-**Fluent** — the full DSL below (parts struct, `newParts(t)`,
+**Fluent** - the full DSL below (parts struct, `newParts(t)`,
 `.and()` chaining). Use when the package already has a fluent DSL or
 the tier is integration/E2E anyway.
 
-**Classic** — plain test funcs segmented by `// given` / `// when` /
+**Classic** - plain test funcs segmented by `// given` / `// when` /
 `// then` comments. Default for units: no DSL to build, same
 discipline, less machinery. In FLUENT tests do NOT write these three
 comments: the `given.`/`when.`/`then.` receiver already names the
@@ -80,19 +80,19 @@ confirmed as the standard in a triage where a repo-wide sweep counted
 the markers as debt, not convention). The comments belong to the
 classic style only, where nothing else marks the sections. Test-func
 doc comments follow the same line: describe the non-obvious contract
-under test (an invariant the name does not carry) — never restate the
+under test (an invariant the name does not carry) - never restate the
 given/when/then chain or the assertions below.
 
 Timing and duration are part of a feature's contract: when the code
 under test paces output (`interval_ms`, backoff, debounce), assert the
 pacing (per-frame arrival deltas, total duration bounds) and exercise
 durations that cross server-level limits (`http.Server` WriteTimeout),
-not only millisecond-fast samples — a suite whose every stream finishes
+not only millisecond-fast samples - a suite whose every stream finishes
 in <100ms cannot see truncation at 10s. Also cover the server's own
 documented env var and timeout knobs in at least one long-running e2e.
 Wire-behavior features (streaming formats, delivery headers, retry
 exhaustion) need at least one e2e assertion each, even when unit tests
-already check the pieces — e2e proves the parts wired through the real
+already check the pieces - e2e proves the parts wired through the real
 HTTP server, router wrappers, and middleware.
 
 ```go
@@ -112,8 +112,7 @@ func TestService_CreateUser(t *testing.T) {
 ```
 
 Classic rules: the three comments in order, one each; setup only under
-`// given` (no assertions), calls only under `// when` (prefer one call
-— the action under test; no assertions), assertions only under
+`// given` (no assertions), calls only under `// when` (prefer one call - the action under test; no assertions), assertions only under
 `// then` (every assert lives here); no section skipped; state stays
 local to the test func (the parts-struct rule does not apply here).
 
@@ -134,10 +133,10 @@ func TestService_CreateUser(t *testing.T) {
 
 - `newParts(t)` returns `p, p, p` (given, when, then) over one flat parts
   struct that holds `*testing.T`, `require.New(t)`, and ALL test
-  state — no local state variables in test funcs, no separate state
+  state - no local state variables in test funcs, no separate state
   structs.
 - LARGE DSL SHAPE (settled after five rejected topologies): ONE flat `parts`
-  struct holding ALL state — core (T, require/assert, ledger) PLUS every domain's
+  struct holding ALL state - core (T, require/assert, ledger) PLUS every domain's
   fields. State never splits into per-domain structs; no wrapping composite
   fixture (rejected on sight); no per-domain wrapper structs either (rejected:
   `type <dom>Parts struct { parts }` markers added ceremony, deleted same day).
@@ -154,7 +153,7 @@ func TestService_CreateUser(t *testing.T) {
   `X_parts_test.go`; extra feature files inside a domain share the domain parts
   file. A parts file is a pure method group on `*parts` (no struct, no ctor of
   its own); a parts file with zero methods is deleted.
-- NEVER base-embeds-domains while domains-embed-base — that cycle reads as a
+- NEVER base-embeds-domains while domains-embed-base - that cycle reads as a
   structural error. Recipe: `references/fluent-testing-guideline.md`.
 - Renaming files to exact-stem pairs: `git mv` per file, then RE-CHECK that no
   other file still uses the old stem (`grep -rn old-stem *.go *.md`): renames
@@ -177,13 +176,12 @@ func TestService_CreateUser(t *testing.T) {
 
 ## Forbidden (all tiers)
 
-- NEVER use direct helper function calls inside fluent Test funcs —
-  everything flows through given/when/then methods (classic units:
+- NEVER use direct helper function calls inside fluent Test funcs - everything flows through given/when/then methods (classic units:
   setup under `// given` instead)
 - NEVER assert or validate in `given` or `when` (classic: not under
   `// given` or `// when`; fluent: not on `given.` or `when.` chains)
 - NEVER chain multiple actions in `when` unless the test truly
-  exercises them as one unit — default is a **one-liner**
+  exercises them as one unit - default is a **one-liner**
 - NEVER put asserts outside `then` (classic `// then`; fluent `then.`)
 - NEVER use build tags, `//nolint`, or skip/delete tests
 - NEVER leave containers running or skip cleanup (integration/E2E)

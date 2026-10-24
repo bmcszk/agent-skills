@@ -16,10 +16,10 @@ metadata:
 
 Deep-dive topics are split into focused reference files:
 
-- [Images & Drawing](references/images.md) — covers Image Basics, DrawImageOptions, Drawing Primitives
-- [Sprites & Tilemaps](references/sprites-tilemaps.md) — covers Sprite Animation, Tilemap Rendering
-- [Camera & Text](references/camera-text.md) — covers Camera, Text Rendering
-- [Shaders & Off-Screen](references/shaders.md) — covers Shaders (Kage), Off-Screen Buffers
+- [Images & Drawing](references/images.md) - covers Image Basics, DrawImageOptions, Drawing Primitives
+- [Sprites & Tilemaps](references/sprites-tilemaps.md) - covers Sprite Animation, Tilemap Rendering
+- [Camera & Text](references/camera-text.md) - covers Camera, Text Rendering
+- [Shaders & Off-Screen](references/shaders.md) - covers Shaders (Kage), Off-Screen Buffers
 
 ## Anti-Patterns
 

@@ -90,11 +90,11 @@ curl -sL https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js -o static/j
 
 Specialized topics are split into focused reference files:
 
-- [Templ](references/templ.md) — Type-safe HTML components, composition, loops, conditionals
-- [HTMX](references/htmx.md) — Form partials, patterns, loading states, hx-on events
-- [Tailwind CSS v4](references/tailwind.md) — Standalone CLI, @source directives, build commands
-- [Forms & Validation](references/forms.md) — View models, form templates, CSRF protection
-- [Deployment & Build](references/deployment.md) — justfile, CI, build commands, production config
+- [Templ](references/templ.md) - Type-safe HTML components, composition, loops, conditionals
+- [HTMX](references/htmx.md) - Form partials, patterns, loading states, hx-on events
+- [Tailwind CSS v4](references/tailwind.md) - Standalone CLI, @source directives, build commands
+- [Forms & Validation](references/forms.md) - View models, form templates, CSRF protection
+- [Deployment & Build](references/deployment.md) - justfile, CI, build commands, production config
 
 ## HTTP Handlers
 

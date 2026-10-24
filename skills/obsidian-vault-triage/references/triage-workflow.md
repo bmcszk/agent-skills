@@ -38,9 +38,9 @@ For each note in the batch source:
    When dumping bodies by splitting on `---`, check for block scalars in
    frontmatter (`frontmatter: >-`, `tags: |-`): an importer that wrapped the
    body inside frontmatter makes a naive split read the note as empty or
-   tag-only. A frontmatter block hundreds of lines long is the tell — read
+   tag-only. A frontmatter block hundreds of lines long is the tell - read
    the raw file before writing the verdict. `titlecheck.py` flags these
-   (exit 1) — treat the flag as "raw read required", and after unwrapping a
+   (exit 1) - treat the flag as "raw read required", and after unwrapping a
    wrapped note audit WORD-LEVEL (old vs new, not line-level: the fold
    changes line breaks) that nothing was dropped before committing.
 2. **Classify** into exactly one target:
@@ -56,7 +56,7 @@ For each note in the batch source:
    Split ONLY at top-level topic boundaries: a new item starts at a top-level
    heading of a distinct subject, not at every `##`. Sub-headings like
    `Summary`, `Key Points`, `Products`, `Notes`, `Zakres usług` are SECTIONS
-   of their parent item, not separate notes — they must stay glued to the
+   of their parent item, not separate notes - they must stay glued to the
    parent. An orphan section-note (`2026-08-25 - Summary.md`) is contextless
    garbage and a triage failure; when in doubt, merge. Each remaining topic
    becomes its own atomic note:
@@ -77,13 +77,13 @@ For each note in the batch source:
      appear in the new notes, and every source topic must map to exactly one
      destination (no double-filing, none uncovered). A file count alone
      cannot catch a merged or shredded note. Two blind spots:
-     (a) MOVE+MERGE of near-duplicate notes into one destination — verify
+     (a) MOVE+MERGE of near-duplicate notes into one destination - verify
      each source's content lines appear verbatim in its OWN destination, not
      just anywhere in the corpus, and prove suspected duplicates with a
      word-subset check before folding (keep each generation as a section,
      don't drop "the shorter one").
      (b) original frontmatter tags: preserve them verbatim in the merged
-     note — the audit is mechanical and flags a dropped tag line as lost
+     note - the audit is mechanical and flags a dropped tag line as lost
      content even when a synonymous tag exists.
    - the source daily note, once fully split, is removed in the same commit
      ONLY if that line-level coverage check passes; if in doubt, move the
@@ -96,10 +96,10 @@ For each note in the batch source:
      resolve to the same path (`os.path.abspath(sp) == os.path.abspath(dp)`):
      write-then-remove on the same path deletes the note you just wrote. The
      damage is silent until coverage_audit reports `destination missing` and
-     linkcheck counts climb — recover verbatim from git HEAD, never re-type.
+     linkcheck counts climb - recover verbatim from git HEAD, never re-type.
    - When consolidating a theme that lives in many domains (e.g. all poetry,
      all receipts), build the candidate set from tags AND every MOC/wiki
-     reference, then READ each candidate's body before the verdict — a
+     reference, then READ each candidate's body before the verdict - a
      `poetry` tag can sit on a prose story or a band list, and an article
      ABOUT poetry is not poetry. Keep multi-variant texts as separate notes
      (draft vs full version) unless word-subset proves one contains the
@@ -110,7 +110,7 @@ For each note in the batch source:
      flagged note, sweep its original source folder (recover the batch list
      from the snapshot commit) and re-read every sibling before declaring
      the report fixed. The flagged note names the CLASS of error (a vet
-     clinic in Dev, a nickname list in Dev, car DTC reports in Dev) — read
+     clinic in Dev, a nickname list in Dev, car DTC reports in Dev) - read
      the domain and evict every note sharing the cause, not just the one
      named.
 4. **Fix all links after every move.** Moving files with shell/git does not
@@ -144,7 +144,7 @@ For each note in the batch source:
 
 After commit, diff each moved note against its pre-move version
 (`git show HEAD~1:<old-path>` vs the new file): expect byte-identical, or
-frontmatter-only additions. Any body diff is a problem — this audit is what
+frontmatter-only additions. Any body diff is a problem - this audit is what
 lets the user trust "I only moved them, nothing changed".
 
 ```bash
@@ -171,7 +171,7 @@ recovery), then fix the procedure gap before retrying.
   `_sources/<origin>/`. Deleting them breaks links; remove only after
   re-pointing every link and verifying.
 - Re-index plugin caches (embeddings etc.) after the final batch.
-- Final commit: `triage: complete — <N> notes, <M> splits, audit clean`.
+- Final commit: `triage: complete - <N> notes, <M> splits, audit clean`.
 
 ## Maintenance mode
 

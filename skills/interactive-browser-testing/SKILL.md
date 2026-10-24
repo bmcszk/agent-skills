@@ -1,7 +1,7 @@
 ---
 name: interactive-browser-testing
-description: Interactive real-time browser testing with Playwright and MiniMax via mcpc
-license: MIT
+description: >-
+  Use when driving interactive real-time browser tests with Playwright and MiniMax via mcpc.
 metadata:
   audience: developers
   workflow: interactive-testing
@@ -9,9 +9,9 @@ metadata:
   technologies: mcpc, playwright, minimax, browser-automation
 ---
 
-## What I do
+## What this skill covers
 
-Interactive real-time browser testing using Playwright and MiniMax via mcpc. No curl, no direct API calls - all testing through the browser.
+interactive real-time browser testing using Playwright and MiniMax via mcpc. No curl, no direct API calls - all testing through the browser.
 
 ## Setup
 

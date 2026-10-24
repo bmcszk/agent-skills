@@ -2,7 +2,7 @@
 
 Full `.github/workflows/scorecard.yml`. Pin both actions to peeled commit
 SHAs (resolve the current tag with `git ls-remote
-https://github.com/<owner>/<repo> refs/tags/vX.Y.Z^{}` — `^{}` gives the
+https://github.com/<owner>/<repo> refs/tags/vX.Y.Z^{}` - `^{}` gives the
 peeled commit, not the annotated tag object).
 
 ```yaml
@@ -56,7 +56,7 @@ jobs:
   it the run is local-only and the README badge never moves.
 - Publishing requires `id-token: write` (keyless OIDC). Public repos have
   this by default; private repos cannot publish at all.
-- `persist-credentials: false` on checkout — the Scorecard tool itself
+- `persist-credentials: false` on checkout - the Scorecard tool itself
   flags leaked tokens and Dangerous-Workflow patterns; do not ship the
   workflow with the default credential persistence.
 - Top-level `permissions: {}` + per-job grants is the Token-Permissions
@@ -70,5 +70,5 @@ jobs:
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/<owner>/<repo>/badge)](https://api.scorecard.dev/projects/github.com/<owner>/<repo>)
 ```
 
-Badge renders `unknown` until the first published run completes — fix the
+Badge renders `unknown` until the first published run completes - fix the
 workflow, not the badge URL.

@@ -9,9 +9,9 @@ metadata:
   technologies: go, clean-code, concurrency, generics
 ---
 
-## What I do
+## What this skill covers
 
-I enforce Go development best practices including:
+enforces Go development best practices:
 - Inline Interface Definition
 - Error handling standards
 - Concurrency patterns with errgroup
@@ -41,12 +41,12 @@ Use this skill when:
 
 Deep-dive topics are split into focused reference files:
 
-- [Interfaces](references/interfaces.md) — Inline interface definition, small focused interfaces, functional options
-- [Error Handling](references/errors.md) — Golden rules, wrapping, sentinel errors, multi-error handling
-- [Concurrency](references/concurrency.md) — errgroup, worker pools, channel patterns
-- [Generics](references/generics.md) — Type parameters, constraints, data structures, decision framework
-- [Testing](references/testing.md) — Table-driven tests, mocks, benchmarks, fuzzing
-- [Performance & Footguns](references/performance.md) — Pre-allocation, sync primitives, common pitfalls
+- [Interfaces](references/interfaces.md) - Inline interface definition, small focused interfaces, functional options
+- [Error Handling](references/errors.md) - Golden rules, wrapping, sentinel errors, multi-error handling
+- [Concurrency](references/concurrency.md) - errgroup, worker pools, channel patterns
+- [Generics](references/generics.md) - Type parameters, constraints, data structures, decision framework
+- [Testing](references/testing.md) - Table-driven tests, mocks, benchmarks, fuzzing
+- [Performance & Footguns](references/performance.md) - Pre-allocation, sync primitives, common pitfalls
 
 # Quick Reference Tables
 
@@ -80,9 +80,9 @@ Deep-dive topics are split into focused reference files:
 
 
 ## Go embedding
-Embedding promotes the embedded struct's members onto the outer type. NEVER re-bind the host inside a method (`p := c.parts` is always wrong): call promoted members on the receiver directly (`c.require`, `c.parsedFile`, `c.aClient()`). A hop is justified ONLY when passing the host as a value. Never build a bidirectional cycle (base embeds sub-structs while sub-structs embed base) — shape promotion one-way. Full rules: references/performance.md §Go embedding.
+Embedding promotes the embedded struct's members onto the outer type. NEVER re-bind the host inside a method (`p := c.parts` is always wrong): call promoted members on the receiver directly (`c.require`, `c.parsedFile`, `c.aClient()`). A hop is justified ONLY when passing the host as a value. Never build a bidirectional cycle (base embeds sub-structs while sub-structs embed base) - shape promotion one-way. Full rules: references/performance.md §Go embedding.
 
-No `var _ = []any{ Type{} }` compile-assert blocks (or `var _` unused-import silencers) — dead noise; delete and let `unused` name genuinely dead symbols. Full rule: references/performance.md §No lint-appeasement constructs.
+No `var _ = []any{ Type{} }` compile-assert blocks (or `var _` unused-import silencers) - dead noise; delete and let `unused` name genuinely dead symbols. Full rule: references/performance.md §No lint-appeasement constructs.
 
 ## Design acceptance is a gate
 

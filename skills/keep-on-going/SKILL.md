@@ -1,6 +1,6 @@
 ---
 name: keep-on-going
-description: 'Session-discipline skill for finishing work, built on top of the beans CLI. One active epic per session, draft-first triage, ~10-minute subtasks delegated to subagents, comprehensive tests + Proof of Work before any bean closes. Use when you are taking on a goal that spans multiple beans, when an epic risks drifting across sessions, when subagents need a delegatable tree to work against, or when you want completion to be provable rather than confident. Keywords: finish, completion discipline, epic task subtask, draft triage, proof of work, beans loop, session goal, agenda, ledger.'
+description: 'Session-discipline skill for finishing work, built on top of the beans CLI. One active epic per session, draft-first triage, ~10-minute subtasks delegated to subagents, tests + Proof of Work before any bean closes. Use when you are taking on a goal that spans multiple beans, when an epic risks drifting across sessions, when subagents need a delegatable tree to work against, or when you want completion to be provable rather than confident. Keywords: finish, completion discipline, epic task subtask, draft triage, proof of work, beans loop, session goal, agenda, ledger.'
 license: MIT
 metadata:
   audience: agents
@@ -11,7 +11,7 @@ metadata:
 
 # Keep On Going
 
-Finish work, not narrate it. The discipline is completion discipline — gates, evidence, depth tree, four-pass leaf work — expressed as a **beans session loop**.
+Finish work, not narrate it. The discipline is completion discipline - gates, evidence, depth tree, four-pass leaf work - expressed as a **beans session loop**.
 
 `keep-on-going` is the **session wrapper** around [`beans`](../beans/SKILL.md). Beans is the storage + CLI; keep-on-going is the rule that says *one epic, looped, until reached*. When `beans prime` says "here's the project state," `keep-on-going` says "now drive it to completion, properly."
 
@@ -19,37 +19,37 @@ Finish work, not narrate it. The discipline is completion discipline — gates, 
 
 HARD sequence for ANY multi-step request. Implementation NEVER precedes the full tree:
 
-1. **PLAN first** — before any implementation, delegate the WHOLE-task plan
+1. **PLAN first** - before any implementation, delegate the WHOLE-task plan
    to the agent's best available research subagent (any reasoning-capable
    subagent mechanism, read-only). Output: goal, epic body, task list, 10-min subtask split,
    deps/blockers, per-leaf skills. Present the tree to the user when the
    request is ambiguous; proceed when it is not. The plan agent re-verifies
    state against the live tree (`ls`, `wc -l`, `grep`) instead of trusting
-   the orchestrator's session brief — session memory runs commits behind,
+   the orchestrator's session brief - session memory runs commits behind,
    and a plan built on stale filenames wastes the first wave.
-2. **BEANS LEDGER via CLI only** — create epic (`-t epic`, NOT feature, when
+2. **BEANS LEDGER via CLI only** - create epic (`-t epic`, NOT feature, when
    children are tasks) + tasks + subtasks with `beans create` drafts. NEVER
-   hand-write `.beans/*.md` — the CLI owns the format. Fill bodies via
+   hand-write `.beans/*.md` - the CLI owns the format. Fill bodies via
    `beans update --body-file` (composed in /tmp) or `--body-append` /
    `--body-replace-*`. Every body carries the beans-skill sections: research
    (root cause, local+online sources), scope, acceptance criteria,
    `## Skills for coder`.
-3. **TRIAGE DELEGATED** — triage is done by a research subagent
+3. **TRIAGE DELEGATED** - triage is done by a research subagent
    (read-only), not by the orchestrator skimming inline. Promote
    draft→todo only when the triaged body is complete (beans skill triage
    contract). Wire `--blocked-by` + `--parent` at creation time.
-4. **THEN implement** — claim `todo` leaves in wave order (orchestrated
+4. **THEN implement** - claim `todo` leaves in wave order (orchestrated
    mode for multi-leaf: PLAN table + per-leaf gates), four passes, PoW, close,
-   `beans list --ready` heartbeat after every PR — claim next or state the
+   `beans list --ready` heartbeat after every PR - claim next or state the
    stop condition. Never end a turn with a ready child unclaimed silently.
    When the user sets a quantitative target (file count, line cap, prefix
    removal), encode the numbers as epic acceptance criteria and close with a
-   numeric audit (`ls <prefix>_*`, `wc -l`, test inventory) — partial progress
+   numeric audit (`ls <prefix>_*`, `wc -l`, test inventory) - partial progress
    reads as not-done to the user, and "looks consolidated" is not a
    checkable criterion.
    Mid-epic user pushback ("the job is not close to finished") = RE-PLAN,
    not defend: re-run the planning agent against the live tree with the
-   original requirements restated VERBATIM — paste the user's requirement text
+   original requirements restated VERBATIM - paste the user's requirement text
    into the plan context, never your paraphrase of an earlier round; each
    re-approximation re-misses the same clause, and the next rejection cites
    the same words back. Diff the plan's finding against what shipped,
@@ -59,7 +59,7 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    "temporarily in the shared file" ships as permanent and reads as
    misplacement at review.
    A verification ask ("check we lost nothing") gets its own research-agent
-   pass plus an orchestrator-run script audit — delegated claims of
+   pass plus an orchestrator-run script audit - delegated claims of
    correctness are hypotheses, and a no-loss/parity verdict is only as
    strong as the extractor that produced it.
    When the user rejects a structural design choice (a DSL shape, a file
@@ -88,7 +88,7 @@ The failure class this section forbids: implementing first and creating the
 ledger mid-flight, hand-editing bean files, inline triage, ready children
 left unclaimed. Notice one mid-task → stop implementing, rebuild the tree.
 
-Use this skill when the cost of quiet incompleteness justifies the ledger — a feature, a refactor, a debugging expedition, a deployment. Don't use it for one-line fixes or factual replies; YAGNI applies to ledgers too.
+Use this skill when the cost of quiet incompleteness justifies the ledger - a feature, a refactor, a debugging expedition, a deployment. Don't use it for one-line fixes or factual replies; YAGNI applies to ledgers too.
 
 ---
 
@@ -149,12 +149,12 @@ proof gate. Steps 3, 6 are judgment work.
 - **Claim:** one bean, one agent, one time. Don't co-claim.
 - **Proof:** `## Proof of Work` is required **before** `-s completed`
   is legal. It must list the commands run, the observed result, and
-  a `Residual:` line. No proof, no close. This is binding — same
+  a `Residual:` line. No proof, no close. This is binding - same
   category as marking a task done without testing.
 - **Close:** for a task/subtask, after `-s completed`. For an
   epic, only when `beans list --json --parent <epic> --no-status
   completed --no-status scrapped` returns empty **and** the epic
-  has its own `## Proof of Work` covering comprehensive end-to-end
+  has its own `## Proof of Work` covering end-to-end
   tests of the goal (not just unit tests).
 
 For the full closure gate spec, see
@@ -172,7 +172,7 @@ For the full closure gate spec, see
 
 A subtask body has **at most 3 acceptance criteria**. If it needs
 more, it's a task, not a subtask. The whole tree starts as
-`draft` — triage waves move epic → tasks → subtasks from `draft`
+`draft` - triage waves move epic → tasks → subtasks from `draft`
 to `todo` as research completes.
 
 Coding subtasks must also include **`## Skills for coder`**: skill
@@ -184,7 +184,7 @@ knows what its kickoff context carries, so a leaf whose `## Skills for
 coder` names `coding-rules` must ship that path (plus "read fully
 before editing") into the worker's contract, and the skill's binding
 rules go in as checkable gate items. Paraphrasing a skill into task
-counts as passing it — a summarized rule loses the clauses the
+counts as passing it - a summarized rule loses the clauses the
 summarizer did not think to include, and the violation class returns
 under green gates (linters do not check comment style).
 
@@ -220,8 +220,8 @@ shallow diff and a confident bug.
 
 Finish a leaf only after all four passes are clean and the gate is
 met with evidence. A visibly impossible gate ends execution honestly
-but leaves the leaf in handoff state — `beans update <id> -s scrapped`
-with `## Reasons for Scrapping` — never `completed`.
+but leaves the leaf in handoff state - `beans update <id> -s scrapped`
+with `## Reasons for Scrapping` - never `completed`.
 
 For the per-leaf recipe, see [`references/leaf.md`](references/leaf.md).
 
@@ -307,7 +307,7 @@ Stop looping on the epic when **any** of these are true:
 
 - **Goal reached.** Every acceptance criterion in the epic body is
   checked. Every child is `completed` or `scrapped`. The epic's
-  `## Proof of Work` covers comprehensive end-to-end tests. Close the
+  `## Proof of Work` covers end-to-end tests. Close the
   epic with `-s completed`.
 - **Goal unreachable.** A `draft` surfaces a question no amount of
   research can answer. `beans update <epic> -s scrapped` with the
@@ -318,7 +318,7 @@ Stop looping on the epic when **any** of these are true:
   the user whether to continue.
 
 A session that loops past these stop conditions is an
-`in-progress` epic with no children left to do — that's a stuck
+`in-progress` epic with no children left to do - that's a stuck
 session. Diagnose, don't pretend.
 
 ---
@@ -394,11 +394,11 @@ an abstraction.
 
 ## References
 
-- [`beans`](../beans/SKILL.md) — the CLI + Workflow Model this skill
+- [`beans`](../beans/SKILL.md) - the CLI + Workflow Model this skill
   wraps.
-- [`references/workflow.md`](references/workflow.md) — step-by-step
+- [`references/workflow.md`](references/workflow.md) - step-by-step
   for one epic session.
-- [`references/leaf.md`](references/leaf.md) — the four-pass leaf
+- [`references/leaf.md`](references/leaf.md) - the four-pass leaf
   recipe.
-- [`references/approvals.md`](references/approvals.md) — the runnable
+- [`references/approvals.md`](references/approvals.md) - the runnable
   gate approval format.

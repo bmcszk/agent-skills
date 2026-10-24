@@ -39,13 +39,13 @@ the `go` directive rides in a PR titled "minor-and-patch" and a green matrix
 proves nothing when GOTOOLCHAIN=auto silently downloads the newer toolchain
 (see SKILL.md pitfalls). For compiled/production-critical ecosystems prefer
 ungrouped (or group patch-only) so each PR is bisectable. Grouping is fine
-for `github-actions` — actions rarely change toolchain floors, and
+for `github-actions` - actions rarely change toolchain floors, and
 Dependabot keeps the peeled-SHA pins fresh, which Pinned-Dependencies
 scores.
 
 ## Extras
 
-- `open-pull-requests-limit: 5` (default 5) — raise only if you actually
+- `open-pull-requests-limit: 5` (default 5) - raise only if you actually
   merge weekly.
 - `reviewers:` / `assignees:` accept teams as `org/team-slug`.
 - `registries:` block for private registries; credentials live in repo
@@ -59,7 +59,7 @@ Dependabot PR per sub-action ref. When the workflow's steps must run at a
 UNIFORM version (CodeQL writes config at the init version and rejects any
 step running a different one: "Loaded a configuration file for version X,
 but running version Y"), no individual PR can EVER pass CI while the others
-are pending — mixed refs are fatal on any merge order.
+are pending - mixed refs are fatal on any merge order.
 
 Recipe when that happens:
 1. Confirm the failure signature is version-skew (grep `--log-failed` for
@@ -77,7 +77,7 @@ Recipe when that happens:
 
 An OAuth token without the `workflow` scope CANNOT: edit workflow files on a
 branch, `gh pr update-branch` a PR that touches `.github/workflows`, or
-merge such a PR (even with `--admin` — "requires the workflow scope").
+merge such a PR (even with `--admin` - "requires the workflow scope").
 CAN: post `@dependabot rebase` / `@dependabot recreate` comments (Dependabot
 itself pushes the rebased branch), comment, close, create its own branches.
 So for workflow PRs: drive branches via `@dependabot` commands, ship

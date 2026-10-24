@@ -11,13 +11,13 @@ Settings → Branches → Add branch protection rule
 - Require a pull request before merging (any settings; approvals count
   only if >0 reviewers)
 - Require status checks to pass: pick the test workflow's job name
-  (must exist at least once before it can be selected — push once first)
+  (must exist at least once before it can be selected - push once first)
 - Optional: require signed commits, require linear history
-- Do NOT tick "Restrict who can push" unless intentional — it locks out
+- Do NOT tick "Restrict who can push" unless intentional - it locks out
   admins without a bypass role
 
 Owner cannot be fully blocked by this (enforce_admins off = admins bypass;
-GitHub has no tag-level CI gate — see SKILL.md pitfalls).
+GitHub has no tag-level CI gate - see SKILL.md pitfalls).
 
 ## 2. Secret scanning + push protection
 
