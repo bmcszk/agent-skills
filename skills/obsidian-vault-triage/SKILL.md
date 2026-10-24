@@ -1,7 +1,7 @@
 ---
 name: obsidian-vault-triage
-description: Triage, reorganize, and maintain an Obsidian vault. Lossless migration, note splitting, tagging, MOC navigation.
-license: MIT
+description: >-
+  Use when triaging, reorganizing, or maintaining an Obsidian vault: lossless migration, note splitting, tagging, MOC navigation.
 metadata:
   category: knowledge-management
 ---
@@ -29,7 +29,7 @@ Keep), splitting daily notes into atomic notes, or tagging back-catalog notes.
 ```
 Home.md              # root MOC: links to all domain MOCs, always current
 00 Inbox/            # unprocessed captures awaiting triage
-10 <Domain>/…        # numbered domain folders (see references/structure.md)
+10 <Domain>/…        # numbered domain folders (see references/triage-workflow.md)
 90 Archive/          # stale/junk, kept, never deleted
 _sources/<origin>/   # import resources (e.g. Joplin _resources) stay here
 ```
@@ -53,15 +53,15 @@ the first batch.
 
 Gate scripts (run from `scripts/`, do not reinvent per session):
 
-- `linkcheck.py <vault>` — every `[[wikilink]]` and relative `](` target
+- `linkcheck.py <vault>` - every `[[wikilink]]` and relative `](` target
   resolves. Zero broken links before a batch commit; classify each reported
   break as real or false positive (code spans, original import text) before
   touching anything.
-- `titlecheck.py <vault>` — no note carries a bare section-word title
+- `titlecheck.py <vault>` - no note carries a bare section-word title
   (`Summary`, `Key Points`, `Produkty`, …). Sections stay glued to their
   parent note; an orphan section-note is a triage failure. Exit 1 = fix the
   split.
-- `coverage_audit.py <vault> <mapping.json>` — run BEFORE removing a split
+- `coverage_audit.py <vault> <mapping.json>` - run BEFORE removing a split
   source. Mapping JSON: `{"<source-relpath>": ["<dest-relpath>", …]}`. Every
   non-trivial source line must exist in the destination corpus and every
   source maps to exactly one destination. Exit 1 = lost content, stop.
@@ -69,7 +69,7 @@ Gate scripts (run from `scripts/`, do not reinvent per session):
 A vault git repo should wire `titlecheck.py` + the staged-file linkcheck as a
 `pre-commit` hook so the gates run without agent discipline. Know what the
 gates CANNOT catch: wrong-domain classification (`Gabinet Weterynaryjny` in
-`10 Dev/`) passes all three gates — a structurally perfect vault can still be
+`10 Dev/`) passes all three gates - a structurally perfect vault can still be
 misfiled. Classification is guarded only by the read-per-note rule; gates
 guard structure and loss. A user-flagged misfile is a CLASS signal: read the
 whole source domain and refile every sibling sharing the cause (see the
@@ -77,21 +77,21 @@ workflow's "flagged misfiles travel in packs").
 
 Keep gate docs honest: when a documented script mode (e.g. coverage_audit
 reading a moved source from git HEAD) is not actually implemented, either
-ship it or fix the doc — a gate that exits 1 on its documented happy path
+ship it or fix the doc - a gate that exits 1 on its documented happy path
 gets worked around ad-hoc, and the workaround is where mistakes happen.
 
 Import-era frontmatter can wrap a note's ENTIRE body in a block scalar
-(`frontmatter: >-` / `tags: |-`). titlecheck flags these — the body is
+(`frontmatter: >-` / `tags: |-`). titlecheck flags these - the body is
 invisible to a naive `---` split, so such a note reads as empty and gets
 filed as an "empty stub". Never verdict a flagged note without a raw file
 read, and when unwrapping, audit word-level (old vs new) before committing.
 After a move batch, run the post-move verification from the workflow's loss
-audit (byte-diff each moved note vs `HEAD~1:<old-path>`) — "I only moved
+audit (byte-diff each moved note vs `HEAD~1:<old-path>`) - "I only moved
 them" is a claim to prove, not assert.
 
 Watch out for a Python gotcha in move loops: dumping bodies by splitting on
 a regex `^---$` mis-parses notes whose BODY contains a literal `---` fence
-(a separator line inside the text) — the split reads only the last chunk as
+(a separator line inside the text) - the split reads only the last chunk as
 the body. For verdict-critical reads use the raw file (or a split that
 requires the frontmatter to be the FIRST block).
 

@@ -13,8 +13,8 @@ metadata:
 
 Provides two complementary capabilities:
 
-1. **Web search** — Privacy-focused meta-search via SearXNG (aggregates Google, Bing, DuckDuckGo, etc.)
-2. **URL content reading** — Fetch and extract content from any URL with heading/paragraph/section filtering
+1. **Web search** - Privacy-focused meta-search via SearXNG (aggregates Google, Bing, DuckDuckGo, etc.)
+2. **URL content reading** - Fetch and extract content from any URL with heading/paragraph/section filtering
 
 ## Setup
 

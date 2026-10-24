@@ -118,7 +118,7 @@ mcpc @gemini tools-call ask-gemini prompt:="@file.go review for bugs, performanc
 ## Best practices
 
 - Use `@filename` syntax to give Gemini file context
-- Use the faster/cheaper flash-tier model for simple queries; the pro-tier flagship for complex analysis (model snapshot names change — query the CLI, don't hardcode)
+- Use the faster/cheaper flash-tier model for simple queries; the pro-tier flagship for complex analysis (model snapshot names change - query the CLI, don't hardcode)
 - Enable `sandbox:=true` when testing potentially risky code
 - For brainstorming, let `methodology:="auto"` unless you need a specific framework
 - Use `changeMode:=true` when you want structured, applicable edit suggestions

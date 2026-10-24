@@ -282,7 +282,7 @@ pan.Play()
 
 - **Sound effects:** WAV (short) or OGG (long)
 - **Background music:** OGG (for looping) or XM (for retro)
-- **Avoid MP3 for looping BGM** — encoder padding causes audible gaps
+- **Avoid MP3 for looping BGM** - encoder padding causes audible gaps
 
 ---
 
@@ -335,14 +335,14 @@ player.SetPosition(timeOffset)
 
 ## Audio Guidelines
 
-1. **Load all audio at startup** — never load during gameplay
-2. **Use `NewPlayerFromBytes` for SFX** — allows simultaneous playback
-3. **Use `InfiniteLoop` for BGM** — seamless looping
-4. **Prefer OGG over MP3 for music** — no gap issues on loop
-5. **Keep sample rate consistent** — all files at 44100 Hz
-6. **Cap concurrent sounds** — too many active players degrades performance
-7. **Clean up finished players** — call `Close()` or let GC handle it
-8. **Test on target platforms** — audio behavior differs on mobile/WASM
+1. **Load all audio at startup** - never load during gameplay
+2. **Use `NewPlayerFromBytes` for SFX** - allows simultaneous playback
+3. **Use `InfiniteLoop` for BGM** - seamless looping
+4. **Prefer OGG over MP3 for music** - no gap issues on loop
+5. **Keep sample rate consistent** - all files at 44100 Hz
+6. **Cap concurrent sounds** - too many active players degrades performance
+7. **Clean up finished players** - call `Close()` or let GC handle it
+8. **Test on target platforms** - audio behavior differs on mobile/WASM
 
 ---
 

@@ -4,17 +4,17 @@ This document provides comprehensive standards for writing fluent E2E tests usin
 
 ## Given/When/Then phase roles (Extremely important)
 
-Hard rules — fluent **and** classic:
+Hard rules - fluent **and** classic:
 
 | Phase | Role | Allowed | Forbidden |
 |---|---|---|---|
-| **given** | Set the stage | Configure state, start deps, seed data — setup **explicit** | Asserts, expects, outcome checks; the action under test |
+| **given** | Set the stage | Configure state, start deps, seed data - setup **explicit** | Asserts, expects, outcome checks; the action under test |
 | **when** | Exercise | Usually **one** fluent call: trigger only what this test covers | Asserts, validation, extra setup unrelated to the trigger |
 | **then** | Verify | **All** asserts, expects, outcome checks | Actions under test, new setup |
 
 Naming a method `…Successfully()` does not change the rule: if it asserts,
 it is chained only under `then.`, never `given.` or `when.`. In `then.`,
-assert the **when** action and its outcomes — not setup already done in
+assert the **when** action and its outcomes - not setup already done in
 `given.` (e.g. do not call `videoUploadedSuccessfully()` after upload
 lives only under `given.`).
 
@@ -830,7 +830,7 @@ func (p *parts) sendMessageFromTemplate(templateFile string, data map[string]any
 ```
 
 ### 6. t.Run Promotion Rule
-**Prefer separate top-level Test funcs over t.Run subtests.** Only use t.Run when a subtest genuinely needs state isolation (fresh parts, fresh server, fresh env). t.Run that exists only to share a "name with a twist" is an anti-pattern — split into separate Test funcs with descriptive names.
+**Prefer separate top-level Test funcs over t.Run subtests.** Only use t.Run when a subtest genuinely needs state isolation (fresh parts, fresh server, fresh env). t.Run that exists only to share a "name with a twist" is an anti-pattern - split into separate Test funcs with descriptive names.
 
 ```go
 // ❌ FORBIDDEN: t.Run wrapper only to share a name
@@ -860,7 +860,7 @@ func TestCookieJarHandling_NoCookieJarDirective(t *testing.T) {
 **Rationale:**
 - Simpler test func bodies; complexity stays in the DSL
 - `go test -run TestCookieJarHandling_NoCookieJarDirective` works for targeted runs
-- No wrapper Test funcs — every test is directly runnable
+- No wrapper Test funcs - every test is directly runnable
 - Junit reports one clean entry per test
 
 ### 7. Fixtures Over Inline Strings
@@ -914,7 +914,7 @@ then.
 - Captured requests can be asserted multiple ways without re-serving
 
 ### 9. Faker/Rule Data Structures Belong in DSL
-**When a test needs a list of validation rules (key, pattern, fieldCount, containsCheck), expose ONE DSL method taking a small struct slice — not per-fixture helper functions that build the slice from a separate file.**
+**When a test needs a list of validation rules (key, pattern, fieldCount, containsCheck), expose ONE DSL method taking a small struct slice - not per-fixture helper functions that build the slice from a separate file.**
 
 ```go
 // ❌ FORBIDDEN: per-fixture rule builders in the test file
@@ -1413,7 +1413,7 @@ just check
 - `GITHUB_ACTIONS` - Automatically set in GitHub Actions
 
 ### 11. Minimal Comments Rule
-**Test source carries near-zero comments. The fluent chain IS the documentation.** Delete: `// PRD-COMMENT:` / requirement-tracker blocks (that context belongs in the PR description), `// Given / // When / // Then` section headers (the chain shows it), `// X was captured before...` / `// suppress unused-var` meta-comments, and anything that paraphrases the next line. Keep only: TODO/FIXME with an issue reference, one-line godoc on exported symbols, `// nolint:` directives. If a test needs a paragraph to be understandable, the fix is better names or a DSL method — not a comment.
+**Test source carries near-zero comments. The fluent chain IS the documentation.** Delete: `// PRD-COMMENT:` / requirement-tracker blocks (that context belongs in the PR description), `// Given / // When / // Then` section headers (the chain shows it), `// X was captured before...` / `// suppress unused-var` meta-comments, and anything that paraphrases the next line. Keep only: TODO/FIXME with an issue reference, one-line godoc on exported symbols, `// nolint:` directives. If a test needs a paragraph to be understandable, the fix is better names or a DSL method - not a comment.
 
 ```go
 // ❌ FORBIDDEN: comment-driven test
@@ -1446,19 +1446,19 @@ func TestExecuteFile_SingleRequest(t *testing.T) {
 ```
 
 ### 12. YAGNI Pass Before Every PR (smallest-change discipline)
-**Before opening a PR, delete everything that has no caller.** Migration/refactor work breeds orphaned helpers — grep and remove: DSL methods with zero call sites, struct types whose table tests were split, per-fixture builder functions, unused fixture files, dead `_ = x` lines. A helper "we might need later" is a liability; re-adding it later costs less than maintaining it now. Prove the pass: grep each deleted symbol returns 0 hits, then run the full gate (build/vet/lint/tests).
+**Before opening a PR, delete everything that has no caller.** Migration/refactor work breeds orphaned helpers - grep and remove: DSL methods with zero call sites, struct types whose table tests were split, per-fixture builder functions, unused fixture files, dead `_ = x` lines. A helper "we might need later" is a liability; re-adding it later costs less than maintaining it now. Prove the pass: grep each deleted symbol returns 0 hits, then run the full gate (build/vet/lint/tests).
 
-**Never appease the `unused` linter with reference lists (PR#35 round 3).** `var _ = []any{ (*parts).foo, ... }` blocks in DSL files keep dead methods lint-clean forever — 5 dead DSL methods survived 3 review rounds behind them. Delete the blocks and let `unused` name the dead methods, then delete them. Same for `var _ = time.Time{}`-style "silence unused import" lines: fix the import, not the symptom.
+**Never appease the `unused` linter with reference lists (PR#35 round 3).** `var _ = []any{ (*parts).foo, ... }` blocks in DSL files keep dead methods lint-clean forever - 5 dead DSL methods survived 3 review rounds behind them. Delete the blocks and let `unused` name the dead methods, then delete them. Same for `var _ = time.Time{}`-style "silence unused import" lines: fix the import, not the symptom.
 
-**DSL domain split when one file bloats.** Settled shape after rejected alternatives: ONE flat `parts` struct holds ALL state: core (T, assertions, client, ledger) plus every domain's fields flattened in. every fluent method is `func (p *parts) … *parts`, declared in a `<domain>_parts_test.go` file (pure method group, no struct/ctor of its own). Chains never break because every method returns the same `*parts`, so call-site churn is zero. Do NOT route methods through a composite fixture wrapping base + per-domain state structs (reads as a pointless indirection layer; rejected on sight), and do NOT give each domain its own struct type — per-domain-typed returns break mixed-domain chains, and Go has no self-type to fix that. Never let the base embed domains while domains embed the base: that cycle reads as a structural error, not a pattern. Builders live where their state lives (used by 2+ domains → core file; one domain → its file); one package; behavior unchanged.
+**DSL domain split when one file bloats.** Settled shape after rejected alternatives: ONE flat `parts` struct holds ALL state: core (T, assertions, client, ledger) plus every domain's fields flattened in. every fluent method is `func (p *parts) … *parts`, declared in a `<domain>_parts_test.go` file (pure method group, no struct/ctor of its own). Chains never break because every method returns the same `*parts`, so call-site churn is zero. Do NOT route methods through a composite fixture wrapping base + per-domain state structs (reads as a pointless indirection layer; rejected on sight), and do NOT give each domain its own struct type - per-domain-typed returns break mixed-domain chains, and Go has no self-type to fix that. Never let the base embed domains while domains embed the base: that cycle reads as a structural error, not a pattern. Builders live where their state lives (used by 2+ domains → core file; one domain → its file); one package; behavior unchanged.
 
-**ONE ctor: `newParts(t)` in the base file.** It constructs the whole parts literal and returns `p, p, p`, and every Test func calls it. No per-domain ctors (deleted as ceremony), no partial/delegated construction, or core state stays nil. Other domains' builders are callable from any test file because everything is the same `*parts`. Pair rule: each domain primary is an exact-stem pair `X_test.go` ↔ `X_parts_test.go`; additional feature files inside a domain share the domain parts file. A parts file is a pure method group on `*parts` — a parts file with zero methods is deleted.
+**ONE ctor: `newParts(t)` in the base file.** It constructs the whole parts literal and returns `p, p, p`, and every Test func calls it. No per-domain ctors (deleted as ceremony), no partial/delegated construction, or core state stays nil. Other domains' builders are callable from any test file because everything is the same `*parts`. Pair rule: each domain primary is an exact-stem pair `X_test.go` ↔ `X_parts_test.go`; additional feature files inside a domain share the domain parts file. A parts file is a pure method group on `*parts` - a parts file with zero methods is deleted.
 
 **One domain per test FILE.** A `client_<feature>_test.go` pairs with the domain its tests assert in; audit violations by counting which parts-file builders each test file calls, then split feature-homogeneous groups into new files rather than swapping ctors per test. Cross-domain setup builders (server boot, file fixtures) used by many files stay base; assertion builders stay in their domain.
 
-**Migration-history godoc is deleted, not shrunk (PR#35 rounds 2-3).** "The legacy tests never exercised this path... gate-mandated count..." belongs in the PR description / bean PoW, never in code. This includes 1-line shrunk survivors and mid-sentence `//` fragments above Test funcs. Delegate contracts for review rounds must state: comments max 1 line across the ENTIRE diff (DSL files included — workers otherwise read "minimal comments" as scoping only Test funcs), only non-obvious WHY, no `// --- moved from X ---` banners. Census: `awk '/^\/\//{c++;next} {if(c>2) print FILENAME": "c" before "NR; c=0}' *_test.go`.
+**Migration-history godoc is deleted, not shrunk (PR#35 rounds 2-3).** "The legacy tests never exercised this path... gate-mandated count..." belongs in the PR description / bean PoW, never in code. This includes 1-line shrunk survivors and mid-sentence `//` fragments above Test funcs. Delegate contracts for review rounds must state: comments max 1 line across the ENTIRE diff (DSL files included - workers otherwise read "minimal comments" as scoping only Test funcs), only non-obvious WHY, no `// --- moved from X ---` banners. Census: `awk '/^\/\//{c++;next} {if(c>2) print FILENAME": "c" before "NR; c=0}' *_test.go`.
 
-**Repeated mock-infrastructure in Test bodies = missing DSL given (PR#35 rounds 1-3).** The same handler shape appearing 3+ times (GraphQL JSON encoding, canned routes, echo) becomes an `a*Server` method. Likewise multi-line inline content strings (external-file JSON payloads) become committed fixtures under `test/data/<domain>/` with a `*Fixture` DSL variant — single-line payloads may stay inline. Keep fixture layout canonical: one `test/data/` tree; dissolve stray dirs (test/fixtures/) and grep `*.go *.http *.md` for stale paths in the same batch.
+**Repeated mock-infrastructure in Test bodies = missing DSL given (PR#35 rounds 1-3).** The same handler shape appearing 3+ times (GraphQL JSON encoding, canned routes, echo) becomes an `a*Server` method. Likewise multi-line inline content strings (external-file JSON payloads) become committed fixtures under `test/data/<domain>/` with a `*Fixture` DSL variant - single-line payloads may stay inline. Keep fixture layout canonical: one `test/data/` tree; dissolve stray dirs (test/fixtures/) and grep `*.go *.http *.md` for stale paths in the same batch.
 
 ---
 

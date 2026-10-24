@@ -35,7 +35,7 @@ type Game interface {
 
 - Called once per frame (tied to display refresh rate)
 - All rendering goes here: draw images, shapes, text
-- **Never modify game state in Draw()** — it may be called at different rates than Update()
+- **Never modify game state in Draw()** - it may be called at different rates than Update()
 - The `screen` parameter is the final render target
 
 ### Layout(outsideWidth, outsideHeight int) (int, int)

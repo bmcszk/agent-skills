@@ -1,7 +1,7 @@
 # Bean File Format
 
 Beans are Markdown files in `.beans/` with YAML frontmatter. The CLI
-owns this format — do not hand-edit the files; use `beans update`.
+owns this format - do not hand-edit the files; use `beans update`.
 
 ```markdown
 ---
@@ -34,7 +34,7 @@ originally requested URL.
 
 ## Filename convention
 
-`<prefix><id>--<slug>.md` — e.g., `myproj-a3x1--fix-login-redirect-bug.md`
+`<prefix><id>--<slug>.md` - e.g., `myproj-a3x1--fix-login-redirect-bug.md`
 
 ## Metadata fields
 

@@ -61,13 +61,13 @@ Notes:
 
 - The upstream `beans init` default is `default_status: todo` (verified
   against `pkg/config/config.go` at hmans/beans v0.4.2). The skill
-  workflow model REQUIRES `draft` — after `beans init`, edit
+  workflow model REQUIRES `draft` - after `beans init`, edit
   `.beans.yml` and set `default_status: draft` before creating any
   bean. Otherwise new beans skip the triage gate silently.
 - `beans.default_status` is what the skill workflow model expects (`draft`).
-  Don't change it to `todo` unless you're skipping triage — that's the
+  Don't change it to `todo` unless you're skipping triage - that's the
   process violation documented in **Closure gates (binding)** in the
   parent `SKILL.md`.
 - `beans.prefix` shows up in every ID; pick something short and stable.
 - `worktree` and `agent` blocks are only relevant when `beans serve`
-  or the agent workflow is in play — safe to leave at defaults.
+  or the agent workflow is in play - safe to leave at defaults.

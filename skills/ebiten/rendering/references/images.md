@@ -52,7 +52,7 @@ func getSprite(sheet *ebiten.Image, col, row int) *ebiten.Image {
 }
 ```
 
-`SubImage` is zero-copy — it references the same pixel data.
+`SubImage` is zero-copy - it references the same pixel data.
 
 ---
 

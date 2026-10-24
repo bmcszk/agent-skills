@@ -1,6 +1,6 @@
 ---
 name: playwright-mcp
-description: 'Browser automation and testing via Playwright (mcpc) — navigate, interact, verify, and screenshot web pages. Use for E2E testing, UI verification, web scraping, and browser-based workflows. Tools: browser_navigate, browser_click, browser_type, browser_snapshot, browser_take_screenshot, browser_wait_for, browser_evaluate. Keywords: playwright, browser automation, e2e testing, ui testing, web scraping, screenshot, browser mcp.'
+description: 'Use for browser automation and testing via Playwright (mcpc) - navigate, interact, verify, and screenshot web pages. Use for E2E testing, UI verification, web scraping, and browser-based workflows. Tools: browser_navigate, browser_click, browser_type, browser_snapshot, browser_take_screenshot, browser_wait_for, browser_evaluate. Keywords: playwright, browser automation, e2e testing, ui testing, web scraping, screenshot, browser mcp.'
 license: MIT
 metadata:
   audience: developers
@@ -26,8 +26,8 @@ mcpc connect ~/.mcpc/mcp.json:playwright @pw
 | Tool | Key params | Description |
 |------|-----------|-------------|
 | `browser_navigate` | `url: str` | Go to URL |
-| `browser_navigate_back` | — | Go back |
-| `browser_close` | — | Close browser |
+| `browser_navigate_back` | - | Go back |
+| `browser_close` | - | Close browser |
 | `browser_resize` | `width: num, height: num` | Resize window |
 | `browser_tabs` | `action: enum` | Manage tabs (open, close, select) |
 
@@ -93,26 +93,26 @@ mcpc connect ~/.mcpc/mcp.json:playwright @pw
 
 ## Critical rules
 
-1. **SNAPSHOT FIRST** — Always run `mcpc @pw tools-call browser_snapshot` before interacting to understand page structure and get element refs
-2. **Use refs** — Elements from snapshot have `ref` attributes; use these as `target` values
-3. **Screenshots** — Take screenshots at every significant step for visual evidence
-4. **Wait** — Use `mcpc @pw tools-call browser_wait_for` after actions to ensure page has updated
-5. **Check console** — Run `mcpc @pw tools-call browser_console_messages` to catch JavaScript errors
+1. **SNAPSHOT FIRST** - Always run `mcpc @pw tools-call browser_snapshot` before interacting to understand page structure and get element refs
+2. **Use refs** - Elements from snapshot have `ref` attributes; use these as `target` values
+3. **Screenshots** - Take screenshots at every significant step for visual evidence
+4. **Wait** - Use `mcpc @pw tools-call browser_wait_for` after actions to ensure page has updated
+5. **Check console** - Run `mcpc @pw tools-call browser_console_messages` to catch JavaScript errors
 
 ## Widget-framework pages (TP-Link routers, jQuery-UI style apps)
 
-Embedded-device and jQuery-widget UIs defeat standard Playwright helpers — snapshot may show nothing interactive and `fill`/`click` can silently no-op:
+Embedded-device and jQuery-widget UIs defeat standard Playwright helpers - snapshot may show nothing interactive and `fill`/`click` can silently no-op:
 
-- Type into inputs via the native value setter + `input` event (`Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el, v); el.dispatchEvent(new Event('input',{bubbles:true}))`) — direct `el.value=` renders but the framework never sees the change.
-- Click via the full pointer sequence — `pointerdown, mousedown, pointerup, mouseup, click`, each a `MouseEvent` with `bubbles:true` — a bare `.click()` does nothing on these widgets.
+- Type into inputs via the native value setter + `input` event (`Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el, v); el.dispatchEvent(new Event('input',{bubbles:true}))`) - direct `el.value=` renders but the framework never sees the change.
+- Click via the full pointer sequence - `pointerdown, mousedown, pointerup, mouseup, click`, each a `MouseEvent` with `bubbles:true` - a bare `.click()` does nothing on these widgets.
 - Read state from custom widget classes, not form semantics: no real `<input type=checkbox>`/`<select>` exist. Toggle state = class on the container (`checkbox-container` with `on`/`checked`); dropdown selection = input `value` + which `<li class="combobox-list selected">`/`checked="checked"` option in the hidden list; spinner values = the `*_hour`/`*_minute` child input values.
-- Expect the tab to die mid-session (navigation hash changes, page reloads); re-navigate and re-login — the session cookie survives.
+- Expect the tab to die mid-session (navigation hash changes, page reloads); re-navigate and re-login - the session cookie survives.
 - Discover the widget structure by slicing `document.body.innerHTML` around a known label rather than querying by tag.
 
 ## Best practices
 
 - Start every session with `mcpc @pw tools-call browser_navigate` to set the initial URL
-- Use `mcpc @pw tools-call browser_snapshot` to discover element selectors — don't guess CSS selectors
+- Use `mcpc @pw tools-call browser_snapshot` to discover element selectors - don't guess CSS selectors
 - Chain actions: snapshot → interact → wait → screenshot → verify
 - Close browser with `mcpc @pw tools-call browser_close` when done to free resources
-- Use `mcpc @pw tools-call browser_evaluate` sparingly — prefer native tool interactions
+- Use `mcpc @pw tools-call browser_evaluate` sparingly - prefer native tool interactions
