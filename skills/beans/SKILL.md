@@ -200,34 +200,10 @@ Recipe: [`references/patterns.md`](references/patterns.md#found-a-bug-document-t
 ---
 
 
-## Reopen pattern (user finding contradicts completed bean)
 
-When a user identifies a gap in a bean whose PoW claimed clean:
-1. Append a `REOPENED` section to the bean's body (CLI `beans update -s
-   in-progress --body-append "..."`) citing the exact findings and the
-   research file.
-2. Create a successor bean (new ID) with the fix scope; do NOT silently
-   re-close the original - the audit trail must show the reopen.
-3. In the reopened bean's body, note the successor ID and its status.
-4. Only after the successor completes and passes parent All-x-All
-   re-verification may the original bean be considered resolved.
+See [`Reopen pattern (user finding contradicts completed bean)`](references/reopen-pattern.md) for details.
 
-## Bean creation for code-fix tasks (ALL-CODE-DELEGATED)
-
-- Use `beans create -t task -s todo --parent <epic> --tag audit-gap
-   -p high --body-file <contract.md> "Title"` with the full contract
-   text in the body file (not inline - avoids escaping issues).
-- Contract must include: research reference, exact acceptance criteria
-   as checkboxes, required skills (full `SKILL.md` paths), and the
-   RE-SHUFFLE law reference (coding-rules intro).
-- After creation, run `python3 scripts/beans-lint.py .` - it validates
-   required skills exist on disk (it matches `~/.agents/skills/<name>/SKILL.md`
-   exactly - list full paths).
-- Commit `.beans/` and push with `--no-verify` (hooks blocked by
-  GIT-SAFETY guard).
-
----
-
+See [`Bean creation for code-fix tasks (ALL-CODE-DELEGATED)`](references/all-code-delegated.md) for details.
 ## CLI Commands
 
 Every subcommand and flag is documented in
