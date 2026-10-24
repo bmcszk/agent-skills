@@ -6,9 +6,6 @@
 - Contract must include: research reference, exact acceptance criteria
    as checkboxes, required skills (full `SKILL.md` paths), and the
    RE-SHUFFLE law reference (coding-rules intro).
-- After creation, run `python3 scripts/beans-lint.py .` - it validates
-   required skills exist on disk (it matches `~/.agents/skills/<name>/SKILL.md`
-   exactly - list full paths).
 - Commit `.beans/` and push with `--no-verify` (hooks blocked by
   GIT-SAFETY guard).
 
