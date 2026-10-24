@@ -408,7 +408,7 @@ history, and the next session loads the ledger, not the transcript.
 
 Every retro finding gets a **structural** fix, never a verbal one:
 - a mistake a check could catch → wire the check (linter rule, CI job,
-  pre-push hook, beans-lint extension) before writing any prose rule;
+  pre-push hook) before writing any prose rule;
 - a wrong dispatch pattern (model choice, contract shape) → fix the
   delegating skill's contract template so the next dispatch inherits
   the fix;
