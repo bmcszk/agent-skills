@@ -240,6 +240,15 @@ beans prime
 
 Outputs context about the project's current beans, priorities, and recommended next actions. Agents should run this at session start.
 
+### Delegation patterns
+
+When dispatching bean work to subagents (especially small or free models):
+
+- **Short prompts.** One goal, exact commands, file paths. Inline design loses fidelity.
+- **Externalize plans.** Put >2 design decisions in `plan.md`, reference by path. Do not paste a 4KB design into the task.
+- **One stall = change tactic.** Hangs and text-only returns are signals - do not retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
+- **Bypass wrappers for diagnostics.** Use raw commands when reading exact errors or lint positions.
+
 ### Agent Task Lifecycle
 
 ```

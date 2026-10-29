@@ -229,7 +229,11 @@ leaf without its owner.
 A retro fix must pass a recurrence test: the failure is caught at
 file-1 when the identical pattern is re-introduced, not after the full
 wave shipped. If the fix is misplaced: move it earlier in the pipeline
-(detector), do not add a second detector later (prevention).
+(detector), do not add a second detector later (prevention). Concrete
+procedure: replay the failure against the earliest point where the new
+rule would fire. If the rule first fires at review stage, move it
+earlier, to the canary or the contract, until replay shows it catching
+the failure at file 1.
 
 ---
 
