@@ -1,6 +1,6 @@
 ---
 name: audio
-description: 'Ebitengine audio: sound effects, music, audio players, streaming, resound effects.'
+description: 'Ebitengine audio. Use when adding sound effects, music, audio players, or streaming to a game with the resound package.'
 metadata:
   risk: none
   source: official
@@ -137,7 +137,7 @@ func NewGame() *Game {
 
 ### InfiniteLoop
 
-`audio.NewInfiniteLoop` wraps a decoded audio player for seamless looping:
+`audio.NewInfiniteLoop` wraps a decoded audio player for gapless looping:
 
 ```go
 decoded, _ := vorbis.Decode(audioCtx, reader)
@@ -145,7 +145,7 @@ loop := audio.NewInfiniteLoop(decoded, decoded.Length())
 loop.Play()
 ```
 
-`NewInfiniteLoop` takes the source player and its total length. It creates a seamlessly looping player.
+`NewInfiniteLoop` takes the source player and its total length. It creates a gaplessly looping player.
 
 ---
 
@@ -337,7 +337,7 @@ player.SetPosition(timeOffset)
 
 1. **Load all audio at startup** - never load during gameplay
 2. **Use `NewPlayerFromBytes` for SFX** - allows simultaneous playback
-3. **Use `InfiniteLoop` for BGM** - seamless looping
+3. **Use `InfiniteLoop` for BGM** - gapless looping
 4. **Prefer OGG over MP3 for music** - no gap issues on loop
 5. **Keep sample rate consistent** - all files at 44100 Hz
 6. **Cap concurrent sounds** - too many active players degrades performance
@@ -351,7 +351,7 @@ player.SetPosition(timeOffset)
 | Don't | Do |
 |-------|-----|
 | Create `audio.Context` per frame | Create exactly one at startup |
-| Use MP3 for looping BGM | Use OGG/WAV for seamless loops |
+| Use MP3 for looping BGM | Use OGG/WAV for gapless loops |
 | Decode audio in `Update()`/`Draw()` | Decode at load time, store bytes |
 | Play raw decoded player for SFX | Use `NewPlayerFromBytes` for each play |
 | Ignore `IsPlaying()` cleanup | Close or pool finished players |

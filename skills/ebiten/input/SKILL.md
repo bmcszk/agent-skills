@@ -1,6 +1,6 @@
 ---
 name: input
-description: 'Ebitengine input handling: keyboard, mouse, gamepad, touch, inpututil for just-pressed detection.'
+description: 'Use when handling player input in Ebitengine: keyboard, mouse, gamepad, touch, inpututil for just-pressed detection.'
 metadata:
   risk: none
   source: official

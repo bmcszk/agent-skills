@@ -1,6 +1,6 @@
 ---
 name: physics
-description: 'Ebitengine collision detection, physics, pathfinding: resolv, Chipmunk2D, Box2D, spatial hashing.'
+description: 'Use when adding collision detection, physics, or pathfinding to an Ebitengine game: resolv, Chipmunk2D, Box2D, spatial hashing.'
 metadata:
   risk: none
   source: community

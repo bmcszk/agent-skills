@@ -97,3 +97,4 @@ myservice/
 ├── main.go
 ├── internal/
 │   ├── handler/         # HTTP handlers
+```

@@ -20,13 +20,12 @@ Finish work, not narrate it. The discipline is completion discipline - gates, ev
 HARD sequence for ANY multi-step request. Implementation NEVER precedes the full tree:
 
 1. **PLAN first** - before any implementation, delegate the WHOLE-task plan
-   to the agent's best available research subagent (any reasoning-capable
-   subagent mechanism, read-only). Output: goal, epic body, task list, 10-min subtask split,
-   deps/blockers, per-leaf skills. Present the tree to the user when the
-   request is ambiguous; proceed when it is not. The plan agent re-verifies
-   state against the live tree (`ls`, `wc -l`, `grep`) instead of trusting
-   the orchestrator's session brief - session memory runs commits behind,
-   and a plan built on stale filenames wastes the first wave.
+   to the agent's best available research subagent (read-only). Output:
+   goal, epic body, task list, 10-min subtask split, deps/blockers,
+   per-leaf skills. Present the tree to the user when the request is
+   ambiguous; proceed when it is not. The plan agent re-verifies state
+   against the live tree (`ls`, `wc -l`, `grep`) - session memory runs
+   commits behind, and a plan built on stale filenames wastes the wave.
 2. **BEANS LEDGER via CLI only** - create epic (`-t epic`, NOT feature, when
    children are tasks) + tasks + subtasks with `beans create` drafts. NEVER
    hand-write `.beans/*.md` - the CLI owns the format. Fill bodies via
@@ -49,11 +48,9 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    checkable criterion.
    Mid-epic user pushback ("the job is not close to finished") = RE-PLAN,
    not defend: re-run the planning agent against the live tree with the
-   original requirements restated VERBATIM - paste the user's requirement text
-   into the plan context, never your paraphrase of an earlier round; each
-   re-approximation re-misses the same clause, and the next rejection cites
-   the same words back. Diff the plan's finding against what shipped,
-   register the delta as new beans, and only then resume the loop.
+   original requirements restated VERBATIM - a paraphrase re-misses the
+   same clause. Diff the plan's finding against what shipped, register
+   the delta as new beans, then resume the loop.
    Single-user helpers surfaced mid-wave by the user get their placement
    decided by the destination rule in the plan, not an interim parking spot:
    "temporarily in the shared file" ships as permanent and reads as
@@ -229,7 +226,11 @@ leaf without its owner.
 A retro fix must pass a recurrence test: the failure is caught at
 file-1 when the identical pattern is re-introduced, not after the full
 wave shipped. If the fix is misplaced: move it earlier in the pipeline
-(detector), do not add a second detector later (prevention).
+(detector), do not add a second detector later (prevention). Concrete
+procedure: replay the failure against the earliest point where the new
+rule would fire. If the rule first fires at review stage, move it
+earlier, to the canary or the contract, until replay shows it catching
+the failure at file 1.
 
 ---
 
@@ -338,11 +339,6 @@ when no human decision is pending.
    template), not a verbal one. Retro closes only when the problem
    cannot recur through the same path.
 
-An open PR is not a pause: run the session retro, claim the next ready
-bean on the same branch, and batch human questions into one grilling
-session. Session close is ledger-shaped: beans closed, commits pushed,
-CI verdict, next pick.
-
 Stop looping on the epic when **any** of these are true:
 
 - **Goal reached.** Every acceptance criterion in the epic body is
@@ -398,11 +394,9 @@ end the turn idle. While a PR is open the session presses on autonomously:
 Communication rule: report state in one line ("PR open, worker on X,
 next Y"), never end a turn with idle capacity while beans are ready.
 
-Session close still needs a state summary, but keep it LEDGER-shaped,
-not narrative: beans closed (by title, not id), commits pushed, CI
-verdict, next pick. A chat-history-style narrative of the day's
-investigations is not a state report: the tracker already holds the
-history, and the next session loads the ledger, not the transcript.
+Session close needs a LEDGER-shaped state summary, not narrative:
+beans closed (by title, not id), commits pushed, CI verdict, next pick.
+The next session loads the ledger, not the transcript.
 
 ### Retro loopback (binding)
 
