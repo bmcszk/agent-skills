@@ -52,11 +52,13 @@ before any bulk import; the CLI error is ground truth over any documented
 convention): `milestone` parent ∈ {} (root only, nil); `epic` parent ∈
 {milestone}; `feature` parent ∈ {milestone, epic}; `task`/`bug` parent ∈
 {milestone, epic, feature}; a `task`/`bug` can NEVER be a parent. One
-program = ONE parentless epic (the GOAL); milestones are optional and
-only make sense for a versioned product ("v1"), not a single-goal
-project. A "support" epic (lints, tests, tooling) is legal as a second
-epic under the same milestone - it is not the session GOAL; keep
-one-goal-per-session (below) for session focus. If a flat task later
+program = ONE parentless epic (the GOAL); its `## DECIDED` section
+records program-level re-scope rules, never a milestone or side file.
+Milestones are optional and only make sense for a versioned product
+("v1"), not a single-goal project. A "support" epic is legal as a second epic under the same milestone:
+technical non-business work such as lints, tests, tooling, git or CI
+problems. It is not the session GOAL; keep one-goal-per-session
+(below) for session focus. If a flat task later
 genuinely needs bean children, convert it in place - `beans update <id>
 -t epic` flips the type and preserves id/history (verified against the
 CLI), making child creation legal. Probe any
@@ -73,12 +75,12 @@ map and skips already-created beans.
 
 ```
 milestone (optional, root - "v1")
-└─ epic (THE GOAL, parentless)
-   ├─ feature (end-user use case)
-   │  ├─ task (technical unit for a worker)
-   │  └─ bug
-   ├─ task
-   └─ epic "support" (lints, tests, tools - same milestone, NOT the GOAL)
+├─ epic (THE GOAL)
+│  ├─ feature (end-user use case)
+│  │  ├─ task (worker-delivered unit)
+│  │  └─ bug
+│  └─ task
+└─ epic "support" (lints, tests, tools - sibling, not the GOAL)
 ```
 
 Subtasks are NOT beans (the CLI rejects a task under a task) - split a
@@ -335,17 +337,17 @@ first, then mark completed:
 
 ```bash
 beans update myproj-a3x1 --body-append "## Proof of Work
-make vet   → 0
-make test  → PASS (148s)
-make lint  → 0 issues
+<build>    → exit 0
+<test>     → PASS (148s)
+<lint>     → 0 issues
 
 Residual: none."
 beans update myproj-a3x1 -s completed
 ```
-
-The verify gate producing the proof is itself binding: run the
-project's tests/build/lint and observe the result. Red gate = fix the
-root cause; cannot verify = leave `in-progress` and say so.
+Placeholders stand for the project's own build/test/lint entry points;
+an example never presumes a stack. The verify gate is itself binding:
+run the project's tests/build/lint and observe the result. Red gate =
+fix the root cause; cannot verify = leave `in-progress` and say so.
 
 #### 2. Epic closure
 
@@ -405,15 +407,15 @@ Process and CLI hygiene - not the closure rules, which live in
 
 | Don't | Do |
 |-------|-----|
-| Skip `beans prime` at session start | Always run `beans prime` first |
-| Use `beans list` without `--json` in scripts | Always use `--json` for machine-readable output |
-| Edit `.beans/` files directly without CLI | Use CLI commands for consistency |
+| Skip `beans prime` at session start | Run it first, every session |
+| Scripts without `--json` | `--json` for machine-readable output |
+| Edit `.beans/` files directly | Use CLI commands |
 | Ignore etag for concurrent updates | Use `--if-match` for safe concurrent edits |
 | Use `--body-file` for small changes | Use `--body-replace-old/new` for targeted edits |
 | Forget to update status when starting work | Set `-s in-progress` when claiming a task |
 | Leave beans in `in-progress` when done | Always close with `-s completed` or `-s scrapped` |
-| Open two active epics in one session | Pick one GOAL per session, loop on it until reached |
-| Find a bug and patch it immediately | `beans create -t bug -s draft`, document evidence, triage, then claim |
+| Two active epics in one session | One GOAL per session, loop until reached |
+| Bug found, patch immediately | `beans create -t bug -s draft`, document, triage, claim |
 | Close work and leave state artifacts behind | Before ending a session: PR title/body match HEAD, every touched bean terminal (`completed`/`scrapped`), epic titles non-empty, no orphan drafts |
 | Set bean statuses without the CLI or leave `todo` epics that already shipped | Session-end sweep: `beans list`, close or scrap every bean the shipped work covers; an epic's status mirrors the work, not the plan |
 | Append `--body-append` PoW before checking the worker's claims | Parent re-runs gates + reads the diff FIRST; PoW records YOUR gate output, not the worker's report |
