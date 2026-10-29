@@ -35,11 +35,3 @@ Deep-dive topics are split into focused reference files:
 | Use `gdata` for large binary data | Use `gdata` for save games only, embed other data |
 | Embed hundreds of MB of assets | Consider loading screens with chunked loading |
 | Ignore LDtk entity fields | Use entity fields for gameplay parameters (spawn points, etc.) |
-
-## When to Use
-This skill is applicable when loading, managing, or organizing game assets in an Ebitengine project: images, audio, tilemaps, sprite sheets, or save data.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -91,7 +91,7 @@ old scope wastes a full worker run.
 
 Scope the re-derivation with a live call-graph audit, not the bean's own
 citations: grep the reference codebase for each symbol the bean plans to
-port and count game callers (both directions: a symbol called only by
+port and count real callers (both directions: a symbol called only by
 another ported symbol still counts). Beans written before a scope rule
 inherit stale premises; their ACs cite scaffolding the rule now cuts.
 Re-derive the AC list from the call-graph, not from the old bean text, and

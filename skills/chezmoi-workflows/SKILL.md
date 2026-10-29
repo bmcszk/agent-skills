@@ -96,6 +96,7 @@ chezmoi git -- push                    # 3. Push to remote
 
 ```bash
 brew install chezmoi                   # macOS
+sudo pacman -S chezmoi                 # Arch Linux
 ```
 
 ### Initialize (fresh start)
@@ -205,7 +206,7 @@ Create OS/architecture-conditional configs using Go templates:
 
 ```bash
 chezmoi add --template ~/.config/app/config.toml  # 1. Add as template (creates .tmpl suffix in source)
-chezmoi edit ~/.config/app/config.toml             # 2. Edit template in $EDITOR (helix)
+chezmoi edit ~/.config/app/config.toml             # 2. Edit template in $EDITOR
 chezmoi diff ~/.config/app/config.toml             # 3. Preview what would change
 chezmoi apply ~/.config/app/config.toml            # 4. Apply rendered template to home
 ```
@@ -273,10 +274,10 @@ chezmoi doctor                         # Full diagnostic - checks all components
 | Check        | Expected                                       | Meaning if failing                 |
 | ------------ | ---------------------------------------------- | ---------------------------------- |
 | config-file  | `found ~/.config/chezmoi/chezmoi.toml`         | Config missing or wrong path       |
-| source-dir   | `~/gh/vjspc/dotfiles is a git working tree (clean)` | Source dirty or not a git repo     |
-| git-command  | `found /opt/homebrew/bin/git`                  | Git not installed                  |
-| edit-command | `found /opt/homebrew/bin/hx`                   | Editor not configured              |
-| 1password    | `found /opt/homebrew/bin/op`                   | 1Password CLI needed for templates |
+| source-dir   | `<your dotfiles repo> is a git working tree (clean)` | Source dirty or not a git repo     |
+| git-command  | git found on PATH                              | Git not installed                  |
+| edit-command | editor found on PATH                           | Editor not configured              |
+| 1password    | `op` found on PATH                             | 1Password CLI needed for templates |
 | age/gpg      | `info` = optional                              | Only needed for encrypted files    |
 
 ```bash

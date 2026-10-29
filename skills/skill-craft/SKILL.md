@@ -32,11 +32,11 @@ of wording; the description targets work that needs this procedure.
 ## The body: every line pays rent
 
 **Low-context budget:** Always pass an explicit skill manifest to delegated
-workers (pi: repeatable `--skill` flags); the contract is the manifest, and
-the worker loads only what it declares. Disabling the runner's discovery
-entirely (pi: `--ns`) is a mode choice, not the default: discovery off
-isolates high-risk or unfamiliar-repo runs; discovery on lets same-domain
-ambient skills load additively around the explicit manifest.
+workers (repeatable skill flags in the runner's dispatch API); the contract
+is the manifest, and the worker loads only what it declares. Disabling
+ambient discovery is a mode choice, not the default: discovery off isolates
+high-risk or unfamiliar-repo runs; discovery on lets same-domain ambient
+skills load additively around the explicit manifest.
 
 1. Procedure the model cannot infer: exact commands, order, decision points.
 2. Institutional context it has no way to know: names, paths, conventions.
@@ -80,10 +80,10 @@ a paragraph only suggests, and running one costs its output tokens, not
 its source. State execution intent explicitly ("run", not "you could").
 
 **Gateway plugins as hard enforcement:** When a rule is violated repeatedly
-(e.g., citation audit, git safety), move it from prose into a Hermes plugin
-(`pre_tool_call` hook). The plugin blocks the tool call at the gateway level
-so the model never sees the violating result. Reference: `hermes-plugin-dev` skill and
-`pi-delegation` plugin pattern.
+(e.g., citation audit, git safety), move it from prose into the runner's
+plugin mechanism (a `pre_tool_call` hook). The plugin blocks the tool call
+at the gateway level so the model never sees the violating result. Use the
+runner's plugin-authoring and delegation skills if installed.
 
 ## Slim by moving, not by deleting law
 
@@ -170,20 +170,7 @@ Only then commit/PR. Third-party installed skills: report upstream-owned
 findings, never fix in place (sync reverts them); archive dirs live
 outside the skills root or the linter scans them.
 
-## Combined PR pattern
+## Repo maintenance
 
-When multiple open PRs target the same skill family, merge into one branch from origin/master:
-1. `git checkout -b combined/<topic> origin/master`
-2. `git diff origin/master..<pr1-branch> -- skills/ | git apply --3way`
-3. `git diff origin/master..<pr2-branch> -- skills/ | git apply --3way`
-4. Resolve conflicts (keep one copy of duplicated sections)
-5. Close old PRs with `--delete-branch`; create single combined PR
-
-## Install delta sync pattern
-
-To sync content from ~/.agents/skills that diverged from repo:
-1. Export origin/master tree: `git archive origin/master skills | tar -x -C /tmp/master-skills`
-2. Normalize both sides (em-dash → hyphen) and diff install vs master per skill
-3. Filter style-only diffs (em-dash, description wording, first-person headers)
-4. Keep install-only content deltas (new sections, rules, procedures)
-5. Apply deltas onto clean master branch; push as single PR
+Maintainer-only PR combining and install/master delta sync: read
+references/repo-maintenance.md when performing repo upkeep.

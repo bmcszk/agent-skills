@@ -409,11 +409,3 @@ jobs:
 | Use `os.ReadFile()` for assets | Use `embed.FS` or resource manager |
 | Assume desktop resolutions | Handle dynamic layouts in `Layout()` |
 | Skip testing audio on mobile/WASM | Test audio on each target platform |
-
-## When to Use
-This skill is applicable when building, packaging, or deploying an Ebitengine game for any platform: desktop, web, mobile, or console.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

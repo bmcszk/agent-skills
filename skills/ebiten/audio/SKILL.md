@@ -81,33 +81,33 @@ func loadMP3(audioCtx *audio.Context, data []byte) (*audio.Player, error) {
 
 ```go
 type Game struct {
-    audioCtx  *audio.Context
-    jumpSound *audio.Player
+	audioCtx  *audio.Context
+	jumpSound []byte
 }
 
 func NewGame() *Game {
-    g := &Game{
-        audioCtx: audio.NewContext(44100),
-    }
-
-    jumpData, _ := os.ReadFile("assets/jump.wav")
-    g.jumpSound, _ = wav.Decode(g.audioCtx, bytes.NewReader(jumpData))
-
-    return g
+	g := &Game{
+		audioCtx: audio.NewContext(44100),
+	}
+	g.jumpSound, _ = os.ReadFile("assets/jump.wav")
+	return g
 }
 
 func (g *Game) Update() error {
-    if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-        g.playSound(g.jumpSound)
-    }
-    return nil
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		g.playSound(g.jumpSound)
+	}
+	return nil
 }
 
-func (g *Game) playSound(p *audio.Player) {
-    p := g.audioCtx.NewPlayerFromBytes(g.audioCtx, p.(interface{ Bytes() []byte }).Bytes())
-    p.Play()
+func (g *Game) playSound(data []byte) {
+	player := g.audioCtx.NewPlayerFromBytes(data)
+	player.Play()
 }
 ```
+
+Each play call needs its own `*audio.Player`, so keep the raw bytes and
+create a fresh player per play via `NewPlayerFromBytes`.
 
 ---
 
@@ -359,11 +359,3 @@ player.SetPosition(timeOffset)
 | Skip audio initialization error checks | Always check errors from `NewContext` |
 | Use different sample rates for files | Standardize on 44100 Hz |
 | Create new `os.File` reads per play | Read file once, store `[]byte` |
-
-## When to Use
-This skill is applicable when implementing or modifying audio in an Ebitengine game: sound effects, background music, audio effects, or resource management.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

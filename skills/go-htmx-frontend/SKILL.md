@@ -1,6 +1,6 @@
 ---
 name: go-htmx-frontend
-description: 'Server-side frontend development with Go, HTMX, and Templ - type-safe, minimal JavaScript. Use when building web UIs with Go using Templ components, HTMX 2.x for interactivity, Tailwind CSS v4, or Alpine.js. Covers installation, syntax, HTMX integration, forms, handlers, streaming, testing, and deployment. Keywords: htmx, templ, go frontend, server-side rendering, tailwind css, alpine js, web development.'
+description: 'Server-side frontend development with Go, HTMX, and Templ - type-safe, minimal JavaScript. Use when building web UIs with Go using Templ components, HTMX 2.x for interactivity, Tailwind CSS v4, or Alpine.js. Covers installation, syntax, HTMX integration, forms, handlers, streaming, testing, and deployment.'
 license: MIT
 metadata:
   audience: developers
@@ -27,6 +27,7 @@ Build web UIs with Go using:
 - https://htmx.org/docs/ - HTMX reference
 - https://htmx.org/examples/ - HTMX examples
 - https://tailwindcss.com/blog/tailwindcss-v4 - Tailwind v4 documentation
+- https://templui.io/ - templUI component library
 
 ---
 
@@ -309,15 +310,4 @@ func TestHandler(t *testing.T) {
 4. **Progressive Enhancement**: Works without JS
 5. **No Node.js**: Use Tailwind standalone CLI, not npm
 6. **CSS-First Config**: Tailwind v4 uses `@theme` in CSS, no JS config
-7. **Check Docs**: Always verify with official documentation
-
-## Resources
-
-- [Templ Docs](https://templ.guide/)
-- [Templ + HTMX Guide](https://templ.guide/server-side-rendering/htmx/)
-- [Templ Forms Guide](https://templ.guide/syntax-and-usage/forms/)
-- [HTMX Docs](https://htmx.org/)
-- [HTMX Examples](https://htmx.org/examples/)
-- [Tailwind CSS v4](https://tailwindcss.com/blog/tailwindcss-v4)
-- [Tailwind Standalone CLI](https://tailwindcss.com/blog/standalone-cli)
-- [templUI](https://templui.io/) - Component library
+7. **Check Docs**: Always verify with official documentation (see Official Documentation section at top).

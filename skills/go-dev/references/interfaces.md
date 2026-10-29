@@ -1,6 +1,4 @@
 # Interfaces
-## CRITICAL: Inline Interface Definition
-# Core Rules
 
 ## CRITICAL: Inline Interface Definition
 

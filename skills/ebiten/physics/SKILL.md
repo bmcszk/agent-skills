@@ -447,11 +447,3 @@ func findPath(tiles [][]int, start, end [2]int) [][2]int {
 | Use `float32` for physics calculations | Use `float64` for precision |
 | Create new physics bodies every frame | Pool and reuse bodies |
 | Mix rendering coordinates with physics coordinates | Keep separate coordinate systems |
-
-## When to Use
-This skill is applicable when implementing collision detection, physics simulation, or pathfinding in an Ebitengine game.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

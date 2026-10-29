@@ -86,15 +86,3 @@ mytui/
 | Progress bars | progress | `github.com/charmbracelet/bubbles/progress` |
 
 ---
-
-# 2. Single Service (API / Backend)
-
-## Basic Service
-
-```
-myservice/
-├── go.mod
-├── main.go
-├── internal/
-│   ├── handler/         # HTTP handlers
-```

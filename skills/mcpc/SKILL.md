@@ -1,6 +1,6 @@
 ---
 name: mcpc
-description: 'Use when interacting with MCP servers from the CLI - call tools, read resources, manage sessions. Load this when you need to access any MCP server via the command line. Configured servers: context7, pixellab, MiniMax, zai-search, zai-reader, zread, zai-vision, gemini-cli, playwright, searxng. Keywords: mcpc, mcp client, model context protocol, mcp server, call tool, read resource, mcp session.'
+description: 'Use when interacting with MCP servers from the CLI - call tools, read resources, manage sessions. Load this when you need to access any MCP server via the command line; see the body for the configured-server inventory and command patterns.'
 metadata:
   audience: developers
   workflow: infrastructure
@@ -14,10 +14,10 @@ Use `mcpc` to interact with MCP (Model Context Protocol) servers from the comman
 
 ## Configured servers
 
-MCP servers are defined in `~/.mcpc/mcp.json`. Connect via `file:entry` syntax:
+MCP servers are defined in your mcpc config. Connect via `file:entry` syntax:
 
 ```bash
-mcpc connect ~/.mcpc/mcp.json:<entry> @<name>
+mcpc connect <your mcpc config>:<entry> @<name>
 ```
 
 **Available servers:** context7, pixellab, MiniMax, gemini-cli, playwright, searxng, plus Z.ai coding-plan servers (key = ZAI_AUTH_TOKEN from `~/.config/environment.d/secrets.conf`):
