@@ -245,7 +245,7 @@ Outputs context about the project's current beans, priorities, and recommended n
 When dispatching bean work to subagents (especially small or free models):
 
 - **Short prompts.** One goal, exact commands, file paths. Inline design loses fidelity.
-- **Externalize plans.** Put >2 design decisions in `plan.md`, reference by path. Do not paste a 4KB design into the task.
+- **Design decisions go in the bean body.** Keep the full design inside the task via `--body-replace-old/new`; the bean is the single source of truth. Do not scatter design across scratch files.
 - **One stall = change tactic.** Hangs and text-only returns are signals - do not retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
 - **Bypass wrappers for diagnostics.** Use raw commands when reading exact errors or lint positions.
 
