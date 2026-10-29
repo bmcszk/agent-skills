@@ -1,6 +1,6 @@
 ---
 name: deployment
-description: 'Ebitengine cross-platform deployment: desktop, WebAssembly, mobile (iOS/Android), Steam, Nintendo Switch.'
+description: 'Use when shipping an Ebitengine game: desktop, WebAssembly, mobile (iOS/Android), Steam, Nintendo Switch.'
 metadata:
   risk: none
   source: official

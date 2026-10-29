@@ -1,6 +1,6 @@
 ---
 name: rendering
-description: 'Ebitengine rendering: images, sprites, tilemaps, camera, text, shaders (Kage), DrawImageOptions, GeoM.'
+description: 'Use when rendering in Ebitengine: images, sprites, tilemaps, camera, text, shaders (Kage), DrawImageOptions, GeoM.'
 metadata:
   risk: none
   source: official

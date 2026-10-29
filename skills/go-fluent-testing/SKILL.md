@@ -17,6 +17,8 @@ Given/When/Then methodology. One DSL, one parts struct, three tiers.
 ## MANDATORY Reference
 
 **ALL Go tests MUST follow:** `references/fluent-testing-guideline.md`
+(design, phases, formatting, patterns). E2E environment, commands, and
+migration steps: `references/e2e-test-operations.md`.
 (included in this skill directory). It is the single source of truth
 for the DSL: parts struct, `newParts(t)`, `.and()` at END of line,
 all state in parts, no direct helper calls in Test funcs, t.Run
@@ -154,7 +156,8 @@ func TestService_CreateUser(t *testing.T) {
   file. A parts file is a pure method group on `*parts` (no struct, no ctor of
   its own); a parts file with zero methods is deleted.
 - NEVER base-embeds-domains while domains-embed-base - that cycle reads as a
-  structural error. Recipe: `references/fluent-testing-guideline.md`.
+  structural error. Recipe: `references/fluent-testing-guideline.md`;
+  migration/environment steps: `references/e2e-test-operations.md`.
 - Renaming files to exact-stem pairs: `git mv` per file, then RE-CHECK that no
   other file still uses the old stem (`grep -rn old-stem *.go *.md`): renames
   leave stale doc references and duplicate stems (a file of the same domain

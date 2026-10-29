@@ -1,6 +1,6 @@
 ---
 name: game-loop
-description: Ebitengine game loop, ebiten.Game interface, TPS/FPS, window management, RunGameOptions.
+description: "Use when building the Ebitengine game loop: ebiten.Game interface, TPS/FPS, window management, RunGameOptions."
 metadata:
   risk: none
   source: official

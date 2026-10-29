@@ -1,6 +1,6 @@
 ---
 name: resources
-description: Ebitengine asset loading, resource management, tilemaps (LDtk, Tiled), Aseprite sprites, embed.FS.
+description: "Use when loading game assets in Ebitengine: resource management, tilemaps (LDtk, Tiled), Aseprite sprites, embed.FS."
 metadata:
   risk: none
   source: official

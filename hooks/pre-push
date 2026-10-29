@@ -1,0 +1,12 @@
+#!/bin/bash
+# Skills quality gate: run before pushing. Both gates must pass.
+# Install: ln -sf ../../hooks/pre-push .git/hooks/pre-push
+set -e
+cd "$(git rev-parse --show-toplevel)"
+if command -v uvx >/dev/null; then
+  uvx skillscheck skills --strict
+else
+  echo "WARN: uv not found, skipping skillscheck (install: curl -LsSf https://astral.sh/uv/install.sh | sh)" >&2
+fi
+python3 skills/skill-craft/scripts/skill-lint.py skills
+echo "skills lint OK"

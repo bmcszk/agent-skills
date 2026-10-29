@@ -50,7 +50,8 @@ def lint(d: Path):
         if n: out.append(f"AI filler '{w}' x{n}")
     fp = re.findall(r"^\s*I (?:am|will|'m)\b.*$", body, re.M)
     if fp: out.append(f"first-person narrative x{len(fp)}")
-    ids = [m.group(0) for m in re.finditer(r"\b[a-z]{2,12}-[a-z]{2,12}-[a-z0-9]*[0-9][a-z0-9]{0,3}\b|\b(?:2026|2025)-\d{2}-\d{2}\b|PR #\d+", body)]
+    prose = re.sub(r"```.*?```", "", body, flags=re.S)  # artifact names in fences are content, not leakage
+    ids = [m.group(0) for m in re.finditer(r"\b[a-z]{2,12}-[a-z]{2,12}-[a-z0-9]*[0-9][a-z0-9]{0,3}\b|\b(?:2026|2025)-\d{2}-\d{2}\b|PR #\d+", prose)]
     if ids: out.append(f"dates/ids/incident refs: {sorted(set(ids))[:4]}")
     return out
 

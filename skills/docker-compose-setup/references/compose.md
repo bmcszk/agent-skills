@@ -124,8 +124,6 @@ services:
       redis:
         condition: service_healthy
 ```
-  go_mod_cache:
-```
 
 ---
 

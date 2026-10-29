@@ -1,6 +1,6 @@
 ---
 name: ecs
-description: 'Entity Component System patterns for Ebitengine: Donburi, Ark, Mizu. Architecture, queries, systems.'
+description: 'Use when structuring Ebitengine game state with an Entity Component System: Donburi, Ark, Mizu, architecture, queries, systems.'
 metadata:
   risk: none
   source: community

@@ -229,7 +229,7 @@ There is NO `beans comment` subcommand. Attach a dated note to a bean with
 the CLI:
 
 ```bash
-beans update <id> --body-append "## AUDIT (brainer 2026-10-24, scope): verdict + evidence"
+beans update <id> --body-append "## AUDIT (brainer, scope): verdict + evidence"
 ```
 
 ### Prime Context
@@ -294,7 +294,7 @@ it to the same bean body and run the delta as a follow-up pass under
 that bean. Do not open a second bean for the same scope, and do not
 drop the stricter verdicts because a first pass already went green.
 
-For epics, steps 8–9 are replaced by: comprehensive end-to-end tests +
+For epics, steps 8–9 are replaced by: end-to-end tests covering the full epic +
 a `## Proof of Work` section that exercises the goal as a user would.
 See **Closure gates (binding)** below.
 
@@ -351,7 +351,7 @@ cannot verify, leave the bean `in-progress` and say so.
 #### 2. Epic closure
 
 **An epic cannot be closed while any of its tasks or subtasks are still
-open, and cannot be closed without comprehensive tests + `## Proof of
+open, and cannot be closed without full end-to-end tests + `## Proof of
 Work`.** Two-part gate:
 
 - **No open children.** Every task and subtask under the epic must be
@@ -364,7 +364,7 @@ Work`.** Two-part gate:
   # Empty output → safe to close the epic.
   ```
 
-- **Comprehensive tests + `## Proof of Work`.** The epic's proof is
+- **Full end-to-end tests + `## Proof of Work`.** The epic's proof is
   *integration-level*: not just "the unit tests passed", but evidence
   the goal as a whole was reached end-to-end. Append a `## Proof of
   Work` section whose commands cover:
@@ -380,7 +380,7 @@ not proven. If a gate cannot be run (no e2e harness exists for this
 project), write that explicitly into `## Proof of Work` under
 `Residual:` with the reason - silent omission is a violation.
 
-Closing an epic with open children, or without comprehensive tests +
+Closing an epic with open children, or without full end-to-end tests +
 Proof of Work, is a process violation - same category as closing a
 task without `## Proof of Work`.
 

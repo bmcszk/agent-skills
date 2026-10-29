@@ -140,7 +140,8 @@ description route the right tasks in and the adjacent tasks out? Can a
 model with no other context follow the body start to finish? Edit behind
 that comparison, never by feel.
 
-See references/eval-patterns.md for the matched-comparison shape.
+See references/eval-patterns.md for the matched-comparison shape and
+references/pr-review.md for the skill review round checklist.
 
 ## Mechanical quality gate for skill libraries
 

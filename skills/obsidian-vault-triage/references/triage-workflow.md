@@ -121,7 +121,7 @@ For each note in the batch source:
    - `[[note|alias]]` and `[[note#heading]]` follow the same filename rule.
    - Quoted wikilinks in frontmatter (`related: "[[Note]]"`) follow the same
      rule and are easy to miss in a grep for `[[`.
-   - Relative markdown links and embeds (`[t](../x.md)`,
+   - Relative markdown links and embeds (label in square brackets, target in round parentheses,
      `![](../../_resources/hash.png)`) are path-based and break on every move.
      Recompute each path from the note's new location. Script this over all
      moved files; hand-edits miss files.
