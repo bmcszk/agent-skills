@@ -47,6 +47,7 @@ Write down briefly:
 - Refactoring a block you touch? Delete narration comments ("call X now", "this returns Y") in the same pass. New structure under old narration leaves the file lying about itself.
 - A doc comment that restates the name and signature is narration ("writeTempConfig writes YAML to a temp file and returns its path"). Delete it. Keep the clause naming an invisible contract (fresh instance, isolation, wire format, poll-vs-sleep reason).
 - Phase markers in tests (`// given`, `// when`, `// then`, or arrange/act/assert) are required structure, not narration. Keep them; add them when the three phases are not obvious from the test layout alone. This outranks "no comments by default" and "delete narration comments" when those rules would remove the markers.
+- Each phase marker must appear on its own line, in the order given, then when, then then. `given` is optional setup; `when` and `then` are mandatory. A single comment like `// when x, then y` on one line is a violation. The `whenthen` analyzer enforces this; every violation ends with ` [coding-rules: given/when/then]` so a failing gate points back at this rule. A comment narrating what the test does (not naming a phase) is treated as narration and removed.
 
 ## Duplication
 
