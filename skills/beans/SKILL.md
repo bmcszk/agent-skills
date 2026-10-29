@@ -20,39 +20,50 @@ Install, `beans init`, and agent-integration steps live in
 - Managing project tasks, bugs, features from the CLI
 - Letting coding agents track their work
 - Creating, listing, updating, and closing beans
-- Organizing work with epics, tags, priorities (never the `milestone` type)
+- Organizing work with milestones, epics, features, tags, priorities
 - Querying project state with `beans list` filters
 
 ---
 
 ## Workflow Model
 
-The lifecycle has three levels and a strict status progression. Read this
+The lifecycle has levels (milestone → epic → feature → task/bug,
+milestone optional) and a strict status progression. Read this
 section before creating beans.
 
 ### Tree structure
 
-Every bean lives in a three-level tree. Names below are conventions, not
-bean `type` values - the `type` is still `task` / `bug` / `feature` /
-`idea`.
+Every bean lives in the type tree below. Bean `type` values are
+`milestone` / `epic` / `feature` / `task` / `bug`.
 
 | Level | What it represents | Bean `type` | Children |
 |---|---|---|---|
-| **Epic** | One GOAL. The outcome a session loops on until reached. | `epic` (multi-epic program root: parentless `epic`) | N tasks |
-| **Task** | One requirement, issue, or capability needed to reach the goal. | `task` or `bug` | none - leaf |
+| **Milestone** (optional) | A shippable checkpoint ("v1 works as a user"). Root only. | `milestone` | N epics |
+| **Epic** | One GOAL - business/end-user outcome the project loops on until reached. | `epic` (program root: parentless `epic`, optionally under a milestone) | N features/tasks |
+| **Feature** | One use case - a definable business/end-user requirement. | `feature` | N tasks |
+| **Task** | One technical unit a worker agent delivers to complete a feature. | `task` or `bug` | none - leaf |
 | **Subtask** | One ~10-minute piece of well-scoped, delegatable work. Hand it to a small subagent. | AC checkboxes inside the owning task (NOT a bean - the CLI rejects a task under a task) | none |
 
 The hierarchy is enforced by the `parent` field - and by the CLI, which
 REJECTS illegal parent/type combos at create time with an explicit error.
-Verified enforcement matrix (probe with one throwaway create per level
+Enforcement matrix from beans v0.4.2 source (`ValidParentTypes` in
+`internal/beancore/links.go`; probe with one throwaway create per level
 before any bulk import; the CLI error is ground truth over any documented
-convention): `epic` parent ∈ {none}; `feature` parent ∈ {epic}; `task`
-parent ∈ {epic, feature}; a `task` can NEVER be a parent. If a flat task later genuinely needs bean children, convert it in place - `beans update <id> -t epic` flips the type and preserves id/history (verified against the CLI), making child creation legal. Probe any
+convention): `milestone` parent ∈ {} (root only, nil); `epic` parent ∈
+{milestone}; `feature` parent ∈ {milestone, epic}; `task`/`bug` parent ∈
+{milestone, epic, feature}; a `task`/`bug` can NEVER be a parent. One
+program = ONE parentless epic (the GOAL); its `## DECIDED` section
+records program-level re-scope rules, never a milestone or side file.
+Milestones are optional and only make sense for a versioned product
+("v1"), not a single-goal project. A "support" epic is legal as a second epic under the same milestone:
+technical non-business work such as lints, tests, tooling, git or CI
+problems. It is not the session GOAL; keep one-goal-per-session
+(below) for session focus. If a flat task later
+genuinely needs bean children, convert it in place - `beans update <id>
+-t epic` flips the type and preserves id/history (verified against the
+CLI), making child creation legal. Probe any
 hierarchy claim before relying on it. A documented convention the CLI
-rejects poisons every recipe built on it. Do NOT use the
-`milestone` type (house rule: it is upstream CLI baggage, never create it);
-where a release grouping is genuinely needed, tag beans (`--tag rel-v1`)
-instead. Where the CLI forbids an
+rejects poisons every recipe built on it. Where the CLI forbids an
 extra level, keep 10-minute granularity as countable acceptance-criteria
 checkboxes in the owning task instead of a separate bean.
 
@@ -63,10 +74,13 @@ part of a batch, re-run as an idempotent repair script that reads the id
 map and skips already-created beans.
 
 ```
-epic (GOAL)
-├─ task (requirement)
-├─ task
-└─ task
+milestone (optional, root - "v1")
+├─ epic (THE GOAL)
+│  ├─ feature (end-user use case)
+│  │  ├─ task (worker-delivered unit)
+│  │  └─ bug
+│  └─ task
+└─ epic "support" (lints, tests, tools - sibling, not the GOAL)
 ```
 
 Subtasks are NOT beans (the CLI rejects a task under a task) - split a
@@ -196,14 +210,9 @@ Do not patch first. Do not jump to `todo` or `in-progress`. Do not "just fix it"
 A live mismatch is still a `draft` until triage says it is a real, scoped, actionable bug. Wrong env, empty data, or an unsupported type is not a silent code change.
 
 Recipe: [`references/patterns.md`](references/patterns.md#found-a-bug-document-then-triage).
+Reopen flow: [`references/reopen-pattern.md`](references/reopen-pattern.md).
+Code-fix bean creation: [`references/all-code-delegated.md`](references/all-code-delegated.md).
 
----
-
-
-
-See [`Reopen pattern (user finding contradicts completed bean)`](references/reopen-pattern.md) for details.
-
-See [`Bean creation for code-fix tasks (ALL-CODE-DELEGATED)`](references/all-code-delegated.md) for details.
 ## CLI Commands
 
 Every subcommand and flag is documented in
@@ -266,28 +275,24 @@ When dispatching bean work to subagents (especially small or free models):
 10. beans update <id> -s completed      → Mark done (only after verify + proof are present)
 ```
 
-The orchestrator, not the worker, owns steps 7-10: a worker report is
- a claim. Re-run the gates yourself, read the diff, then write the PoW
- in the bean body - a completion recorded only in chat is not a
-   completion in the tracker, and the next session cannot verify what the
-   tracker does not contain. For every-file tasks, the PoW states the live
-   file count, the verdict count, and the command that proves the two sets
-   match. Count parity plus green gates prove coverage, not substance.
-   Before closing a sweep, re-read the diff of every fixed file and
-   spot-read some clean ones. A worker can stamp verdicts while breaking
-   the style rules, and gates stay green because style is not
-   machine-checked. A close on verdict counts alone gets reopened.
+The orchestrator, not the worker, owns steps 7-10: a worker report is a
+claim. Re-run the gates, read the diff, write the PoW in the bean body -
+a completion recorded only in chat is not in the tracker. For every-file
+tasks the PoW states the live file count, the verdict count, and the
+command proving the sets match. Count parity plus green gates prove
+coverage, not substance: re-read the diff of every fixed file and
+spot-read clean ones before closing a sweep. A worker can stamp verdicts
+while breaking style rules no gate checks; a close on verdict counts
+alone gets reopened.
 
- A repo can add its own beans lint that checks more than the CLI does.
- If it has one, run it after every bean change.
+A repo may add its own beans lint that checks more than the CLI; if it
+has one, run it after every bean change. Check that a skill path exists
+on disk before writing it into a bean body.
 
- Check that a skill path exists on disk before writing it into a bean
- body.
-
- A mis-typed bean (a `task` that needs children) converts IN PLACE with
- `beans update <id> -t epic`. Id, body, and history survive. Scrap and
- recreate orphans the audit trail, so reserve scrapping for goals that
- are genuinely dead.
+A mis-typed bean (a `task` that needs children) converts IN PLACE with
+`beans update <id> -t epic`; id, body, and history survive. Scrap and
+recreate orphans the audit trail - reserve scrapping for genuinely dead
+goals.
 
 When a triage verdict arrives AFTER a fix pass already shipped, append
 it to the same bean body and run the delta as a follow-up pass under
@@ -332,21 +337,17 @@ first, then mark completed:
 
 ```bash
 beans update myproj-a3x1 --body-append "## Proof of Work
-
-\
-make vet   → 0\n\
-make test  → PASS (unit + integration + e2e, 148s)\n\
-make lint  → 0 issues (452 → 0)
+<build>    → exit 0
+<test>     → PASS (148s)
+<lint>     → 0 issues
 
 Residual: none."
-
 beans update myproj-a3x1 -s completed
 ```
-
-The verify gate that produces the proof is itself binding. "I think it
-works" is not completion. Run the project's tests/build/lint and
-observe the result. If the gate is red, fix the root cause; if you
-cannot verify, leave the bean `in-progress` and say so.
+Placeholders stand for the project's own build/test/lint entry points;
+an example never presumes a stack. The verify gate is itself binding:
+run the project's tests/build/lint and observe the result. Red gate =
+fix the root cause; cannot verify = leave `in-progress` and say so.
 
 #### 2. Epic closure
 
@@ -376,13 +377,8 @@ Work`.** Two-part gate:
     version.
 
 A goal that says "ships feature X" without exercising X end-to-end is
-not proven. If a gate cannot be run (no e2e harness exists for this
-project), write that explicitly into `## Proof of Work` under
-`Residual:` with the reason - silent omission is a violation.
-
-Closing an epic with open children, or without full end-to-end tests +
-Proof of Work, is a process violation - same category as closing a
-task without `## Proof of Work`.
+not proven. No e2e harness exists? Say so under `Residual:` with the
+reason - silent omission is a violation.
 
 ---
 
@@ -411,15 +407,15 @@ Process and CLI hygiene - not the closure rules, which live in
 
 | Don't | Do |
 |-------|-----|
-| Skip `beans prime` at session start | Always run `beans prime` first |
-| Use `beans list` without `--json` in scripts | Always use `--json` for machine-readable output |
-| Edit `.beans/` files directly without CLI | Use CLI commands for consistency |
+| Skip `beans prime` at session start | Run it first, every session |
+| Scripts without `--json` | `--json` for machine-readable output |
+| Edit `.beans/` files directly | Use CLI commands |
 | Ignore etag for concurrent updates | Use `--if-match` for safe concurrent edits |
 | Use `--body-file` for small changes | Use `--body-replace-old/new` for targeted edits |
 | Forget to update status when starting work | Set `-s in-progress` when claiming a task |
 | Leave beans in `in-progress` when done | Always close with `-s completed` or `-s scrapped` |
-| Open two active epics in one session | Pick one GOAL per session, loop on it until reached |
-| Find a bug and patch it immediately | `beans create -t bug -s draft`, document evidence, triage, then claim |
+| Two active epics in one session | One GOAL per session, loop until reached |
+| Bug found, patch immediately | `beans create -t bug -s draft`, document, triage, claim |
 | Close work and leave state artifacts behind | Before ending a session: PR title/body match HEAD, every touched bean terminal (`completed`/`scrapped`), epic titles non-empty, no orphan drafts |
 | Set bean statuses without the CLI or leave `todo` epics that already shipped | Session-end sweep: `beans list`, close or scrap every bean the shipped work covers; an epic's status mirrors the work, not the plan |
 | Append `--body-append` PoW before checking the worker's claims | Parent re-runs gates + reads the diff FIRST; PoW records YOUR gate output, not the worker's report |
@@ -433,7 +429,3 @@ Process and CLI hygiene - not the closure rules, which live in
 - **Repo:** https://github.com/hmans/beans
 - **Releases:** https://github.com/hmans/beans/releases
 - **Docs (Context7):** https://context7.com/hmans/beans/llms.txt
-
----
-
-> **Remember:** Always `beans prime` first. Use `--json` for scripts. Close your beans.

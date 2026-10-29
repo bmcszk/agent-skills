@@ -85,7 +85,7 @@ the governing style skill, and note the epic-PoW delta. Side-channel fixes
 drift from the ledger and the epic closes without them. When the directive
 RE-SCOPES the whole program ("1:1 functionality, not 1:1 code shape"), stop
 in-flight workers first (revert claim to prior status), record the rule in
-the milestone bean's `## DECIDED` section, then re-derive each queued bean's
+the program root epic's `## DECIDED` section, then re-derive each queued bean's
 scope from the new rule before re-dispatching: a contract written under the
 old scope wastes a full worker run.
 

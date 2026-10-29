@@ -11,7 +11,7 @@ should always use it.
 
 ## Create
 
-Title is the POSITIONAL arg; `-t` takes a TYPE (`epic|bug|feature|task` - do NOT use `milestone`, house rule):
+Title is the POSITIONAL arg; `-t` takes a TYPE (`milestone|epic|bug|feature|task`):
 `beans create epic "My goal"` ✗ → `invalid type: epic`. Correct:
 `beans create "My goal" -t epic`.
 

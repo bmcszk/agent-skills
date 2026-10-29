@@ -26,8 +26,9 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    ambiguous; proceed when it is not. The plan agent re-verifies state
    against the live tree (`ls`, `wc -l`, `grep`) - session memory runs
    commits behind, and a plan built on stale filenames wastes the wave.
-2. **BEANS LEDGER via CLI only** - create epic (`-t epic`, NOT feature, when
-   children are tasks) + tasks + subtasks with `beans create` drafts. NEVER
+2. **BEANS LEDGER via CLI only** - create the GOAL as `-t epic` (a
+   feature never carries the program goal) + features/tasks/subtasks with
+   `beans create` drafts. NEVER
    hand-write `.beans/*.md` - the CLI owns the format. Fill bodies via
    `beans update --body-file` (composed in /tmp) or `--body-append` /
    `--body-replace-*`. Every body carries the beans-skill sections: research
@@ -149,13 +150,9 @@ proof gate. Steps 3, 6 are judgment work.
   a `Residual:` line. No proof, no close. This is binding - same
   category as marking a task done without testing.
 - **Close:** for a task/subtask, after `-s completed`. For an
-  epic, only when `beans list --json --parent <epic> --no-status
-  completed --no-status scrapped` returns empty **and** the epic
-  has its own `## Proof of Work` covering end-to-end
-  tests of the goal (not just unit tests).
-
-For the full closure gate spec, see
-[`beans`](../beans/SKILL.md#closure-gates-binding).
+  epic, only when no child is open and the epic has its own
+  end-to-end `## Proof of Work` (full spec:
+  [`beans`](../beans/SKILL.md#closure-gates-binding)).
 
 ---
 
@@ -163,9 +160,11 @@ For the full closure gate spec, see
 
 | Level | Bean | Holds |
 |---|---|---|
-| Epic | `feature` (or `bug`) | The session's GOAL. One per session. |
-| Task | `task` / `bug` | One requirement. Triageable. |
-| Subtask | `task` | One ~10-minute delegatable unit. Hand to a worker subagent. |
+| Milestone (optional) | `milestone` | Shippable checkpoint ("v1"). Root only. |
+| Epic | `epic` | The session's GOAL. One parentless epic per program (a `support` epic may coexist under the same milestone). |
+| Feature | `feature` | One use case - a definable end-user requirement. |
+| Task | `task` / `bug` | One technical unit a worker delivers. Triageable. |
+| Subtask | AC checkboxes in the owning task (NOT a bean) | One ~10-minute delegatable unit. Hand to a worker subagent. |
 
 A subtask body has **at most 3 acceptance criteria**. If it needs
 more, it's a task, not a subtask. The whole tree starts as

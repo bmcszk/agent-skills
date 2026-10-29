@@ -4,7 +4,7 @@ This file documents the mechanical review gates used when reviewing PRs to a ski
 
 ## Mechanical gates (run first, no judgement)
 
-1. **Budget** - body ≤ 500 lines; description ≤ ~600 chars.
+1. **Budget** - body ≤ 500 lines; body < 5000 tokens (skillscheck `1e.body.tokens`, warnings are errors under `--strict`); description ≤ ~600 chars. Incoming content additions commonly push an already-large body over the line: compress wording, delegate detail to references by anchor link, never drop laws to fit.
 2. **Routing** - description leads with a load trigger: "Use when", "Use for", "Load when", or "TRIGGERS -".
 3. **Style** - zero em dashes; zero AI filler (crucial, delve, additionally, comprehensive, seamless, leverage, robust).
 4. **Dates/IDs** - no PR numbers, ticket IDs, dates, or incident references in body (frontmatter metadata OK).
