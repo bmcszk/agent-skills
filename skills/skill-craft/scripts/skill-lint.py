@@ -33,20 +33,16 @@ for d in sorted(root.iterdir()):
         out.append(f"body {len(lines)} lines > 500")
     if "—" in body:
         out.append(f"em dash x{body.count('—')}")
-    filler_lines = [l for l in body.splitlines() if "AI filler" not in l]
-    filler_body = "\n".join(filler_lines)
+    filler_body = "\n".join(l for l in body.splitlines() if "AI filler" not in l)
     for w in ["crucial", "delve", "additionally,", "comprehensive", "seamless", "leverage", "robust"]:
         n = len(re.findall(w, filler_body, re.I))
         if n: out.append(f"AI filler '{w}' x{n}")
     fp = re.findall(r"^\s*I (?:am|will|'m)\b.*$", body, re.M)
     if fp: out.append(f"first-person narrative x{len(fp)}")
-    ids = re.findall(r"\b[a-z]+-[a-z0-9]{4}\b|\b(20\d{2})-\d{2}-\d{2}\b|PR #\d+", body)
+    ids = re.findall(r"\b[a-zA-Z][a-zA-Z0-9]*-[a-z]{2,8}-[a-z0-9]{4}\b|\b(2026|2025)-\d{2}-\d{2}\b|PR #\d+", body)
     if ids: out.append(f"dates/ids/incident refs: {sorted(set(i for i in ids if i))[:4]}")
-    # dangling references
-    quoted = set(re.findall(r'"[^"]*references/[^"]*"', body))
-    body_unquoted = body
-    for q in quoted:
-        body_unquoted = body_unquoted.replace(q, "")
+    # dangling references (quoted examples like "read references/x.md" excluded)
+    body_unquoted = re.sub(r'"[^"\n]*"', '', body)
     for ref in re.findall(r"references/([A-Za-z0-9_./-]+\.md)", body_unquoted):
         if not (d / "references" / ref).exists():
             out.append(f"dangling reference references/{ref}")

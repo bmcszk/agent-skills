@@ -23,6 +23,12 @@ triggers:
 Include negative triggers for adjacent skills when confusion is likely
 ("not for X"). Off-target activation is the number one skill failure mode.
 
+Calibrate both directions: an under-specified description misses valid
+tasks, an over-broad one triggers noise. Test with two prompt sets - ones
+that must trigger it, near-misses that must not - and edit until both
+route correctly. Trivial one-step tasks never trigger skills regardless
+of wording; the description targets work that needs this procedure.
+
 ## The body: every line pays rent
 
 **Low-context budget:** Always pass an explicit skill manifest to delegated
@@ -42,14 +48,20 @@ ambient skills load additively around the explicit manifest.
 One `SKILL.md`, plus reference files one level deep. The body states WHAT
 and WHEN; references hold HOW-much-detail. Every reference is named in the
 body with its load condition ("when the run times out, read
-references/timeouts.md"), and every named file exists: a reference the
+references/eval-patterns.md"), and every named file exists: a reference the
 body never points to is dead, and a body pointing at a missing file
 dead-ends the run that needs it. A generic example name in the body counts
 as a dangling reference to a linter; write examples as "when X, read
 references/<actual-file>.md".
 
+Reading a reference costs its tokens only when read, so references may be exhaustive: full API dumps, long examples, checklists. Keep each one
+single-concern and named by content (`form_validation_rules.md`, not
+`doc2.md`); split by domain (`reference/aws.md`, `reference/gcp.md`) so a
+run loads only its domain. Above 300 lines, add a table of contents.
+
 Scripts beat prose for anything mechanical: a checked script enforces what
-a paragraph only suggests.
+a paragraph only suggests, and running one costs its output tokens, not
+its source. State execution intent explicitly ("run", not "you could").
 
 **Gateway plugins as hard enforcement:** When a rule is violated repeatedly
 (e.g., citation audit, git safety), move it from prose into a Hermes plugin
@@ -62,7 +74,7 @@ so the model never sees the violating result. Reference: `hermes-plugin-dev` ski
 When a body is over budget, the move is mechanical: procedures only some
 runs need (recovery recipes, latency profiles, verbatim clauses) go to a
 reference file, and the body keeps one line naming the file plus its load
-condition ("on timeout, read references/timeouts.md" in the abstract; every
+condition ("on timeout, read references/eval-patterns.md" in the abstract; every
 named reference must exist in the skill directory). A hard rule stays in
 the body even if it costs tokens: moving a rule into a sometimes-loaded
 file means a low-context dispatcher breaks it on the runs that skip the
@@ -84,6 +96,26 @@ cannot pass dead-ends every dispatcher after it.
 - Spell-check compound words a linter will not catch ("misplaced", not
   "mis-placed"); a typo inside a normative rule undercuts the rule.
 
+## Portability: project, agent, and model agnostic
+
+A skill must run identically on any repo, any agent runtime, any model.
+The test for every line:
+
+- Project agnostic: no repo names, machine paths, or team-specific
+  tooling in rules. Write "the project's lint gate", not the tool's
+  proper name; keep concrete paths in examples, not law.
+- Agent agnostic: describe capabilities, not clients. "Run the project's
+  build command" beats a runner-specific command; quarantine unavoidable
+  client incantations in a reference the body does not require.
+- Model agnostic: procedures must survive a small model. One instruction
+  per line, explicit 1-2-3 ordering, no "simply" or "obviously". Anything
+  a weak model would skip gets a gate (script, checklist) instead of
+  prose, and every hard rule explains its why so any model generalizes.
+- The skill spec (frontmatter name + description, body, optional
+  scripts/references/assets) is the portability contract. Runtime
+  extensions (gateway hooks, runner flags) must degrade gracefully when
+  absent.
+
 ## Test before shipping
 
 Load the skill in a fresh session on the task it targets; compare with and
@@ -92,9 +124,7 @@ description route the right tasks in and the adjacent tasks out? Can a
 model with no other context follow the body start to finish? Edit behind
 that comparison, never by feel.
 
-See references/eval-patterns.md for the matched-comparison shape and
-references/pr-review.md for the mechanical review gates used when
-reviewing a PR that changes skills.
+See references/eval-patterns.md for the matched-comparison shape.
 
 ## Mechanical quality gate for skill libraries
 
@@ -105,8 +135,8 @@ than ad-hoc checks. The script should:
 3. Scan body for em dashes, the banned filler words listed in the
    Style section, first-person narrative.
 4. Detect dates, ticket IDs, incident refs in body (not frontmatter metadata).
-5. Verify every `references/<file>.md` and `scripts/<file>.py` named in body exists.
-6. Normalize style (em dash → hyphen) before comparing content deltas.
+4. Verify every `references/<file>.md` and `scripts/<file>.py` named in body exists.
+5. Normalize style (em dash → hyphen) before comparing content deltas.
 
 Then classify findings:
 - **Hard blockers** (dangling refs, broken frontmatter, dates/ids in body) → fix immediately.
@@ -116,6 +146,7 @@ Then classify findings:
 
 After fixes: re-run lint, verify YAML, ensure line budgets < 500. Only then commit/PR.
 
+This session's pattern: 22 skills, 316 em dashes removed, 5 AI filler words dropped, 1 dangling reference fixed, 6 first-person sections rewritten, 8 descriptions re-routed, 2 skills gained new content sections (beans write-back comments, keep-on-going VOIDED/gate/wiring/recurrence rules).
 
 ## Combined PR pattern
 
