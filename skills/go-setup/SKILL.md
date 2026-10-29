@@ -1,6 +1,6 @@
 ---
 name: go-setup
-description: 'Go project setup, structure decisions, and library selection for production-ready applications. Use when starting a new Go project, deciding on project structure, choosing libraries, or setting up build tools. Covers CLI/TUI, single service, monorepo, mixed layouts, and recommended libraries. Keywords: go project setup, go project structure, go monorepo, go workspace, go libraries, go architecture.'
+description: 'Go project setup, structure decisions, and library selection for production-ready applications. Use when starting a new Go project, deciding on project structure, choosing libraries, or setting up build tools. Covers CLI/TUI, single service, monorepo, mixed layouts, and recommended libraries.'
 license: MIT
 metadata:
   audience: developers
@@ -8,25 +8,6 @@ metadata:
   category: backend
   technologies: go, architecture, project-structure
 ---
-
-## What this skill covers
-
-covers Go project initialization and setup:
-- Project structure decisions
-- Library selection
-- Architecture planning
-- Configuration setup
-
-## When to use me
-
-Use this skill when:
-- Starting a new Go project
-- Deciding on project structure
-- Choosing libraries and dependencies
-- Setting up build tools and configuration
-
----
-
 
 ## Project Structure References
 
@@ -38,96 +19,79 @@ Detailed structure guides are split into focused reference files:
 - [Mixed](references/mixed.md) - Combined CLI + service + shared packages layout
 - [Recommended Libraries](references/libraries.md) - Core, CLI/TUI, database, concurrency, testing, build tools
 
-## Common Commands
-
-```bash
-just build          # Build binary
-just run            # Run application
-just dev            # Run with hot reload
-
-just check          # vet + test-unit + lint
-just lint           # golangci-lint
-just test-unit      # Unit tests only
-just test-all       # All tests
-
-just migrate-up     # Apply migrations
-just migrate-down   # Rollback migrations
-just sqlc           # Generate SQL code
-```
-
 ## Standard justfile Template
 
 ```just
-# Variables
+## Variables
 binary := "myapp"
 main := "./cmd/server"
 
-# Default recipe (runs with just `just`)
+## Default recipe (runs with just `just`)
 default: build
 
-# Build binary
+## Build binary
 build:
     go build -o bin/{{binary}} {{main}}
 
-# Run application
+## Run application
 run:
     go run {{main}}
 
-# Development with hot reload (requires air)
+## Development with hot reload (requires air)
 dev:
     air
 
-# Run all checks
+## Run all checks
 check: lint test
 
-# Run linter
+## Run linter
 lint:
     golangci-lint run ./...
 
-# Run unit tests
+## Run unit tests
 test:
     go test -v -race ./...
 
-# Run unit tests with coverage
+## Run unit tests with coverage
 test-coverage:
     go test -v -race -coverprofile=coverage.out ./...
     go tool cover -html=coverage.out -o coverage.html
 
-# Run integration tests
+## Run integration tests
 test-integration:
     go test -v ./test/integration/...
 
-# Run E2E tests
+## Run E2E tests
 test-e2e:
     go test -v ./test/e2e/...
 
-# Run all tests
+## Run all tests
 test-all: test test-integration test-e2e
 
-# Database migrations
+## Database migrations
 migrate-up:
     migrate -path ./db/migrations -database "$DATABASE_URL" up
 
 migrate-down:
     migrate -path ./db/migrations -database "$DATABASE_URL" down
 
-# Generate SQL code
+## Generate SQL code
 sqlc:
     sqlc generate
 
-# Clean build artifacts
+## Clean build artifacts
 clean:
     rm -rf bin/
     rm -f coverage.out coverage.html
 
-# Install binary to GOPATH
+## Install binary to GOPATH
 install:
     go install {{main}}
 ```
 
 ---
 
-# Configuration
+## Configuration
 
 ## Environment Variables (Recommended)
 
@@ -155,7 +119,7 @@ func Load() (*Config, error) {
 ## .env Files (Development Only)
 
 ```
-# .env (gitignored)
+## .env (gitignored)
 DATABASE_URL=postgres://user:pass@localhost:5432/mydb
 JWT_SECRET=dev-secret
 LOG_LEVEL=debug
@@ -164,7 +128,7 @@ PORT=8080
 
 ---
 
-# Key Principles
+## Key Principles
 
 ## From Official Go Docs
 
@@ -198,7 +162,7 @@ Don't create a package just to:
 
 ---
 
-# Initialization Checklist
+## Initialization Checklist
 
 When starting a new Go project:
 
@@ -215,40 +179,9 @@ When starting a new Go project:
 
 ---
 
-# .gitignore for Go
+## .gitignore
 
-```
-# Binaries
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-bin/
-
-# Test
-*.test
-*.out
-coverage.out
-
-# Go workspace
-go.work
-go.work.sum
-
-# Environment
-.env
-.env.local
-*.env
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Build
-dist/
-```
+Commit a Go `.gitignore` covering binaries, test/coverage output, `go.work` artifacts, `.env` files, IDE dirs, and `dist/`. Start from the standard GitHub Go template; do not hand-roll per project.
 
 ---
 
@@ -267,7 +200,7 @@ jobs:
       
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version-file: go.mod
       
       - uses: extractions/setup-just@v2
       
@@ -288,7 +221,7 @@ CI pitfalls:
 
 ---
 
-# Related Skills
+## Related Skills
 
 After setup, use these skills for development:
 - `go-dev` - Go development patterns and best practices

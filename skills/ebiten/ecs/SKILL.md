@@ -328,27 +328,14 @@ import "github.com/leap-fish/necs"
 
 ## Ark (Alternative)
 
-```go
-import "github.com/mlange-42/ark/ecs"
+Ark is an archetype-based ECS with excellent cache performance. Keep only
+the law here; the API differs from Donburi and changes often, so read the
+[Ark docs](https://github.com/mlange-42/ark) when using it:
 
-// Archetype-based ECS with excellent cache performance
-w := ecs.NewWorld()
-
-posMapper := ecs.NewMap1[Position](&w)
-velMapper := ecs.NewMap2[Position, Velocity](&w)
-
-// Create entity
-entity := posMapper.NewEntity(&Position{X: 10, Y: 20})
-
-// Query
-query := ecs.NewFilter1[Position](&w)
-for q.Next() {
-    pos := q.Get()
-    pos.X += 1
-}
-```
-
-Ark is faster for large entity counts due to archetype storage, but has a steeper API.
+- One world per game; maps and filters are built from that world.
+- Create entities through typed mappers, not raw struct literals.
+- Query via filters; iterate with the query's `Next` loop.
+- Ark has no first-class Ebiten glue, so wire `Update`/`Draw` yourself.
 
 ---
 
@@ -399,11 +386,3 @@ func (g *Game) Update() error {
 | Create world per level (Donburi) | Use a single world, manage entity lifecycles |
 | Store references to entries across frames | Re-query or use Entity IDs |
 | Skip removing dead entities | Clean up each frame to prevent memory leaks |
-
-## When to Use
-This skill is applicable when designing or implementing an Entity Component System architecture in an Ebitengine game.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

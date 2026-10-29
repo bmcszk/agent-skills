@@ -1,6 +1,6 @@
 ---
 name: context7
-description: 'Fetch up-to-date documentation for any library, framework, SDK, API, or CLI tool via Context7 (mcpc). Use when you need current version-accurate docs, code examples, or API references - training data may be outdated. Prefer this over web search for library documentation queries. Keywords: context7, documentation, library docs, API reference, up-to-date docs, version-accurate, code examples.'
+description: 'Fetch up-to-date documentation for any library, framework, SDK, API, or CLI tool via Context7 (mcpc). Use when you need current version-accurate docs, code examples, or API references - training data may be outdated. Prefer this over web search for library documentation queries. Not for current events, news, or non-library facts - use web search; not for system man pages already on disk.'
 license: MIT
 metadata:
   audience: developers
@@ -17,9 +17,8 @@ Prefer this over web search for library documentation queries.
 
 ## Setup
 
-```bash
-mcpc connect ~/.mcpc/mcp.json:context7 @c7
-```
+Connect the context7 MCP server via your MCP client (mcpc:
+`mcpc connect <your mcpc config>:context7 @c7`).
 
 ## Tools
 

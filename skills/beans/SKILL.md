@@ -10,7 +10,7 @@ metadata:
 
 > CLI-based, flat-file issue tracker. Tasks live in `.beans/` as Markdown files, version-controlled alongside your code.
 
-**Repo:** <https://github.com/hmans/beans> (760+ stars)
+**Repo:** <https://github.com/hmans/beans>
 
 Install, `beans init`, and agent-integration steps live in
 [`references/setup.md`](references/setup.md).
@@ -234,12 +234,10 @@ The CLI owns that file - never hand-edit `.beans/*.md`.
 
 ### Write-back comments (audit verdicts, review notes)
 
-There is NO `beans comment` subcommand. Attach a dated note to a bean with
-the CLI:
-
-```bash
-beans update <id> --body-append "## AUDIT (brainer, scope): verdict + evidence"
-```
+There is NO `beans comment` subcommand. Attach dated notes to a bean with
+the CLI; patterns and wording: read
+[`references/write-back-comments.md`](references/write-back-comments.md)
+when writing audit verdicts or review notes back to a bean.
 
 ### Prime Context
 
@@ -380,13 +378,8 @@ A goal that says "ships feature X" without exercising X end-to-end is
 not proven. No e2e harness exists? Say so under `Residual:` with the
 reason - silent omission is a violation.
 
----
-
-### No Proof of Work, no `completed`
-
-Applies to **every** bean type. The two subsections above define *what
-counts as proof* for tasks/subtasks vs epics; this is the underlying
-rule that no bean escapes.
+These proof rules apply to **every** bean type: no Proof of Work, no
+`completed`.
 
 ### Commit Message Convention
 

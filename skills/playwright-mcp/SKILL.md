@@ -1,6 +1,6 @@
 ---
 name: playwright-mcp
-description: 'Use for browser automation and testing via Playwright (mcpc) - navigate, interact, verify, and screenshot web pages. Use for E2E testing, UI verification, web scraping, and browser-based workflows. Tools: browser_navigate, browser_click, browser_type, browser_snapshot, browser_take_screenshot, browser_wait_for, browser_evaluate. Keywords: playwright, browser automation, e2e testing, ui testing, web scraping, screenshot, browser mcp.'
+description: 'Use for browser automation and testing via Playwright (mcpc) - navigate, interact, verify, and screenshot web pages. Use for E2E testing, UI verification, web scraping, and browser-based workflows. Tools: browser_navigate, browser_click, browser_type, browser_snapshot, browser_take_screenshot, browser_wait_for, browser_evaluate.'
 license: MIT
 metadata:
   audience: developers
@@ -16,7 +16,7 @@ Controls a real browser via Playwright for navigation, interaction, verification
 ## Setup
 
 ```bash
-mcpc connect ~/.mcpc/mcp.json:playwright @pw
+mcpc connect <your mcpc config>:playwright @pw
 ```
 
 ## Tools

@@ -1,6 +1,6 @@
 ---
 name: go-browser-tests
-description: 'Go browser testing with chromedp for HTMX applications, real browser automation. Use when testing HTMX frontend interactions, authentication flows, or any scenario requiring a real browser. Runs in test/e2e/browser/ with chromedp. Keywords: browser testing, chromedp, e2e browser, HTMX testing, frontend automation, real browser test.'
+description: 'Go browser testing with chromedp for HTMX applications, real browser automation. Use when testing HTMX frontend interactions, authentication flows, or any scenario requiring a real browser. Runs in test/e2e/browser/ with chromedp.'
 license: MIT
 metadata:
   audience: developers
@@ -8,16 +8,6 @@ metadata:
   category: browser-testing
   technologies: go, chromedp, htmx
 ---
-
-## What this skill covers
-
-browser testing with chromedp for HTMX applications.
-
-## When to use me
-
-- Testing HTMX applications
-- Testing frontend interactions
-- Testing authentication flows
 
 ## Rules
 
@@ -96,20 +86,14 @@ func loginToDashboard(ctx context.Context, email, password, appURL string) chrom
 
 ## Commands
 
-```bash
-<runner> test-browser
-<runner> test-e2e-up    # Start services first
-
-# Use project's runner: make or just
-```
+Run the project's browser-test target (e.g. `just test-browser` or
+`make test-browser`); start services first with the e2e-up target
+(e.g. `just test-e2e-up`).
 
 ## Important
 
 - Browser tests are the ONLY tests that validate real user experience
-- HTTP tests DO NOT validate frontend functionality
-
-## Forbidden
-
+- HTTP tests do not replace browser tests for frontend features; handler-level
+  HTMX tests (asserting partial HTML) are fine and cheaper
 - NEVER skip browser tests for frontend features
-- NEVER use HTTP tests for HTMX behavior
 - NEVER use build tags

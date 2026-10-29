@@ -15,14 +15,6 @@ Ebitengine is a dead simple 2D game library for Go. Cross-platform: desktop (Win
 
 **Import:** `github.com/hajimehoshi/ebiten/v2`
 
----
-
-## When to Use This Skill
-
-You are building a 2D game or interactive graphical application in Go using Ebitengine (Ebiten v2).
-
----
-
 ## Sub-Skill Routing
 
 | If you need... | Use Sub-Skill |
@@ -206,8 +198,3 @@ func main() {
 ---
 
 > **Remember:** Ebitengine is intentionally simple. Start with the `Game` interface, add libraries only when needed.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

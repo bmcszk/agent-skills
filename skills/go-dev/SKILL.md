@@ -1,6 +1,6 @@
 ---
 name: go-dev
-description: 'Go development best practices, coding patterns, and code standards for production-ready Go applications. Use when writing new Go code, reviewing Go code, refactoring, implementing concurrency, or designing interfaces and generics. Covers inline interfaces, error handling, errgroup concurrency, generics, testing excellence. Keywords: go development, golang best practices, go code review, go concurrency, go generics, go interfaces.'
+description: 'Go development best practices, coding patterns, and code standards for production-ready Go applications. Use when writing new Go code, reviewing Go code, refactoring, implementing concurrency, or designing interfaces and generics. Covers inline interfaces, error handling, errgroup concurrency, generics, testing excellence.'
 license: MIT
 metadata:
   audience: developers
@@ -8,26 +8,6 @@ metadata:
   category: backend
   technologies: go, clean-code, concurrency, generics
 ---
-
-## What this skill covers
-
-enforces Go development best practices:
-- Inline Interface Definition
-- Error handling standards
-- Concurrency patterns with errgroup
-- Interface design
-- Generics usage
-- Performance optimization
-- Testing excellence
-
-## When to use me
-
-Use this skill when:
-- Writing new Go code
-- Reviewing Go code
-- Refactoring existing code
-- Implementing concurrent operations
-- Designing interfaces and generics
 
 ## Related Skills
 
@@ -70,13 +50,8 @@ Deep-dive topics are split into focused reference files:
 
 ## Testing
 
-| Command | Description |
-|---------|-------------|
-| `go test -v` | Verbose output |
-| `go test -race` | Run race detector |
-| `go test -cover` | Show coverage |
-| `go test -bench .` | Run benchmarks |
-| `go test -fuzz Fuzz` | Run fuzzing |
+Race detection is mandatory for concurrent code; coverage and benchmarks
+follow the same `go test` flags as any Go project.
 
 
 ## Go embedding

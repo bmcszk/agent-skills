@@ -76,38 +76,7 @@ ebiten.RunGameWithOptions(&Game{}, opts)
 
 ---
 
-## Window Configuration
-
-| Function | Purpose |
-|----------|---------|
-| `SetWindowSize(w, h int)` | Window size in device-independent pixels |
-| `SetWindowTitle(title string)` | Window title |
-| `SetWindowResizingMode(mode)` | `WindowResizingModeDisabled`, `WindowResizingModeOnlyFullscreenEnabled`, `WindowResizingModeEnabled` |
-| `SetWindowDecorated(decorated bool)` | Show/hide title bar |
-| `SetWindowPosition(x, y int)` | Window position |
-| `SetWindowFloating(float bool)` | Keep window on top |
-| `SetWindowMousePassthrough(on bool)` | Click-through window |
-| `SetFullscreen(fullscreen bool)` | Toggle fullscreen |
-| `SetFPSMode(mode)` | `FPSModeVsyncOn` (default), `FPSModeVsyncOffMaximum`, `FPSModeVsyncOffMinimum` |
-| `SetTPS(tps int)` | Ticks per second (default 60) |
-| `SetScreenClearedEveryFrame(cleared bool)` | Auto-clear screen before Draw |
-| `SetScreenFilterEnabled(enabled bool)` | Enable/disable screen scaling filter |
-| `SetVsyncEnabled(enabled bool)` | VSync control |
-
-### Read State
-
-| Function | Returns |
-|----------|---------|
-| `WindowSize()` | `(w, h int)` |
-| `IsFullscreen()` | `bool` |
-| `IsWindowDecorated()` | `bool` |
-| `WindowPosition()` | `(x, y int)` |
-| `CurrentFPS()` | `float64` |
-| `CurrentTPS()` | `float64` |
-| `ActualFPS()` | `float64` |
-| `ActualTPS()` | `float64` |
-| `IsFocused()` | `bool` |
-| `IsScreenTransparent()` | `bool` |
+Full window/state API table (including `RunGameOptions`): read `references/api.md` when configuring window mode, FPS mode, or reading runtime FPS/TPS.
 
 ---
 
@@ -228,11 +197,3 @@ func (g *Game) Update() error {
 ---
 
 > **Remember:** Update is logic. Draw is rendering. Never mix them.
-
-## When to Use
-This skill is applicable when implementing or modifying the Ebitengine game loop, window configuration, or game state management.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

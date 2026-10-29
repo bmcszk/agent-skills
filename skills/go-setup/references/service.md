@@ -1,5 +1,4 @@
 # Single Service (API / Backend)
-# 2. Single Service (API / Backend)
 
 ## Basic Service
 

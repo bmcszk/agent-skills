@@ -1,6 +1,6 @@
 ---
 name: pixellab
-description: 'AI-powered pixel art generation for characters, animations, tiles, and game assets via PixelLab (mcpc). Use when you need character sprites with directional views, animations, isometric tiles, top-down tilesets, sidescroller tilesets, or map objects. All operations are non-blocking and return job IDs for status tracking. Keywords: pixel art, sprite generation, character animation, tileset, isometric tiles, game assets, pixellab.'
+description: 'AI-powered pixel art generation for characters, animations, tiles, and game assets via PixelLab (mcpc). Use when you need character sprites with directional views, animations, isometric tiles, top-down tilesets, sidescroller tilesets, or map objects. All operations are non-blocking and return job IDs for status tracking.'
 license: MIT
 metadata:
   audience: developers

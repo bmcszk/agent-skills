@@ -11,17 +11,16 @@ metadata:
 
 # Arch Linux / CachyOS Administration
 
-> **This file is intentionally machine-agnostic.** Machine-specific data (hostname, hardware specs, kernel versions) lives in per-host files (e.g. `./vecna.md`) at the project root.
+> **This file is intentionally machine-agnostic.** Machine-specific data (hostname, hardware specs, kernel versions) lives in per-host files at the project root (e.g. `<hostname>.md`).
 >
 > **Always verify against the listed source before relying on anything.** Training data goes stale; the docs do not. Use `context7` and `searxng` skills for online verification.
 
-## Hard constraints (from user feedback)
+## Hard constraints
 
 1. **AI agent must not invoke `sudo` directly.** Scripts that need root use `sudo` internally.
 2. **All fix scripts must be idempotent** (safe to re-run).
 3. **User wants 300% certainty on kernel/bootloader changes.** Investigate online; check the actual binary; verify the fix ran.
 4. **Avoid kernel panic risk.** Kernel cmdline and initramfs changes are the highest-risk surface.
-5. **Read existing skills before acting.** `ls .agents/skills/` and use `find_skills` from the global set.
 
 ## Pacman / `pacman.conf`
 
@@ -36,7 +35,7 @@ metadata:
 
 ### Removing the running kernel is safe
 
-Per ArchWiki/Reddit: "It is safe to remove either [kernel] as long as you have another kernel installed that you can boot into." The running kernel stays in memory; only disk files are removed.
+Per ArchWiki: it is safe to remove a kernel as long as another bootable kernel remains installed. The running kernel stays in memory; only disk files are removed.
 
 ### IgnorePkg does not block removal
 
@@ -45,6 +44,8 @@ Per `pacman.conf(5)`: IgnorePkg only affects `--sysupgrade` (upgrades), **not** 
 ## Kernel switching (the SIMPLE way)
 
 **To switch default kernel: just remove the one you don't want.**
+
+The example assumes `linux-cachyos` (remove) vs `linux-cachyos-lts` (keep); substitute your pair.
 
 ```bash
 # Verify the kernel you want to keep has boot files:
@@ -137,8 +138,8 @@ Early-loads amdgpu in initramfs so KMS + EDID injection work at mode-set time, b
 
 | Kernel | Base | Stability | Use case |
 |---|---|---|---|
-| `linux-cachyos` | latest stable (7.0.x) | Bleeding edge | Default if unsure; has AutoFDO |
-| `linux-cachyos-lts` | longterm (6.18.x) | "Minimally patched for maximum stability" | Stable fallback; fewer regressions |
+| `linux-cachyos` | latest stable | Bleeding edge | Default if unsure; has AutoFDO |
+| `linux-cachyos-lts` | longterm | "Minimally patched for maximum stability" | Stable fallback; fewer regressions |
 | `linux-cachyos-deckify` | latest stable | Handheld-specific patches | CachyOS Handheld ISO default |
 
 Source: `wiki.cachyos.org/features/kernel`
@@ -147,16 +148,16 @@ Source: `wiki.cachyos.org/features/kernel`
 
 - **AutoFDO + Propeller** (main only): 1-5% on kernel-heavy benchmarks; negligible for GPU-bound gaming
 - **Newest BORE patches** (main only): marginal scheduler tuning
-- **Color Pipeline API for HW HDR** (6.19+): only if using HDR over HDMI
+- **Color Pipeline API for HW HDR**: only if using HDR over HDMI (needs a new-enough mainline kernel)
 - **New amdgpu features**: sometimes new features, sometimes new regressions
 
-What you keep on LTS: BORE scheduler, CachyOS base patchset, full 890M/Zen 5/NPU support (all in tree since 6.8/6.6).
+What you keep on LTS: BORE scheduler, CachyOS base patchset, full recent-hardware support (890M/Zen 5/NPU all long in tree).
 
 ## Display / compositor issues
 
 ### KWin doesn't re-enable display after gamescope teardown
 
-On kernel 7.0.12, KWin may leave `HDMI-A-1` in `enabled: disabled, dpms: Off` after gamescope exits. Symptoms: black screen after "Switch to Desktop" in Steam Big Picture.
+On recent mainline kernels, KWin may leave `HDMI-A-1` in `enabled: disabled, dpms: Off` after gamescope exits. Symptoms: black screen after "Switch to Desktop" in Steam Big Picture.
 
 **Workaround:** `qdbus6 org.kde.KWin /KWin org.kde.KWin.replace` (restarts KWin, re-detects outputs)
 

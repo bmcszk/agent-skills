@@ -1,6 +1,6 @@
 ---
 name: gemini
-description: 'Google Gemini AI assistant for code analysis, brainstorming, file analysis, and general questions via Gemini (mcpc). Use when you need a second opinion on code, architectural review, brainstorming ideas, or analyzing files. Supports multiple brainstorming methodologies and structured change mode for code edits. Keywords: gemini, google ai, code analysis, brainstorming, code review, second opinion, ask gemini.'
+description: 'Google Gemini AI assistant for code analysis, brainstorming, file analysis, and general questions via Gemini (mcpc). Use when you need a second opinion on code, architectural review, brainstorming ideas, or analyzing files. Supports multiple brainstorming methodologies and structured change mode for code edits.'
 license: MIT
 metadata:
   audience: developers
@@ -16,7 +16,7 @@ Provides access to Google Gemini AI models for code analysis, brainstorming, fil
 ## Setup
 
 ```bash
-mcpc connect ~/.mcpc/mcp.json:gemini-cli @gemini
+mcpc connect <your mcpc config>:gemini-cli @gemini
 ```
 
 ## Tools

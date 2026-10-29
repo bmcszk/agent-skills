@@ -1,6 +1,6 @@
 ---
 name: searxng
-description: 'Privacy-focused web search and URL content reading via SearXNG (mcpc). Use when you need meta-search across Google/Bing/DuckDuckGo without tracking, or to fetch and extract content from any URL with heading/paragraph filtering. Tools: searxng_web_search for private search, web_url_read for content extraction. Keywords: searxng, private search, meta search, privacy search, url content extraction, read article, web fetch.'
+description: 'Privacy-focused web search and URL content reading via SearXNG (mcpc). Use when you need meta-search across Google/Bing/DuckDuckGo without tracking, or to fetch and extract content from any URL with heading/paragraph filtering. Tools: searxng_web_search for private search, web_url_read for content extraction.'
 license: MIT
 metadata:
   audience: developers

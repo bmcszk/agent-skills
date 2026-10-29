@@ -94,24 +94,7 @@ for _, key := range pressedKeys {
 }
 ```
 
-### Key Constants
-
-Common keys in `ebiten` package:
-
-| Constant | Key |
-|----------|-----|
-| `KeyArrowUp/Down/Left/Right` | Arrow keys |
-| `KeySpace` | Space |
-| `KeyEnter` | Enter |
-| `KeyEscape` | Escape |
-| `KeyShiftLeft/ShiftRight` | Shift |
-| `KeyControlLeft/ControlRight` | Control |
-| `KeyA` through `KeyZ` | Letter keys |
-| `Key0` through `Key9` | Number keys |
-| `KeyTab` | Tab |
-| `KeyBackspace` | Backspace |
-
----
+Full key-constant table: read `references/keys.md` when you need a key constant not shown here (`ebiten.Key*` constants cover the full keyboard; `inpututil` wraps all queries).
 
 ## Mouse
 
@@ -471,11 +454,3 @@ func (r *InputRecorder) Record(mapper *InputMapper) {
 | Mix input reading with game logic | Separate input polling from action handling |
 | Ignore touch input for mobile targets | Use touch IDs for multi-touch support |
 | Create new slices in hot path for `AppendPressedKeys` | Reuse slice: `keys = inpututil.AppendPressedKeys(keys[:0])` |
-
-## When to Use
-This skill is applicable when implementing or modifying input handling in an Ebitengine game: keyboard, mouse, gamepad, or touch.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

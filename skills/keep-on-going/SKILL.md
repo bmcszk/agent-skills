@@ -1,6 +1,6 @@
 ---
 name: keep-on-going
-description: 'Session-discipline skill for finishing work, built on top of the beans CLI. One active epic per session, draft-first triage, ~10-minute subtasks delegated to subagents, tests + Proof of Work before any bean closes. Use when you are taking on a goal that spans multiple beans, when an epic risks drifting across sessions, when subagents need a delegatable tree to work against, or when you want completion to be provable rather than confident. Keywords: finish, completion discipline, epic task subtask, draft triage, proof of work, beans loop, session goal, agenda, ledger.'
+description: 'Session-discipline skill for finishing work, built on top of the beans CLI. One active epic per session, draft-first triage, ~10-minute subtasks delegated to subagents, tests + Proof of Work before any bean closes. Use when you are taking on a goal that spans multiple beans, when an epic risks drifting across sessions, when subagents need a delegatable tree to work against, or when you want completion to be provable rather than confident.'
 license: MIT
 metadata:
   audience: agents
@@ -379,7 +379,7 @@ covers what an author misses about their own change.
 A PR waiting for review is NOT a stopping point and never an excuse to
 end the turn idle. While a PR is open the session presses on autonomously:
 
-1. **Run `retro`** (skill) on the session so far: audit the problems
+1. **Run a retrospective audit** on the session so far: audit the problems
    actually hit (wrong model dispatches, stalled RPC lanes, narration
    comments, scope-rule misses), fix their structural causes in the
    governing skills/contracts/hooks: lessons land where the next
@@ -387,7 +387,7 @@ end the turn idle. While a PR is open the session presses on autonomously:
 2. **Continue the epic loop** on the same branch: next ready bean,
    re-gate, commit, push: the open PR absorbs the new commits.
 3. **Frontier check**: if a genuine human decision surfaced mid-wave,
-   batch it into one `grilling` session (whole frontier, numbered,
+   batch it into one focused question-list session (whole frontier, numbered,
    recommended answers). Ad-hoc asks and waiting are both failures.
 
 Communication rule: report state in one line ("PR open, worker on X,

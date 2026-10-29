@@ -6,7 +6,7 @@
 - Contract must include: research reference, exact acceptance criteria
    as checkboxes, required skills (full `SKILL.md` paths), and the
    RE-SHUFFLE law reference (coding-rules intro).
-- Commit `.beans/` and push with `--no-verify` (hooks blocked by
-  GIT-SAFETY guard).
+- Commit `.beans/` and push; hooks must stay green - never bypass
+  them.
 
 ---

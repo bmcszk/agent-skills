@@ -34,11 +34,3 @@ Deep-dive topics are split into focused reference files:
 | Apply transforms without considering order | Remember: transforms apply in reverse call order |
 | Load/decode images every frame | Load once, cache the `*ebiten.Image` |
 | Use `screen.Set(x, y, color)` for many pixels | Use shaders or `Image.Fill()` for bulk pixel ops |
-
-## When to Use
-This skill is applicable when implementing or modifying rendering in an Ebitengine game: drawing images, sprites, tilemaps, camera, text, or shaders.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

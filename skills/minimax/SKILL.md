@@ -1,6 +1,6 @@
 ---
 name: minimax
-description: 'AI-powered web search and image understanding via MiniMax (mcpc). Use when you need real-time web search (Google-like) or to analyze/describe/extract information from images (local files or URLs). Tools: web_search for current info, understand_image for visual analysis. Keywords: minimax, web search, image understanding, image analysis, visual search, ai search.'
+description: 'AI-powered web search and image understanding via MiniMax (mcpc). Use when you need real-time web search (Google-like) or to analyze/describe/extract information from images (local files or URLs). Tools: web_search for current info, understand_image for visual analysis.'
 license: MIT
 metadata:
   audience: developers
@@ -19,7 +19,7 @@ Provides two AI-powered capabilities:
 ## Setup
 
 ```bash
-mcpc connect ~/.mcpc/mcp.json:MiniMax @minimax
+mcpc connect <your mcpc config>:MiniMax @minimax
 ```
 
 ## Tools
