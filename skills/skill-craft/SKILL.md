@@ -43,6 +43,22 @@ ambient skills load additively around the explicit manifest.
 3. Gotchas with a mechanism: "do X because Y fails otherwise". A gotcha
    without its why is a rule; with the why it survives edge cases.
 
+## The knowledge delta test
+
+A skill must change behavior: non-obvious decision criteria, trade-offs
+tied to conditions, failure modes learned in practice, domain procedures
+whose ordering matters. Generic advice the model already supplies ("write
+clean code", basic tutorials) is dead weight no matter how correct.
+
+## Freedom calibration
+
+Match instruction rigidity to task fragility, not to writing mood.
+Creative work needs principles and examples, not a fixed script; review
+and design work needs decision criteria with moderate freedom; fragile
+operations (file edits, security, migrations, external writes) need
+explicit step sequencing with verification. A skill that scripts the
+creative parts and vibes the dangerous parts fails both ways.
+
 ## Progressive disclosure
 
 One `SKILL.md`, plus reference files one level deep. The body states WHAT
