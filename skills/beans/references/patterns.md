@@ -135,15 +135,16 @@ when every AC checkbox is real or a superseded-AC note records where an
 AC moved and why. A partial close buries which parity evidence exists; the
 log keeps the next session's entry point exact.
 
-## Group work into releases (tags, not `milestone` beans)
+## Releases and version checkpoints (`milestone`, optional)
 
-The CLI ships a `milestone` type; house rule: never create one. Tag-based
-grouping does the same job:
+The `milestone` type is a first-class ROOT: a shippable checkpoint ("v1
+works as a user") that groups epics. It is optional - use one when the
+project is a versioned product; a single-goal project just has a
+parentless epic. Milestones cannot have parents (CLI rejects any parent).
 
 ```bash
-beans update myproj-a3x1 --tag rel-v1
-beans update myproj-b7k2 --tag rel-v1
-
-# List everything in the release
+beans create "v1: game playable start-to-finish" -t milestone -s draft
+beans create "Support: lint, tests, tooling" -t epic --parent <milestone-id>
+beans update myproj-a3x1 --tag rel-v1   # tags still fine for loose grouping
 beans list --json -S "rel-v1"
 ```
