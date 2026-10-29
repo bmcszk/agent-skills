@@ -1,37 +1,48 @@
 #!/usr/bin/env python3
-"""skill-craft lint for agent-skills: mechanical gates per SKILL.md."""
-import sys, re, pathlib
+"""Style gate for SKILL.md files. Structural checks (spec, fences, links,
+budgets, adapters) are owned by skillscheck: uvx skillscheck <dir>.
+This shim covers only what an external linter cannot know: the local
+prose style law and project-content leakage."""
+import sys, re
+from pathlib import Path
 
-def norm(t):
-    return re.sub(r'\s*—\s*', ' - ', t)
-
-root = pathlib.Path(sys.argv[1])
-issues = {}
-for d in sorted(root.iterdir()):
-    f = d / "SKILL.md"
-    if not d.is_dir() or not f.exists():
-        continue
-    t = f.read_text()
+def lint(d: Path):
     out = []
-    # frontmatter + description routing
-    m = re.match(r"^---\n(.*?)\n---\n", t, re.S)
+    p = d / "SKILL.md"
+    t = p.read_text() if p.exists() else ""
+    if not t:
+        return ["SKILL.md missing or empty"]
+    m = re.match(r"^---\n(.*?)\n---\n(.*)$", t, re.S)
     if not m:
-        out.append("no frontmatter")
+        return ["no frontmatter"]
+    fm, body = m.groups()
+    fm_lines = fm.splitlines()
+    desc = None
+    for i, l in enumerate(fm_lines):
+        m2 = re.match(r"^description:\s*(.*)$", l)
+        if m2:
+            rest = m2.group(1)
+            if rest in (">", ">-", "|", "|-"):
+                cont = []
+                for l2 in fm_lines[i+1:]:
+                    if not l2.startswith(" ") and l2.strip():
+                        break
+                    cont.append(l2.strip())
+                desc = " ".join(cont)
+            else:
+                desc = rest
+            break
+    if desc is None:
+        out.append("no description")
     else:
-        fm = m.group(1)
-        dm = re.search(r"description:\s*>?-?\s*(.*?)(?=\n\w+:|\Z)", fm, re.S)
-        desc = re.sub(r"\s+", " ", dm.group(1)) if dm else ""
-        if "use when" not in desc.lower() and "use for" not in desc.lower() and "load when" not in desc.lower() and "triggers" not in desc.lower():
+        desc = desc.strip().strip('"')
+        if not re.search(r"\b(when|use|for)\b", desc, re.I):
             out.append("description lacks trigger (routing)")
-        if len(desc) > 600:
-            out.append(f"description very long ({len(desc)} ch)")
-        if re.search(r"\bI \w+", desc) or "This skill" in desc:
+        if re.search(r"\bI\b|\bmy\b|this skill", desc, re.I):
             out.append("description first-person / 'This skill' (want third person)")
-    body = t[m.end():] if m else t
-    lines = body.splitlines()
-    if len(lines) > 500:
-        out.append(f"body {len(lines)} lines > 500")
-    if "—" in body:
+    if len(body.splitlines()) > 500:
+        out.append(f"body {len(body.splitlines())} lines > 500")
+    if body.count("—"):
         out.append(f"em dash x{body.count('—')}")
     filler_body = "\n".join(l for l in body.splitlines() if "AI filler" not in l)
     for w in ["crucial", "delve", "additionally,", "comprehensive", "seamless", "leverage", "robust"]:
@@ -39,23 +50,22 @@ for d in sorted(root.iterdir()):
         if n: out.append(f"AI filler '{w}' x{n}")
     fp = re.findall(r"^\s*I (?:am|will|'m)\b.*$", body, re.M)
     if fp: out.append(f"first-person narrative x{len(fp)}")
-    ids = re.findall(r"\b[a-zA-Z][a-zA-Z0-9]*-[a-z]{2,8}-[a-z0-9]{4}\b|\b(2026|2025)-\d{2}-\d{2}\b|PR #\d+", body)
-    if ids: out.append(f"dates/ids/incident refs: {sorted(set(i for i in ids if i))[:4]}")
-    # dangling references (quoted examples like "read references/x.md" excluded)
-    body_unquoted = re.sub(r'"[^"\n]*"', '', body)
-    for ref in re.findall(r"references/([A-Za-z0-9_./-]+\.md)", body_unquoted):
-        if not (d / "references" / ref).exists():
-            out.append(f"dangling reference references/{ref}")
-    # scripts named must exist
-    for sc in re.findall(r"scripts/([A-Za-z0-9_./-]+\.(?:py|sh|js))", body):
-        if not (d / "scripts" / sc).exists():
-            out.append(f"dangling script scripts/{sc}")
-    # flags info
-    flags = sorted(set(re.findall(r"--[a-z][a-z-]+", body)))
-    if flags: out.append("flags used (verify argparse): " + ", ".join(flags))
-    if out:
-        issues[d.name] = out
-for name in sorted(issues):
-    print(f"== {name}")
-    for i in issues[name]: print(f"   - {i}")
-print(f"\n{len(issues)} skills with findings")
+    ids = [m.group(0) for m in re.finditer(r"\b[a-z]{2,12}-[a-z]{2,12}-[a-z0-9]*[0-9][a-z0-9]{0,3}\b|\b(?:2026|2025)-\d{2}-\d{2}\b|PR #\d+", body)]
+    if ids: out.append(f"dates/ids/incident refs: {sorted(set(ids))[:4]}")
+    return out
+
+def main():
+    root = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+    dirs = sorted(d for d in root.rglob("SKILL.md") if "[SKILL_PRUNED]" not in d.read_text()[:2000])
+    bad = 0
+    for f in dirs:
+        finds = lint(f.parent)
+        if finds:
+            bad += 1
+            print(f"== {f.parent.relative_to(root)}")
+            for x in finds: print(f"   - {x}")
+    print(f"\n{bad} skills with style findings")
+    sys.exit(1 if bad else 0)
+
+if __name__ == "__main__":
+    main()

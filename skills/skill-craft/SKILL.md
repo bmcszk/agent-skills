@@ -144,15 +144,19 @@ See references/eval-patterns.md for the matched-comparison shape.
 
 ## Mechanical quality gate for skill libraries
 
-When reviewing multiple skills at once, run a checked lint script rather
-than ad-hoc checks. The script should:
-1. Parse frontmatter and body; validate YAML on every skill.
-2. Flag descriptions missing "Use when" load triggers (routing).
-3. Scan body for em dashes, the banned filler words listed in the
-   Style section, first-person narrative.
-4. Detect dates, ticket IDs, incident refs in body (not frontmatter metadata).
-4. Verify every `references/<file>.md` and `scripts/<file>.py` named in body exists.
-5. Normalize style (em dash → hyphen) before comparing content deltas.
+Run two gates, in this order:
+
+1. **Structural gate: `skillscheck`** (`uvx skillscheck <skills-dir>`).
+   Owns everything the spec and cross-agent reality can check: frontmatter
+   validity and metadata value types, unclosed code fences, broken links
+   with fragment anchors, token budgets, reference nesting, secret leaks,
+   orphaned files, and per-agent adapter rules. Do not hand-write these
+   checks; a checked script you maintain loses to a maintained linter.
+   `--strict` promotes warnings to errors in CI.
+2. **Style gate: `scripts/skill-lint.py`** (this skill). Owns only what an
+   external linter cannot know: the local prose law (em dashes, AI filler,
+   first-person narrative) and project-content leakage (dates, ticket
+   ids, incident refs, bean ids in body).
 
 Then classify findings:
 - **Hard blockers** (dangling refs, broken frontmatter, dates/ids in body) → fix immediately.
@@ -160,9 +164,10 @@ Then classify findings:
 - **Routing** (descriptions not starting with "Use when/for") → rewrite as load conditions.
 - **Content deltas** (install-only sections not in repo) → extract exact sections and add to repo skills.
 
-After fixes: re-run lint, verify YAML, ensure line budgets < 500. Only then commit/PR.
-
-This session's pattern: 22 skills, 316 em dashes removed, 5 AI filler words dropped, 1 dangling reference fixed, 6 first-person sections rewritten, 8 descriptions re-routed, 2 skills gained new content sections (beans write-back comments, keep-on-going VOIDED/gate/wiring/recurrence rules).
+After fixes: re-run both gates, verify YAML, ensure line budgets < 500.
+Only then commit/PR. Third-party installed skills: report upstream-owned
+findings, never fix in place (sync reverts them); archive dirs live
+outside the skills root or the linter scans them.
 
 ## Combined PR pattern
 
