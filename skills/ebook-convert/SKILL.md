@@ -16,9 +16,9 @@ Output format is inferred from the output file extension. Supported: mobi, azw3,
 
 ## Format choice matters
 
-- **mobi** — legacy; Amazon stopped accepting it for Send-to-Kindle in 2022, new Kindles don't read it. Only when explicitly requested.
-- **azw3** — modern Kindle format, keeps formatting/CSS best. Prefer for Kindle devices.
-- **epub** — universal; Kindle (2022+) and Send-to-Kindle accept it directly, no conversion needed.
+- **mobi** legacy; Amazon stopped accepting it for Send-to-Kindle in 2022, new Kindles don't read it. Only when explicitly requested.
+- **azw3** modern Kindle format, keeps formatting/CSS best. Prefer for Kindle devices.
+- **epub** universal; Kindle (2022+) and Send-to-Kindle accept it directly, no conversion needed.
 
 ## Useful options
 
@@ -36,5 +36,5 @@ ebook-convert in.epub out.azw3 --toc-threshold=50
 ## Workflow
 
 1. Locate the input file (find if path not given).
-2. Run `ebook-convert <in> <out>`; conversion can take 10–60s — use a generous timeout.
+2. Run `ebook-convert <in> <out>`; conversion can take 10-60s, use a generous timeout.
 3. Verify the output file exists and has non-zero size.
