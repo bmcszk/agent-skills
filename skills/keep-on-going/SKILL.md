@@ -214,7 +214,8 @@ bean, re-run with suppression hard-forbidden in the worker contract.
 ### Planned-work wiring protection
 
 Planned-work wiring is protected: code whose comments cite an open bean
-(`TODO ... lands later (<bean-id>)`) is another leaf's working surface.
+by title (`TODO ... lands later (see "<bean title>")`) is another leaf's
+working surface.
 A repair or style pass may not delete it to silence a linter; the fix is an
 exclusion named in the epic body or moving the wiring's landing forward,
 never silent deletion. Deleting another leaf's scaffolding re-scopes that

@@ -38,7 +38,7 @@ it into smaller, trustworthy ones.
 
 When you approve a gate, record:
 
-- The bean ID.
+- The bean title (IDs stay in CLI commands, never in reports or messages).
 - The gate title (the `- [ ]` line, shortened).
 - The command (verbatim, including flags and args).
 - The expected match (the `EXPECT:` line).
@@ -84,7 +84,7 @@ marker in the body:
 ```markdown
 - [ ] Run integration tests
   ABANDON: G3  no integration tests exist for this module; tracked
-  as a separate bean (myproj-x1y2)
+  as a separate bean ("integration tests for checkout flow")
 ```
 
 The bean stays in `in-progress` (or `todo`) until every gate is
