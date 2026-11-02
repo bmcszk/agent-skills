@@ -1,6 +1,6 @@
 # Tools Reference
 
-Load when invoking browser (@pw) or image-analysis (@minimax) tools via mcpc.
+Load when invoking browser (@pw) tools via mcpc.
 
 ## Tools Reference
 
@@ -36,9 +36,4 @@ Load when invoking browser (@pw) or image-analysis (@minimax) tools via mcpc.
 | `mcpc @pw tools-call browser_network_requests` | Get network logs |
 | `mcpc @pw tools-call browser_evaluate function:=<js>` | Run JavaScript |
 
-### AI Analysis (mcpc @minimax)
-| Command | Use |
-|---------|-----|
-| `mcpc @minimax tools-call understand_image prompt:=<prompt> image_source:=<path>` | Analyze screenshots with AI |
-| `mcpc @minimax tools-call web_search query:=<query>` | Search web for info |
 
