@@ -186,6 +186,11 @@ func (s *stage) noError() *stage {
 
 Do not `require.NoError` inside `do()` for transport failures. Keep "could not reach the service" separate from "service returned 400".
 
+## Resource cleanup
+
+- Check the transport error first, then `defer resp.Body.Close()`. Every method that reads a response body closes it. Async `then` checks poll repeatedly, and every poll opens a new body, so every poll closes one.
+- Tear down what `given` sets up. Register deferred cleanup for compose projects, containers, temp dirs, and listeners in `newStage` or in the method that started the resource. A failing cleanup logs a warning and moves on. It never panics the test.
+
 ## Naming
 
 | Kind | Pattern | Examples |
