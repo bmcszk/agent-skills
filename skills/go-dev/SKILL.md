@@ -1,11 +1,12 @@
 ---
 name: go-dev
 description: >-
-  Use for any Go implementation, refactor, code review, or Go version bump.
-  Holds the Go decision order and hard rules, and routes to references for
-  core style and design rules, tradeoffs, and modern Go (1.24 to 1.27 APIs,
-  go fix, json/v2). For tests, also load go-tests. For a new project, load
-  go-setup.
+  Use for any Go implementation, refactor, code review, or Go version bump,
+  including concurrency and database access, error handling, and performance
+  work. Holds the Go decision order and hard rules and routes to references
+  for style, core design rules, tradeoffs and modern Go practice (1.24 to 1.27
+  APIs plus go fix and json/v2). Not for test design, that is go-tests. For a
+  new project, load go-setup.
 license: MIT
 metadata:
   audience: developers
@@ -54,6 +55,11 @@ Build, vet, lint, and tests check that code is correct. None of them checks that
 |------|------|
 | Any tradeoff | [development-balance.md](references/development-balance.md) |
 | Implementation, refactor, or review | [core-go-rules.md](references/core-go-rules.md) |
+| Line breaking, declarations, control flow, signatures, pointer vs value | [style.md](references/style.md) |
+| Goroutines, channels, `select`, mutex and atomics, `errgroup`, worker pools | [concurrency.md](references/concurrency.md) |
+| Queries, scanning, transactions, isolation, pooling, batching, indexes | [database.md](references/database.md) |
+| Error strings, wrapping, `errors.Is`/`As`/`Join`, panic, log fields | [error-handling.md](references/error-handling.md) |
+| Profiling, allocations, CPU and cache, GC limits, I/O, caching | [performance.md](references/performance.md) |
 | Go version bump, `go fix`, new stdlib API, json/v2, omitempty/omitzero | [modern-go.md](references/modern-go.md) |
 | Unit, integration, or E2E tests | [go-tests](../go-tests/SKILL.md) |
 | New project, layout, library choice | [go-setup](../go-setup/SKILL.md) |
