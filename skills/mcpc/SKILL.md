@@ -20,7 +20,7 @@ MCP servers are defined in your mcpc config. Connect via `file:entry` syntax:
 mcpc connect <your mcpc config>:<entry> @<name>
 ```
 
-**Available servers:** context7, pixellab, MiniMax, gemini-cli, playwright, searxng, plus Z.ai coding-plan servers (key = ZAI_AUTH_TOKEN from `~/.config/environment.d/secrets.conf`):
+**Available servers:** context7, pixellab, gemini-cli, playwright, searxng, plus Z.ai coding-plan servers (key = ZAI_AUTH_TOKEN from `~/.config/environment.d/secrets.conf`):
 
 | Session | Entry | Tools | Notes |
 |---|---|---|---|
@@ -28,13 +28,12 @@ mcpc connect <your mcpc config>:<entry> @<name>
 | `@zai-reader` | `zai-web-reader` | `webReader` | remote, live-verified |
 | `@zread` | `zread` | `search_doc`, `read_file`, `get_repo_structure` | remote; repo_name = owner/repo |
 | `@zai-vision` | `zai-vision` | `analyze_image`, `ui_to_artifact`, OCR, … | stdio npx @z_ai/mcp-server; **local file paths only** - URL fetch fails (400 图片输入格式/解析错误); Node ≥22 |
-| `@minimax` | `MiniMax` | `web_search`, `understand_image` | uvx minimax-coding-plan-mcp, key = MINIMAX_CODING_KEY; local paths verified; search verified |
 
-Not configured (pay-per-use platform API, NOT covered by coding plans): official generative MiniMax-MCP (uvx minimax-mcp: TTS/video/image/music). Only add on explicit user request.
+Not configured (pay-per-use platform API, NOT covered by coding plans): MiniMax MCPs. Only add on explicit user request.
 
 **PATH pitfall:** `mcpc` binary lives in `~/.bun/bin` - absent from default non-login PATH. First line of any script: `export PATH="$HOME/.bun/bin:$PATH"` (else `command not found`, exit 127).
 
-**Verified quirks:** Z.ai/zread remote tools take `owner/repo` as `repo_name`; vision tools reject remote image URLs (HTTP 400 图片输入格式/解析错误) - download or generate a local file first (local paths verified OK on both @zai-vision and @minimax).
+**Verified quirks:** Z.ai/zread remote tools take `owner/repo` as `repo_name`; vision tools reject remote image URLs (HTTP 400 图片输入格式/解析错误) - download or generate a local file first (@zai-vision verified).
 
 ## Quick reference
 
@@ -214,6 +213,5 @@ Each MCP server has its own skill with tool-specific workflows:
 
 - `context7` - Documentation lookup
 - `pixellab` - Pixel art generation
-- `minimax` - AI web search and image understanding
 - `playwright-mcp` - Browser automation
 - `searxng` - Web search and URL reading
