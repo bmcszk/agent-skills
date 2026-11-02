@@ -3,10 +3,12 @@ name: go-tests
 description: >-
   Use when adding, changing, or reviewing Go unit, integration, or E2E tests
   or test stages, when choosing which test level a code change needs, when
-  choosing between integration and E2E tests, or when picking the test
-  runtime. Covers unit tests for pure public functions, integration tests on
-  Docker Compose, and E2E tests on the project's full-stack runtime, all in
-  the fluent given/when/then stage pattern (*_test.go plus *_stage_test.go).
+  choosing between integration and E2E tests, when writing a benchmark or an
+  Example, when reading a coverage report, or when picking the test runtime.
+  Covers unit tests for pure public functions, integration tests on Docker
+  Compose, and E2E tests on the project's full-stack runtime, all in the fluent
+  given/when/then stage pattern (*_test.go plus *_stage_test.go). Also use when
+  migrating an existing Go test suite onto that fluent pattern.
   Browser tests: see go-browser-tests.
 ---
 
@@ -32,6 +34,11 @@ More references, each with its load condition:
 
 - Growing or splitting a stage, adding a stage file, or changing the stage type: [stage-structure.md](references/stage-structure.md).
 - Test data, fake upstream servers, async checks, or test file layout: [test-data-and-config.md](references/test-data-and-config.md).
+- Comparing implementations or input sizes, or writing a new benchmark: [benchmarks.md](references/benchmarks.md).
+- Reading a coverage report or choosing which untested path to attack next: [coverage.md](references/coverage.md).
+- A runnable `Example*` next to a public API: [examples.md](references/examples.md).
+- Fuzzing a target, or faking time with `testing/synctest`: [unit-tests.md](references/unit-tests.md).
+- Moving an existing suite onto the fluent stage DSL: [fluent-migration.md](references/fluent-migration.md).
 
 ## Hard rules: unit
 

@@ -37,7 +37,7 @@ Gotcha: the `omitzero` fixer removes `omitempty` from struct-typed fields. The `
 
 | Instead of | Use | Go |
 |---|---|---|
-| `errors.As(err, &target)` with a declared var | `target, ok := errors.AsType[*MyErr](err)` | 1.26 |
+| `errors.As(err, &target)` with a declared var | `target, ok := errors.AsType[*MyErr](err)`. Rationale: [error-handling.md](error-handling.md). | 1.26 |
 | a `ptr(v)` helper | `new(v)`, for example `new(30)` | 1.26 |
 | `wg.Add(1); go func(){ defer wg.Done() ... }()` | `wg.Go(func(){ ... })`, only for goroutines that cannot fail, cannot panic, and need no cancellation. Otherwise `errgroup`. | 1.25 |
 | `filepath.Clean` plus a prefix check on user paths | `os.OpenRoot(dir)` and `root.Open(name)`. It also blocks symlink escape. | 1.24 |
