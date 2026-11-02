@@ -5,7 +5,7 @@
 | Purpose | Library | Import | Notes |
 |---------|---------|--------|-------|
 | HTTP Router | chi | `github.com/go-chi/chi/v5` | Lightweight, stdlib-compatible |
-| Testing | testify | `github.com/stretchr/testify` | assert, require, mock, suite |
+| Testing | testify | `github.com/stretchr/testify` | assert, require |
 | Config | caarlos0/env | `github.com/caarlos0/env/v11` | Environment-based config |
 | Logging | slog | `log/slog` | Go 1.21+ stdlib |
 
@@ -37,7 +37,7 @@
 
 | Purpose | Library | Import | Notes |
 |---------|---------|--------|-------|
-| Testcontainers | testcontainers | `github.com/testcontainers/testcontainers-go` | Real dependencies |
+| Docker Compose | docker compose | CLI, no import | Real dependencies for integration tests |
 | HTTP Testing | httptest | `net/http/httptest` | Stdlib HTTP testing |
 
 ## When to Use What

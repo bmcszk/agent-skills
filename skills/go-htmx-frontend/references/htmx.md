@@ -1,9 +1,21 @@
 # HTMX
-## HTMX Integration
 
-### HTMX Form with Partial Update
+Docs: https://htmx.org/docs/ and https://templ.guide/server-side-rendering/htmx/
 
-From official docs: https://templ.guide/server-side-rendering/htmx/
+## Install
+
+```bash
+# HTMX 2.x
+mkdir -p static/js
+curl -sL https://unpkg.com/htmx.org@2/dist/htmx.min.js -o static/js/htmx.min.js
+
+# Alpine.js, only when a page needs client state
+curl -sL https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js -o static/js/alpine.min.js
+```
+
+Commit the downloaded file so the build does not depend on a CDN.
+
+## Form with a partial update
 
 ```go
 // counts.templ
@@ -12,12 +24,12 @@ package components
 import "strconv"
 
 templ Counts(global, session int) {
-    <form 
-        id="countsForm" 
-        action="/" 
-        method="POST" 
-        hx-post="/" 
-        hx-select="#countsForm" 
+    <form
+        id="countsForm"
+        action="/"
+        method="POST"
+        hx-post="/"
+        hx-select="#countsForm"
         hx-swap="outerHTML"
     >
         <div class="columns">
@@ -37,11 +49,11 @@ templ Counts(global, session int) {
 ```
 
 Key attributes:
-- `hx-post="/"` - POST to this endpoint
-- `hx-select="#countsForm"` - Extract this element from response
-- `hx-swap="outerHTML"` - Replace the form element
+- `hx-post="/"` posts to this endpoint.
+- `hx-select="#countsForm"` extracts this element from the response.
+- `hx-swap="outerHTML"` replaces the form element.
 
-### HTMX Patterns
+## Patterns
 
 ```go
 // Click to load
@@ -52,7 +64,7 @@ templ LoadButton() {
 
 // Real-time search with debounce
 templ SearchInput() {
-    <input 
+    <input
         type="search"
         name="q"
         hx-get="/search"
@@ -64,7 +76,7 @@ templ SearchInput() {
 
 // Infinite scroll
 templ InfiniteScroll() {
-    <div 
+    <div
         hx-get="/more-items"
         hx-trigger="revealed"
         hx-swap="beforeend"
@@ -82,7 +94,7 @@ templ SubmitButton() {
 }
 ```
 
-### HTMX Loading States CSS
+## Loading-state CSS
 
 ```css
 .htmx-indicator {
@@ -96,9 +108,32 @@ templ SubmitButton() {
 }
 ```
 
-### hx-on Attributes (JavaScript Events)
+## Error responses
 
-From official docs - for inline JavaScript:
+HTMX 2 does not swap 4xx and 5xx responses by default. The default `htmx.config.responseHandling` marks them as errors with `swap: false`. A handler that returns `404` or `422` with an HTML fragment shows nothing on the page.
+
+Pick one:
+- Return `200` with the fragment when the fragment is an inline validation message.
+- Opt in to swapping specific codes, for example 422 for validation errors:
+
+```html
+<script>
+  htmx.config.responseHandling = [
+    {code: "204", swap: false},
+    {code: "[23]..", swap: true},
+    {code: "422", swap: true, error: false},
+    {code: "[45]..", swap: false, error: true},
+  ];
+</script>
+```
+
+Put that block after the HTMX script. HTMX takes the first rule that matches, so keep `422` before `[45]..`.
+
+Handler side of full pages and partials: [handlers.md](handlers.md).
+
+## hx-on attributes
+
+For inline JavaScript events:
 
 ```go
 // Static JavaScript
@@ -118,6 +153,3 @@ templ DynamicAlert(message string) {
     </button>
 }
 ```
-
----
-
