@@ -1,6 +1,6 @@
 ---
 name: go-fluent-testing
-description: 'Go testing with the fluent Given/When/Then DSL across all test tiers: unit (mocks, blackbox), integration (testcontainers, real deps), and E2E (docker-compose, HTTP). ONE methodology - parts struct, newParts(t), .and() chaining, all state in parts. Canonical rules in references/fluent-testing-guideline.md. Use when writing or reviewing ANY Go test: unit, integration, E2E, or choosing the tier for a new test. Keywords: go test, fluent testing, given when then, parts struct, testcontainers, docker-compose, unit test, integration test, e2e test, testify, mocking, blackbox.'
+description: 'Go testing with the fluent Given/When/Then DSL across all test tiers: unit (mocks, blackbox), integration (testcontainers, real deps), and E2E (docker-compose, HTTP). ONE methodology - parts struct, newParts(t), .and() chaining, all state in parts. Canonical rules in references/formatting-rules.md. Use when writing or reviewing ANY Go test: unit, integration, E2E, or choosing the tier for a new test. Keywords: go test, fluent testing, given when then, parts struct, testcontainers, docker-compose, unit test, integration test, e2e test, testify, mocking, blackbox.'
 license: MIT
 metadata:
   audience: developers
@@ -16,7 +16,7 @@ Given/When/Then methodology. One DSL, one parts struct, three tiers.
 
 ## MANDATORY Reference
 
-**ALL Go tests MUST follow:** `references/fluent-testing-guideline.md`
+**ALL Go tests MUST follow:** `references/formatting-rules.md`
 (included in this skill directory). It is the single source of truth
 for the DSL: parts struct, `newParts(t)`, `.and()` at END of line,
 all state in parts, no direct helper calls in Test funcs, t.Run
@@ -154,7 +154,7 @@ func TestService_CreateUser(t *testing.T) {
   file. A parts file is a pure method group on `*parts` (no struct, no ctor of
   its own); a parts file with zero methods is deleted.
 - NEVER base-embeds-domains while domains-embed-base - that cycle reads as a
-  structural error. Recipe: `references/fluent-testing-guideline.md`.
+  structural error. Recipe: `references/formatting-rules.md`.
 - Renaming files to exact-stem pairs: `git mv` per file, then RE-CHECK that no
   other file still uses the old stem (`grep -rn old-stem *.go *.md`): renames
   leave stale doc references and duplicate stems (a file of the same domain

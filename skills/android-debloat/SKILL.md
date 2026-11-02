@@ -1,6 +1,6 @@
 ---
 name: android-debloat
-description: De-bloat, speed up, and maintain Android phones over adb — no root. Use when the user says their phone is slow or laggy, wants bloatware removed or disabled, asks to free phone storage or move media to a memory card, reports battery drain, or asks for adb-based Android maintenance, diagnostics, or rollback of phone changes. Covers diagnosis (RAM/swap, wakeup floods, disk fullness), safe package disabling, verified bulk file moves, and rollback discipline.
+description: De-bloat, speed up, and maintain Android phones over adb — no root. Use when the user says their phone is slow or laggy, wants bloatware removed or disabled, asks to free phone storage or move media to a memory card, reports battery drain, or asks for adb-based Android maintenance, diagnostics, or rollback of phone changes. Use when diagnosing device slowness, storage pressure, battery drain, or preparing bulk file moves over adb. Covers diagnosis (RAM/swap, wakeup floods, disk fullness), safe package disabling, verified bulk file moves, and rollback discipline.
 license: MIT
 metadata:
   category: device-maintenance

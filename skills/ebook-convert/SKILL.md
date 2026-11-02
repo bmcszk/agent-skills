@@ -1,6 +1,6 @@
 ---
 name: ebook-convert
-description: Convert ebooks between formats (EPUB, MOBI, AZW3, PDF, etc.) using Calibre's ebook-convert CLI. Use when the user asks to convert an ebook, e.g. "convert epub to mobi/azw3", "zamień epub na mobi", "konwersja e-booka".
+description: Convert ebooks between formats (EPUB, MOBI, AZW3, PDF, etc.) using Calibre's ebook-convert CLI. Use when a conversion task comes up, e.g. epub to mobi/azw3 or any e-book format change.
 ---
 
 # Ebook Conversion
