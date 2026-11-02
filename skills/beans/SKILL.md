@@ -383,12 +383,13 @@ These proof rules apply to **every** bean type: no Proof of Work, no
 
 ### Commit Message Convention
 
-Include bean IDs in commit messages:
+Name beans by title, never by ID - IDs are opaque to readers, titles are
+not:
 
 ```
 feat(auth): add OAuth PKCE support
 
-Refs: myproj-a3x1
+Refs: "OAuth login with PKCE"
 ```
 
 ---

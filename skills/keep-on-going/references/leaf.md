@@ -57,7 +57,8 @@ Low-cost polish:
 - Inconsistent naming.
 - Comment that explains *why*, not *what*.
 - Doc comments on exported symbols.
-- Changelog / commit message that names the bean ID.
+- Changelog / commit message that names the bean by title (never a bare
+  bean ID).
 
 Then **go back to pass 2**. Repeat until a full pass from 2 finds
 nothing new. Stop when 4 successive passes are no-ops.
