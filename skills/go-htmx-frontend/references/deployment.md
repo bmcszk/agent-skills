@@ -1,4 +1,7 @@
-# Deployment & Build
+# Deployment and build
+
+Use this for the `justfile`, hot reload, the production build, and CI. Tailwind install details: [tailwind.md](tailwind.md#install-the-standalone-cli).
+
 ## justfile
 
 ```just
@@ -13,12 +16,20 @@ css_output := "static/css/output.css"
 default:
     @just --list
 
-# Install dependencies (templ + tailwind standalone)
+# Install dependencies (templ + tailwind standalone). Asset names: references/tailwind.md
 install:
+    #!/usr/bin/env bash
+    set -euo pipefail
     go install github.com/a-h/templ/cmd/templ@latest
-    @mkdir -p tools
-    @curl -sL https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-$(uname -m)-unknown-linux-gnu -o {{tailwind_bin}}
-    @chmod +x {{tailwind_bin}}
+    case "$(uname -s)-$(uname -m)" in
+        Linux-x86_64)  asset=tailwindcss-linux-x64 ;;
+        Linux-aarch64) asset=tailwindcss-linux-arm64 ;;
+        Darwin-arm64)  asset=tailwindcss-macos-arm64 ;;
+        *) echo "unsupported platform" >&2; exit 1 ;;
+    esac
+    mkdir -p tools
+    curl -fsSL "https://github.com/tailwindlabs/tailwindcss/releases/latest/download/$asset" -o {{tailwind_bin}}
+    chmod +x {{tailwind_bin}}
 
 # Development mode with hot reload
 dev:
@@ -47,7 +58,7 @@ css:
 css-watch:
     {{tailwind_bin}} -i {{css_input}} -o {{css_output}} --watch
 
-# Run all tests
+# Run all tests (levels and layout: ../go-tests)
 test:
     go test ./...
 

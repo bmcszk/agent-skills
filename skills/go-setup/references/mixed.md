@@ -31,10 +31,10 @@ myproject/
 ├── test/
 │   ├── integration/
 │   │   ├── integration_test.go
-│   │   └── integration_parts_test.go
+│   │   └── integration_stage_test.go
 │   └── e2e/
 │       ├── e2e_test.go
-│       └── e2e_parts_test.go
+│       └── e2e_stage_test.go
 ├── docker-compose.yml
 ├── Dockerfile
 ├── justfile

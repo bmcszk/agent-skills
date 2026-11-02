@@ -24,7 +24,7 @@ myorg/
 │   │   └── test/
 │   │       ├── integration/
 │   │       └── e2e/
-│   ├── payment-service/
+│   ├── order-service/
 │   │   ├── go.mod
 │   │   ├── cmd/
 │   │   ├── internal/
@@ -46,8 +46,8 @@ myorg/
 ├── proto/                  # Protocol definitions (gRPC)
 │   ├── user/
 │   │   └── user.proto
-│   └── payment/
-│       └── payment.proto
+│   └── order/
+│       └── order.proto
 ├── test/                   # Shared test utilities
 │   ├── fixtures/
 │   └── testutil/
@@ -67,7 +67,7 @@ go 1.22
 
 use (
     ./services/user-service
-    ./services/payment-service
+    ./services/order-service
     ./services/notification-service
 )
 ```
@@ -76,7 +76,7 @@ use (
 
 ```just
 # Variables
-services := "user-service payment-service notification-service"
+services := "user-service order-service notification-service"
 
 # Default recipe
 default: build test

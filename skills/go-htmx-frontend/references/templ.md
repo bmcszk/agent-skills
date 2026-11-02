@@ -1,7 +1,23 @@
 # Templ
-## Templ Syntax
 
-### Basic Component
+Docs: https://templ.guide/ and https://templ.guide/syntax-and-usage/template-composition/
+
+## Install
+
+```bash
+# Templ CLI (Go 1.24+), as a project tool
+go get -tool github.com/a-h/templ/cmd/templ@latest
+
+# Or as a global binary
+go install github.com/a-h/templ/cmd/templ@latest
+
+# Runtime dependency
+go get github.com/a-h/templ
+```
+
+Run `templ generate` before `go build`. Generated `*_templ.go` files are build output. Keep them out of version control unless the project already commits them.
+
+## Basic component
 
 ```go
 // components.templ
@@ -18,7 +34,7 @@ templ ShowTime(t time.Time) {
 }
 ```
 
-### Template Composition with Children
+## Layout with children
 
 ```go
 // layout.templ
@@ -41,7 +57,7 @@ templ Layout(title string) {
 }
 ```
 
-### Using Layout with Children
+Use the layout:
 
 ```go
 // page.templ
@@ -57,7 +73,7 @@ templ HomePage() {
 }
 ```
 
-### Components as Parameters
+## Components as parameters
 
 ```go
 // components.templ
@@ -79,24 +95,24 @@ templ paragraph(text string) {
 }
 ```
 
-### Conditional Classes with templ.KV
+## Conditional classes with templ.KV
 
 ```go
 templ FormField(name string, hasError bool, value string) {
     <div class={ "form-group", templ.KV("has-error", hasError) }>
         <label for={ name }>{ name }</label>
-        <input 
-            type="text" 
-            id={ name } 
-            name={ name } 
-            class="form-control" 
+        <input
+            type="text"
+            id={ name }
+            name={ name }
+            class="form-control"
             value={ value }
         />
     </div>
 }
 ```
 
-### For Loops
+## Loops
 
 ```go
 templ UserList(users []User) {
@@ -108,7 +124,7 @@ templ UserList(users []User) {
 }
 ```
 
-### If/Else
+## Conditionals
 
 ```go
 templ Status(isActive bool) {
@@ -119,6 +135,3 @@ templ Status(isActive bool) {
     }
 }
 ```
-
----
-

@@ -225,4 +225,4 @@ CI pitfalls:
 
 After setup, use these skills for development:
 - `go-dev` - Go development patterns and best practices
-- `go-fluent-testing` - Unit/integration/E2E testing (fluent Given/When/Then)
+- `go-tests` - Unit, integration, and E2E tests (fluent given/when/then stage)
