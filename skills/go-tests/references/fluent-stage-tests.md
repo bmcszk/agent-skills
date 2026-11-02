@@ -188,8 +188,8 @@ Do not `require.NoError` inside `do()` for transport failures. Keep "could not r
 
 ## Resource cleanup
 
-- Every method that reads a response body closes it: check the transport error first, then `defer resp.Body.Close()`. This includes async `then` checks — each poll opens a new body, so each poll must close one.
-- Tear down what `given` sets up. Compose projects, containers, temp dirs, and listeners get a deferred cleanup (registered in `newStage` or in the method that started the resource), not a hope that the CI runner garbage-collects them. A failing cleanup logs a warning and moves on; it never panics the test.
+- Check the transport error first, then `defer resp.Body.Close()`. Every method that reads a response body closes it. Async `then` checks poll repeatedly, and every poll opens a new body, so every poll closes one.
+- Tear down what `given` sets up. Register deferred cleanup for compose projects, containers, temp dirs, and listeners in `newStage` or in the method that started the resource. A failing cleanup logs a warning and moves on. It never panics the test.
 
 ## Naming
 
