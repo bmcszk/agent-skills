@@ -46,7 +46,7 @@ Write down briefly:
 - Do not narrate, restate the code, or add obvious TODOs.
 - Refactoring a block you touch? Delete narration comments ("call X now", "this returns Y") in the same pass. New structure under old narration leaves the file lying about itself.
 - A doc comment that restates the name and signature is narration ("writeTempConfig writes YAML to a temp file and returns its path"). Delete it. Keep the clause naming an invisible contract (fresh instance, isolation, wire format, poll-vs-sleep reason).
-- Phase markers in tests (`// given`, `// when`, `// then`, or arrange/act/assert) are required structure, not narration. Keep them; add them when the three phases are not obvious from the test layout alone. This outranks "no comments by default" and "delete narration comments" when those rules would remove the markers.
+- Phase markers in tests (`// given`, `// when`, `// then`, or arrange/act/assert) are required structure, not narration. Keep them; add them when the three phases are not obvious from the test layout alone. This outranks "no comments by default" and "delete narration comments" when those rules would remove the markers. A fluent DSL whose `given.` / `when.` / `then.` receivers already name the phases needs no marker comments.
 
 ## Duplication
 
@@ -83,7 +83,7 @@ Write down briefly:
 
 ## Conflict order
 
-When rules conflict: safety first, then local consistency, then this skill, then minimal change. This skill outranks laziness or YAGNI-only shortcuts when those would break a rule here.
+When rules conflict: safety first, then this skill and the language skills that build on it, then local consistency, then minimal change. This skill outranks laziness or YAGNI-only shortcuts when those would break a rule here. Ranking above local consistency applies to code you write or touch; it does not license reshuffling untouched code.
 
 ## Guards and gates: honest work only (user rule)
 
@@ -121,4 +121,4 @@ Within a category, rank placement (stronger wins):
 
 - Test through the public API only. Test private helpers only when the user explicitly asks. A private function that seems to need direct testing is a design signal: either a public entry point already covers it, or it does too much.
 - Every test reads as given / when / then. `given` is optional setup. `when` is mandatory: the action under test. `then` is mandatory: the asserted result. If you cannot point at the `when` or the `then`, the test is rewritten from scratch, not patched. Carry the structure through the code's design when possible; keep the phase-marker comments (see Comments).
-- Avoid mocks: test real behavior. A unit test that needs a mock is usually an integration test in disguise: rewrite it against the real collaborator. Mocks stay only for what a unit test cannot run at all (network, clock, randomness, hardware), and stay thin.
+- Avoid mocks: test real behavior. A unit test that needs a mock is usually an integration test in disguise: rewrite it against the real collaborator. Mocks stay only for what a unit test cannot run at all (network, clock, randomness, hardware), and stay thin. A language skill may forbid mocks entirely; the stricter rule wins.
