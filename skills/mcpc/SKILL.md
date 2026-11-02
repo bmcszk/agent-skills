@@ -215,6 +215,5 @@ Each MCP server has its own skill with tool-specific workflows:
 - `context7` - Documentation lookup
 - `pixellab` - Pixel art generation
 - `minimax` - AI web search and image understanding
-- `gemini` - Google Gemini AI assistant
 - `playwright-mcp` - Browser automation
 - `searxng` - Web search and URL reading
