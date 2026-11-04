@@ -1,6 +1,14 @@
 ---
 name: keep-on-going
-description: 'Session-discipline skill for finishing work, built on top of the beans CLI. One active epic per session, draft-first triage, ~10-minute subtasks delegated to subagents, tests + Proof of Work before any bean closes. Use when you are taking on a goal that spans multiple beans, when an epic risks drifting across sessions, when subagents need a delegatable tree to work against, or when you want completion to be provable rather than confident.'
+description: >-
+  Session-discipline skill for finishing work, built on top of the beans
+  CLI. One active epic per session, draft-first triage, ~10-minute subtasks
+  delegated to subagents, tests + Proof of Work before any bean closes.
+  Beans are cited by title in every human-facing artifact (chat, PR, commit
+  message); IDs live only inside CLI commands. Use when you are taking on
+  a goal that spans multiple beans, when an epic risks drifting across
+  sessions, when subagents need a delegatable tree to work against, or
+  when you want completion to be provable rather than confident.
 license: MIT
 metadata:
   audience: agents
