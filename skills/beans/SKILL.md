@@ -1,6 +1,16 @@
 ---
 name: beans
-description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics, or query project state from the CLI.'
+description: >-
+  Beans task management CLI: create, list, update, close tasks/bugs/features
+  alongside your code. Flat-file issue tracker for humans and agents. Every
+  new bean starts as `draft` and must pass deep-research triage before
+  promotion to `todo`. If you find a bug, document it as a draft, triage
+  first, do not patch first. Tree structure: epic (one goal per session) ->
+  task (one requirement) -> subtask (~10-min delegatable work). Rule: cite
+  beans by title in every human-facing artifact (chat, commits, PRs, docs);
+  bean IDs appear only inside CLI commands. Use when you need to track work
+  items, create tasks, manage bugs, organize epics, or query project state
+  from the CLI.
 metadata:
   risk: none
   source: community
@@ -22,6 +32,27 @@ Install, `beans init`, and agent-integration steps live in
 - Creating, listing, updating, and closing beans
 - Organizing work with milestones, epics, features, tags, priorities
 - Querying project state with `beans list` filters
+
+## Referencing beans (binding: chat, commits, docs)
+
+Never write a bean ID as bare text in user communication, commit messages,
+PR bodies, or any documentation. IDs are opaque to readers, titles are not.
+
+- Text reference: use the bean title ("OAuth login with PKCE").
+- Documentation reference: markdown link, label = bean title, ID allowed
+  only inside the href:
+  `[OAuth login with PKCE](.beans/myproj-a3x1--oauth-login-with-pkce.md)`
+- Commit message:
+
+```
+feat(auth): add OAuth PKCE support
+
+Refs: "OAuth login with PKCE"
+```
+
+- A reference rule recorded as chat-only leaks into docs on the next
+  file-writing task: apply it to EVERY artifact in one motion, and grep
+  the touched tree for the ID pattern before pushing to catch stragglers.
 
 ---
 
@@ -380,19 +411,6 @@ reason - silent omission is a violation.
 
 These proof rules apply to **every** bean type: no Proof of Work, no
 `completed`.
-
-### Commit Message Convention
-
-Name beans by title, never by ID - IDs are opaque to readers, titles are
-not:
-
-```
-feat(auth): add OAuth PKCE support
-
-Refs: "OAuth login with PKCE"
-```
-
----
 
 ## Anti-Patterns
 
