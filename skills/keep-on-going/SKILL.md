@@ -13,14 +13,14 @@ metadata:
 
 Finish work, not narrate it. The discipline is completion discipline - gates, evidence, depth tree, four-pass leaf work - expressed as a **beans session loop**.
 
-`keep-on-going` is the **session wrapper** around [`beans`](../beans/SKILL.md). Beans is the storage + CLI; keep-on-going is the rule that says *one epic, looped, until reached*. When `beans prime` says "here's the project state," `keep-on-going` says "now drive it to completion, properly."
+`keep-on-going` is the **session wrapper** around [`beans`](../beans/SKILL.md). Beans is the storage + CLI; keep-on-going says *one epic, looped, until reached*: when `beans prime` shows the project state, drive it to completion, properly.
 
 ## PLAN WHOLE THING FIRST (user binding)
 
 HARD sequence for ANY multi-step request. Implementation NEVER precedes the full tree:
 
 1. **PLAN first** - before any implementation, delegate the WHOLE-task plan
-   to the agent's best available research subagent (read-only). Output:
+   to the best available research subagent (read-only). Output:
    goal, epic body, task list, 10-min subtask split, deps/blockers,
    per-leaf skills. Present the tree to the user when the request is
    ambiguous; proceed when it is not. The plan agent re-verifies state
@@ -71,28 +71,26 @@ HARD sequence for ANY multi-step request. Implementation NEVER precedes the full
    outcome. Record each reversal in the ledger instead of treating the
    newest directive as final, and keep the final-shape note in the
    governing docs/skill current with every reversal so the next session
-   does not re-ship a superseded shape from stale guidance.
-   A structural rejection gets the SIGN-OFF PROBE before any wave: build the
-   candidate shape on ONE file, show the diff, and let the user accept the
-   pattern: mass-applying an unconfirmed pattern converts every review round
-   into a full rewrite (ten reversals in one review cycle came exactly from
-   wave-first shipping). During a long design churn, a session-end sweep is
-   mandatory: PR title/body re-synced to HEAD, touched beans terminal, epic
-   title non-empty, governing docs/skill re-read for superseded shape claims.
-   the tracker and docs must describe the shape that EXISTS, not the one
-   shipped three reversals ago.
+   does not re-ship a superseded shape from stale guidance; the tracker
+   and docs must describe the shape that EXISTS. A structural rejection
+   gets the SIGN-OFF PROBE before any wave: build the candidate shape on
+   ONE file, show the diff, and let the user accept the pattern -
+   mass-applying an unconfirmed pattern converts every review round into
+   a full rewrite. During long design churn a session-end sweep is
+   mandatory: PR title/body re-synced to HEAD, touched beans terminal,
+   epic title non-empty, governing docs re-read for superseded claims.
 
 The failure class this section forbids: implementing first and creating the
 ledger mid-flight, hand-editing bean files, inline triage, ready children
 left unclaimed. Notice one mid-task → stop implementing, rebuild the tree.
 
-Use this skill when the cost of quiet incompleteness justifies the ledger - a feature, a refactor, a debugging expedition, a deployment. Don't use it for one-line fixes or factual replies; YAGNI applies to ledgers too.
+Use it when the cost of quiet incompleteness justifies the ledger - a feature, refactor, debugging expedition, deployment. Not for one-line fixes or factual replies; YAGNI applies to ledgers too.
 
 ---
 
 ## One session = one epic
 
-An epic IS the session's goal. Pick at most one active epic and loop on it until the goal is reached or scrapped. Two open epics = split focus = slower. The session heartbeat:
+An epic IS the session's goal. Pick at most one active epic and loop on it until the goal is reached or scrapped. Two open epics = split focus = slower. Heartbeat:
 
 ```
 beans prime                    → load project state
@@ -126,8 +124,10 @@ are all checked and every child is `completed` (or `scrapped`).
               unblocked children to claim? loop or stop
 ```
 
-Steps 1, 2, 5 have hard rules. Step 4 has both a verify gate and a
-proof gate. Steps 3, 6 are judgment work.
+Steps 1, 2, 5 have hard rules. Step 4 has a verify gate, a proof gate,
+and type-specific proof: a `task`/`subtask` proves with a working unit
+test of the changed behavior, a `feature` with a working integration or
+e2e test (BDD scenarios). Steps 3, 6 are judgment work.
 
 ### What each step refuses to skip
 
@@ -147,8 +147,9 @@ proof gate. Steps 3, 6 are judgment work.
 - **Claim:** one bean, one agent, one time. Don't co-claim.
 - **Proof:** `## Proof of Work` is required **before** `-s completed`
   is legal. It must list the commands run, the observed result, and
-  a `Residual:` line. No proof, no close. This is binding - same
-  category as marking a task done without testing.
+  a `Residual:` line, plus the type-specific proof named in the PROVE
+  step below. No proof, no close. This is binding - same category as
+  marking a task done without testing.
 - **Close:** for a task/subtask, after `-s completed`. For an
   epic, only when no child is open and the epic has its own
   end-to-end `## Proof of Work` (full spec:
