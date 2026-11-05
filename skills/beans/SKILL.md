@@ -1,6 +1,16 @@
 ---
 name: beans
-description: 'Beans task management CLI: create, list, update, close tasks/bugs/features alongside your code. Flat-file issue tracker for humans and agents. Every new bean starts as `draft` and must pass deep-research triage before promotion to `todo`. If you find a bug, document it as a draft, triage first, do not patch first. Tree structure: epic (one goal per session) -> task (one requirement) -> subtask (~10-min delegatable work). Use when you need to track work items, create tasks, manage bugs, organize epics, or query project state from the CLI.'
+description: >-
+  Beans task management CLI: create, list, update, close tasks/bugs/features
+  alongside your code. Flat-file issue tracker for humans and agents. Every
+  new bean starts as `draft` and must pass deep-research triage before
+  promotion to `todo`. If you find a bug, document it as a draft, triage
+  first, do not patch first. Tree structure: epic (one goal per session) ->
+  task (one requirement) -> subtask (~10-min delegatable work). Rule: cite
+  beans by title in every human-facing artifact (chat, commits, PRs, docs);
+  bean IDs appear only inside CLI commands. Use when you need to track work
+  items, create tasks, manage bugs, organize epics, or query project state
+  from the CLI.
 metadata:
   risk: none
   source: community
@@ -22,6 +32,19 @@ Install, `beans init`, and agent-integration steps live in
 - Creating, listing, updating, and closing beans
 - Organizing work with milestones, epics, features, tags, priorities
 - Querying project state with `beans list` filters
+
+## Referencing beans (binding: chat, commits, docs)
+
+Never write a bean ID as bare text in user communication, commit messages,
+PR bodies, or any documentation. IDs are opaque to readers, titles are not.
+
+- Text and docs: bean title ("OAuth login with PKCE"); the ID may appear
+  only inside a link href
+  (`[OAuth login with PKCE](.beans/myproj-a3x1--oauth-login-with-pkce.md)`).
+- Commit trailer: `Refs: "OAuth login with PKCE"`
+- A rule recorded as chat-only leaks into docs on the next file-writing
+  task: apply it to EVERY artifact in one motion, and grep the touched
+  tree for the ID pattern before pushing to catch stragglers.
 
 ---
 
@@ -238,14 +261,6 @@ the CLI; patterns and wording: read
 [`references/write-back-comments.md`](references/write-back-comments.md)
 when writing audit verdicts or review notes back to a bean.
 
-### Prime Context
-
-```bash
-beans prime
-```
-
-Outputs context about the project's current beans, priorities, and recommended next actions. Agents should run this at session start.
-
 ### Delegation patterns
 
 When dispatching bean work to subagents (especially small or free models):
@@ -274,13 +289,9 @@ When dispatching bean work to subagents (especially small or free models):
 
 The orchestrator, not the worker, owns steps 7-10: a worker report is a
 claim. Re-run the gates, read the diff, write the PoW in the bean body -
-a completion recorded only in chat is not in the tracker. For every-file
-tasks the PoW states the live file count, the verdict count, and the
-command proving the sets match. Count parity plus green gates prove
-coverage, not substance: re-read the diff of every fixed file and
-spot-read clean ones before closing a sweep. A worker can stamp verdicts
-while breaking style rules no gate checks; a close on verdict counts
-alone gets reopened.
+a completion recorded only in chat is not in the tracker. Count parity
+plus green gates prove coverage, not substance: re-read the diff of
+every fixed file before closing a sweep.
 
 A repo may add its own beans lint that checks more than the CLI; if it
 has one, run it after every bean change. Check that a skill path exists
@@ -382,19 +393,6 @@ reason - silent omission is a violation.
 
 These proof rules apply to **every** bean type: no Proof of Work, no
 `completed`.
-
-### Commit Message Convention
-
-Name beans by title, never by ID - IDs are opaque to readers, titles are
-not:
-
-```
-feat(auth): add OAuth PKCE support
-
-Refs: "OAuth login with PKCE"
-```
-
----
 
 ## Anti-Patterns
 
