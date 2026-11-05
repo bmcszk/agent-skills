@@ -90,10 +90,9 @@ task by adding acceptance-criteria checkboxes to its body, or create a
 ### One goal per session
 
 An epic IS the session's goal. Pick **at most one** active epic and loop
-on it until the goal is reached or scrapped. Two open epics = split
-focus = slower. `beans list --ready` is the natural heartbeat; treat
-the epic as done when its acceptance criteria are checked and the last
-child is `completed`.
+on it until the goal is reached or scrapped. `beans list --ready` is the
+heartbeat; the epic is done when its acceptance criteria are checked and
+the last child is `completed`.
 
 ### Status progression: every bean starts as `draft`
 
@@ -228,9 +227,9 @@ sessions.
 | `beans update` | Claim, progress, append PoW, close. Use `--body-replace-old/new` for targeted edits, `--body-append` for `## Summary of Changes` and `## Proof of Work`. |
 | `beans show` | Inspect. `--body-only` for piping, `--etag-only` for safe concurrent updates. |
 
-For the on-disk file format (YAML frontmatter, filename convention,
-field schema) see [`references/bean-file-format.md`](references/bean-file-format.md).
-The CLI owns that file - never hand-edit `.beans/*.md`.
+On-disk file format (frontmatter, filename convention, field schema):
+[`references/bean-file-format.md`](references/bean-file-format.md). The
+CLI owns that file - never hand-edit `.beans/*.md`.
 
 ### Write-back comments (audit verdicts, review notes)
 
@@ -328,6 +327,12 @@ contain, at minimum:
   applies).
 - The observed result for each command (exit status, key signal: counts,
   pass/fail, output fingerprint).
+- Type-specific proof, in addition to the project's own gates:
+  - `task` / `subtask`: at least one working unit test covering the
+    behavior the bean changed, shown with its pass output.
+  - `feature`: a working integration or e2e test covering the use cases
+    (BDD style - scenarios in Given/When/Then naming or structure),
+    shown with its pass output.
 - A `Residual:` line - named leftovers, or `none`.
 
 If `## Proof of Work` is missing, the closure is rejected. Append it
@@ -337,15 +342,13 @@ first, then mark completed:
 beans update myproj-a3x1 --body-append "## Proof of Work
 <build>    → exit 0
 <test>     → PASS (148s)
-<lint>     → 0 issues
 
 Residual: none."
 beans update myproj-a3x1 -s completed
 ```
-Placeholders stand for the project's own build/test/lint entry points;
-an example never presumes a stack. The verify gate is itself binding:
-run the project's tests/build/lint and observe the result. Red gate =
-fix the root cause; cannot verify = leave `in-progress` and say so.
+Placeholders stand for the project's own entry points; an example never
+presumes a stack. The verify gate itself stays binding: red gate = fix
+the root cause; cannot verify = leave `in-progress`.
 
 #### 2. Epic closure
 
@@ -364,13 +367,12 @@ Work`.** Two-part gate:
   ```
 
 - **Full end-to-end tests + `## Proof of Work`.** The epic's proof is
-  *integration-level*: not just "the unit tests passed", but evidence
-  the goal as a whole was reached end-to-end. Append a `## Proof of
-  Work` section whose commands cover:
+  *integration-level*: evidence the goal as a whole was reached
+  end-to-end. Append a `## Proof of Work` section whose commands cover:
 
   - The full test suite (unit + integration + e2e, where they exist).
-  - Any end-to-end / smoke checks that exercise the goal as a user
-    would (browser, CLI invocation, API roundtrip, etc.).
+  - End-to-end / smoke checks that exercise the goal as a user would
+    (browser, CLI invocation, API roundtrip, etc.).
   - For build/deploy epics, the live artifact and its reachable URL or
     version.
 
@@ -410,8 +412,7 @@ Process and CLI hygiene - not the closure rules, which live in
 | Leave beans in `in-progress` when done | Always close with `-s completed` or `-s scrapped` |
 | Two active epics in one session | One GOAL per session, loop until reached |
 | Bug found, patch immediately | `beans create -t bug -s draft`, document, triage, claim |
-| Close work and leave state artifacts behind | Before ending a session: PR title/body match HEAD, every touched bean terminal (`completed`/`scrapped`), epic titles non-empty, no orphan drafts |
-| Set bean statuses without the CLI or leave `todo` epics that already shipped | Session-end sweep: `beans list`, close or scrap every bean the shipped work covers; an epic's status mirrors the work, not the plan |
+| Close work leaving state artifacts behind, or set statuses without the CLI | Session-end sweep: PR title/body match HEAD, `beans list`, close or scrap every bean the work covers; epic title non-empty, no orphan drafts |
 | Append `--body-append` PoW before checking the worker's claims | Parent re-runs gates + reads the diff FIRST; PoW records YOUR gate output, not the worker's report |
 | Hand-edit `.beans/*.md` to attach a comment | `beans update --body-append "## LABEL (context): ..."` - no comment subcommand exists; the CLI owns the file |
 | Create with only `-d` and fix the title later | Pass the title positionally at create - the filename slug is permanent, later `--title` edits don't rename it |
