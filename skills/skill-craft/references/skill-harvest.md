@@ -10,7 +10,7 @@ updates, or when the user reports local skill edits.
 ## The loop
 
 1. **Detect drift.** Hash-compare installed vs upstream per file
-   (skill-craft's `repo-maintenance.md` has the diff recipe). Diffs are
+   (skill-craft's [references/repo-maintenance.md](repo-maintenance.md) has the diff recipe). Diffs are
    candidates; style-only churn (em dash rewrites, hash timestamps) is
    not.
 2. **Triage each change** - three questions, all must answer yes:

@@ -163,8 +163,18 @@ description route the right tasks in and the adjacent tasks out? Can a
 model with no other context follow the body start to finish? Edit behind
 that comparison, never by feel.
 
-See references/eval-patterns.md for the matched-comparison shape and
-references/pr-review.md for the skill review round checklist.
+See [references/eval-patterns.md](references/eval-patterns.md) for the
+matched-comparison shape and [references/pr-review.md](references/pr-review.md)
+for the skill review round checklist.
+
+Reference mentions that load a file use a markdown link whose text is the
+path itself: `[references/foo.md](references/foo.md)`. Agents resolve both
+link and backtick forms the same way; the link form survives GitHub
+rendering (clickable review) and link checkers (broken reference fails in
+CI, not at runtime). Keep paths relative to the skill dir with forward
+slashes, and name the load condition next to the link - the condition
+triggers the read, the link just carries it. Abstract mentions that teach
+naming rather than load a file stay in backticks.
 
 ## Mechanical quality gate for skill libraries
 
@@ -196,12 +206,14 @@ outside the skills root or the linter scans them.
 ## Repo maintenance
 
 Maintainer-only PR combining and install/master delta sync: read
-references/repo-maintenance.md when performing repo upkeep.
+[references/repo-maintenance.md](references/repo-maintenance.md) when
+performing repo upkeep.
 
 ## Skill harvest
 
 The global skill dir mutates in place; updates overwrite local changes.
 Before bulk updates, or whenever an installed skill diverges from its
-upstream, read references/skill-harvest.md and triage the drift:
+upstream, read
+[references/skill-harvest.md](references/skill-harvest.md) and triage the drift:
 valuable, worth pushing, project agnostic - then branch and PR the
 survivors through this skill's full rulebook.
