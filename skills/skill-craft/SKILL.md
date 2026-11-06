@@ -10,6 +10,20 @@ repeated failure. A shorter body that carries the same law wins: studies show st
 guidance outperforms exhaustive documentation, and loading one to three
 skills beats flooding context.
 
+## Verify every command before shipping
+
+A skill's example commands are load-bearing: agents run them as
+written. Probe each command form against a real sandbox (fresh git
+repo, empty directory, no arguments) before shipping, including the
+documented failure mode of every flag used - `git merge-base
+--fork-point` exits 1 when no reflog knows the old tip, so its example
+must carry the `|| merge-base` fallback inline. Order assumptions
+between commands (remove the worktree before deleting its branch; run
+`fetch --prune` before the sweep) belong in the example order, not in
+the reader's head. A batch written from recall shipped three subtle
+command bugs in one file; the same file live-probed found all three in
+minutes.
+
 ## Description is routing, not documentation
 
 The description is injected into the model's context for EVERY task; the
@@ -22,6 +36,15 @@ triggers:
 
 Include negative triggers for adjacent skills when confusion is likely
 ("not for X"). Off-target activation is the number one skill failure mode.
+
+The description is also the ONLY surface some runtimes always expose: pi
+lists skills to subagents by name + description and treats the body as
+optional reading that may never load. Put a standing law every agent must
+obey regardless of task (citation format, communication rules) IN the
+description, not deep in the body - a rule at line 380 of a 400-line body
+has effectively never governed anyone. And audit the body's command
+examples for the pattern the law forbids: agents imitate the example they
+see, so a "never X" law sitting under 20 examples of X reads as optional.
 
 Calibrate both directions: an under-specified description misses valid
 tasks, an over-broad one triggers noise. Test with two prompt sets - ones

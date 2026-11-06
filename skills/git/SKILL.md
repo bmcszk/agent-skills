@@ -36,10 +36,32 @@ git switch -c <type>/<short-desc>   # from fresh master
 ```
 
 The merged-branch sweep: `git branch -d` refuses unmerged branches, so it
-is safe as written. Verify nothing else claims the name: `git branch -a
+is safe as written - and under squash-merge it catches nothing from
+merged PRs (new SHAs); squash debris falls to the cleanup law below.
+Verify nothing else claims the name: `git branch -a
 --list <type>/*` and `git ls-remote --heads origin <type>/*`. Never
 branch from another feature branch unless the work depends on it; if it
 does, name the base branch in the PR description.
+
+### One open PR per branch; few open PRs total
+
+Stacked-PR waves rot. Every open PR ages against master while it waits,
+and each later merge re-dirties every branch that touched the same files
+(observed cost: two of three parallel PRs needed dedicated merge
+sessions, one twice). Laws:
+
+- Branch each lane from current master; never from another open lane's
+  branch unless the work truly depends on it (then name the base in the
+  PR body and expect a re-merge per upstream merge).
+- Keep the number of simultaneously open PRs minimal — ideally one per
+  repo, two only when they touch disjoint file sets. Disjoint means
+  disjoint: shared README/manifest/fixture dirs are NOT disjoint.
+- Sequence same-area work: open PR N+1 only after N merges (or after
+  refreshing N+1's branch with a merge from master — see "Refreshing a
+  branch").
+- Between any two merges, refresh every other open branch that shares
+  files with what just merged (`gh pr view <n> --json mergeable` shows
+  CONFLICTING the moment it rots). Do not let the user discover the rot.
 
 ### Branch naming
 
@@ -58,6 +80,53 @@ types. Examples: `feat(auth): add PKCE login flow`,
 `fix(parser): clamp negative turn counts`.
 
 ## Keep the branch shippable
+
+**PR health first, above any other work.** The moment a PR is open, its
+greenness outranks new lanes, new features, and new PRs. Concretely:
+
+- Poll every open PR's health before starting anything new:
+  `gh pr view <n> --json mergeable,mergeStateStatus,statusCheckRollup`.
+  CONFLICTING/DIRTY = drop what you are doing and fix it (merge from
+  master, resolve, gates, push). A failing check = root-cause and fix.
+- A red PR blocks everything else in the repo: never open, never review,
+  never start a new lane while any open PR is red or dirty. Fix the red
+  one first, then resume the queue.
+- One red PR left unattended while a new PR is opened is a sequencing
+  bug, not bad luck — the new PR's merge will re-dirty the red one
+  (observed: a fold PR went dirty while attention moved to the other
+  merges in the same wave).
+- After fixing, re-verify health before reporting: `gh pr view <n>
+  --json mergeable` must read CLEAN and the checks line must be all
+  green (or carry only a disclosed intentional-RED with the PR body
+  naming it).
+
+**"Status?" means "convince me nothing is rotting."** When the user asks
+for status, they are expressing concern that something is stuck, broken,
+or unattended — not requesting a narration of the last log lines. A good
+status reply therefore PROVES health with fresh evidence, gathered in the
+same turn:
+
+- Re-run the health probes live (`gh pr view` for every open PR, checks,
+  branch tips vs remote, worktree/branch debris count, CI rollup) — never
+  replay remembered state; stale "it was green 20 minutes ago" is the
+  failure mode being probed for.
+- Lead with any NON-green item and its unblock ETA. If a fix is in
+  flight, say what is happening at the GIT level (merge in progress,
+  gates running, push pending) and what YOU will do if it does not
+  finish (fix it yourself, re-dispatch). An in-flight item without
+  a named fallback reads as "nobody is watching it".
+- End with the single next action and its trigger. No status reply may
+  end on "waiting" alone — if the only blocker is a human merge, say
+  exactly that; if the blocker is your own work, you own the watching.
+- Gate or count evidence is SHA-scoped: quote numbers only from the tree
+  you verified at the SHA you name. A stale or detached checkout
+  fabricates health (phantom package counts, files master deleted still
+  "present") — sync it first, or cite the current lane worktree instead.
+- When a spawned child does the push, spell its required environment in
+  the task contract — parent-shell exports do not cross the spawn
+  boundary. An unset commit-signing agent socket stalls a finished merge
+  at push time: name the env line and the no-force recovery rule
+  (amend only never-pushed commits, else fixup commit) in the task.
 
 CI status is part of the work, not an afterthought:
 
@@ -171,11 +240,40 @@ git remote prune origin
 git worktree prune
 ```
 
+Under squash-merge this `-d` refuses EVERY merged branch: the squash
+commit has a new SHA, so the branch still reads as unmerged. The merge
+is proven by the PR record, not by git ancestry (`git cherry` marks
+every branch commit `+` even after a clean squash merge - that output
+is not evidence of pending work). Prove content parity with an empty
+diff, then force-delete:
+
+```bash
+git diff master <branch> --stat   # must print NOTHING
+git branch -D <branch>
+```
+
+Never `-D` without the empty diff - it is the only guard left. An
+intervening merge on master makes the whole-tree diff non-empty; then
+scope the diff to the paths your branch touched.
+
+
+
 Repeat the start-of-work sweep to catch older debris. Then start the
 next branch from the refreshed master. Never reuse a merged branch for
 new work: squash-merge gives the new commits new SHAs, and a reused
 branch pushes on top of a history that no longer matches - force-push
 temptation follows.
+
+### When the agent's terminal gates git mutations
+
+If the shell refuses git mutations (a safety hook), route the post-merge
+cleanup through a delegated worker micro-task instead of hand-running it.
+Give the task's edit gate an anchor file that EXISTS in the worker's tree
+at its base commit: an anchor that lives only on another unmerged branch
+reads as missing there and pushes the worker to refuse or fabricate. For
+a cleanup-only task the safe anchor is the lane log (append-only); a
+worker refusal on anchor grounds is it doing the right thing —
+re-dispatch with a legal anchor, not a wider scope.
 
 ## Human merges, agent assists
 
