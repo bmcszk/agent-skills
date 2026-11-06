@@ -53,11 +53,11 @@ sessions, one twice). Laws:
 - Branch each lane from current master; never from another open lane's
   branch unless the work truly depends on it (then name the base in the
   PR body and expect a re-merge per upstream merge).
-- Keep the number of simultaneously open PRs minimal — ideally one per
+- Keep the number of simultaneously open PRs minimal - ideally one per
   repo, two only when they touch disjoint file sets. Disjoint means
   disjoint: shared README/manifest/fixture dirs are NOT disjoint.
 - Sequence same-area work: open PR N+1 only after N merges (or after
-  refreshing N+1's branch with a merge from master — see "Refreshing a
+  refreshing N+1's branch with a merge from master - see "Refreshing a
   branch").
 - Between any two merges, refresh every other open branch that shares
   files with what just merged (`gh pr view <n> --json mergeable` shows
@@ -92,7 +92,7 @@ greenness outranks new lanes, new features, and new PRs. Concretely:
   never start a new lane while any open PR is red or dirty. Fix the red
   one first, then resume the queue.
 - One red PR left unattended while a new PR is opened is a sequencing
-  bug, not bad luck — the new PR's merge will re-dirty the red one
+  bug, not bad luck - the new PR's merge will re-dirty the red one
   (observed: a fold PR went dirty while attention moved to the other
   merges in the same wave).
 - After fixing, re-verify health before reporting: `gh pr view <n>
@@ -102,12 +102,12 @@ greenness outranks new lanes, new features, and new PRs. Concretely:
 
 **"Status?" means "convince me nothing is rotting."** When the user asks
 for status, they are expressing concern that something is stuck, broken,
-or unattended — not requesting a narration of the last log lines. A good
+or unattended - not requesting a narration of the last log lines. A good
 status reply therefore PROVES health with fresh evidence, gathered in the
 same turn:
 
 - Re-run the health probes live (`gh pr view` for every open PR, checks,
-  branch tips vs remote, worktree/branch debris count, CI rollup) — never
+  branch tips vs remote, worktree/branch debris count, CI rollup) - never
   replay remembered state; stale "it was green 20 minutes ago" is the
   failure mode being probed for.
 - Lead with any NON-green item and its unblock ETA. If a fix is in
@@ -116,14 +116,14 @@ same turn:
   finish (fix it yourself, re-dispatch). An in-flight item without
   a named fallback reads as "nobody is watching it".
 - End with the single next action and its trigger. No status reply may
-  end on "waiting" alone — if the only blocker is a human merge, say
+  end on "waiting" alone - if the only blocker is a human merge, say
   exactly that; if the blocker is your own work, you own the watching.
 - Gate or count evidence is SHA-scoped: quote numbers only from the tree
   you verified at the SHA you name. A stale or detached checkout
   fabricates health (phantom package counts, files master deleted still
-  "present") — sync it first, or cite the current lane worktree instead.
+  "present") - sync it first, or cite the current lane worktree instead.
 - When a spawned child does the push, spell its required environment in
-  the task contract — parent-shell exports do not cross the spawn
+  the task contract - parent-shell exports do not cross the spawn
   boundary. An unset commit-signing agent socket stalls a finished merge
   at push time: name the env line and the no-force recovery rule
   (amend only never-pushed commits, else fixup commit) in the task.
@@ -272,7 +272,7 @@ Give the task's edit gate an anchor file that EXISTS in the worker's tree
 at its base commit: an anchor that lives only on another unmerged branch
 reads as missing there and pushes the worker to refuse or fabricate. For
 a cleanup-only task the safe anchor is the lane log (append-only); a
-worker refusal on anchor grounds is it doing the right thing —
+worker refusal on anchor grounds is it doing the right thing  - 
 re-dispatch with a legal anchor, not a wider scope.
 
 ## Human merges, agent assists
