@@ -29,8 +29,7 @@ Checklist before a single line of work:
 ```bash
 git checkout master
 git pull origin master          # local master == origin/master
-git remote prune origin        # drop remote refs of merged branches
-git fetch --prune --prune-tags
+git fetch --prune --prune-tags  # prunes stale remote refs and tags
 git worktree prune             # drop metadata of removed worktrees
 git branch --merged master | grep -v master | xargs -r git branch -d
 git switch -c <type>/<short-desc>   # from fresh master
@@ -100,10 +99,18 @@ git log --oneline $(git merge-base HEAD origin/master)..HEAD
 
 `merge-base` is the common ancestor; `--fork-point` additionally reads
 the reflog to find the original tip when master was rewound (squash
-merges rewrite master constantly, so prefer `--fork-point` when master's
-history moved under you). Diff against the fork point, not against
-master's tip: `git diff $(git merge-base HEAD origin/master)`. Three
-dots in `git log A...B` also splits into theirs/mine/ours views.
+merges rewrite master constantly). Fork-point fails empty (exit 1) when
+no reflog knows the old tip - fresh clones, post-`reset` states - so
+always fall back:
+
+```bash
+git merge-base --fork-point origin/master HEAD \
+  || git merge-base origin/master HEAD
+```
+
+Diff against the fork point, not against master's tip:
+`git diff $(git merge-base HEAD origin/master)`. Three dots in
+`git log A...B` also splits into theirs/mine/ours views.
 
 ## Fixing conflicts
 
@@ -156,9 +163,11 @@ lands:
 ```bash
 git checkout master
 git pull origin master
+git worktree remove .worktrees/<name>   # FIRST if one existed for it:
+                                        # branch -d refuses a branch that
+                                        # is checked out in a worktree
 git branch -d <merged-branch>        # -d refuses unmerged, safe
 git remote prune origin
-git worktree remove .worktrees/<name>   # if one existed for it
 git worktree prune
 ```
 
