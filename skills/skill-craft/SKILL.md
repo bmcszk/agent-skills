@@ -198,10 +198,10 @@ outside the skills root or the linter scans them.
 Maintainer-only PR combining and install/master delta sync: read
 references/repo-maintenance.md when performing repo upkeep.
 
-## Skill management
+## Skill harvest
 
 The global skill dir mutates in place; updates overwrite local changes.
 Before bulk updates, or whenever an installed skill diverges from its
-upstream, read references/skill-management.md and triage the drift:
+upstream, read references/skill-harvest.md and triage the drift:
 valuable, worth pushing, project agnostic - then branch and PR the
 survivors through this skill's full rulebook.

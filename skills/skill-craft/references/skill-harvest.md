@@ -1,4 +1,4 @@
-# Skill management: harvesting local mutations
+# Skill harvest: harvesting local mutations
 
 The global skill dir (`~/.agents/skills`) mutates constantly: working
 sessions amend installed skills in place (Hermes changes, lesson writes,
