@@ -20,13 +20,7 @@ beans update myproj-a3x1 \
   --body-replace-old "- [ ] Write test" \
   --body-replace-new "- [x] Write test"
 
-# 5. Append Proof of Work - the closing gate, so run it BEFORE step 6:
-#    commands run + observed results + a `Residual:` line, PLUS the
-#    type-specific proof in addition to the project's own gates:
-#    a `task`/`subtask` proves with at least one working unit test of
-#    the changed behavior; a `feature` proves with a working integration
-#    or e2e test covering its use cases (BDD style). No proof, no
-#    close - a PoW that lists commands only is rejected.
+# 5. Append Proof of Work - the closure gate (required contents: SKILL.md)
 beans update myproj-a3x1 --body-append "## Proof of Work
 
 \
@@ -36,8 +30,7 @@ make lint  → 0 issues
 
 Residual: none."
 
-# 6. Close (only after PoW is present, the type-specific proof is
-#    attached, and the verify gate is green)
+# 6. Close
 beans update myproj-a3x1 -s completed
 ```
 
