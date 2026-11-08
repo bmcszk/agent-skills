@@ -22,12 +22,6 @@ One integration branch (`master`). Work lands only through PRs,
 squash-merged by a human with CI green. Everything else below is how to
 stay out of git's way.
 
-Scope: this skill speaks GIT ONLY - branches, commits, merges, checks,
-worktrees, SHAs. Delegation mechanics (which subagent, pid, RPC stage,
-steer/stop) belong in the delegation/lane-ops skills and their reports;
-a git-level status says "merge in progress, gates running, push pending"
-and names the fallback, never the worker plumbing.
-
 ## Open only real PRs (verify the diff before create)
 A squash commits whatever is ON the branch at merge time, not what the
 PR description promised - so a branch carrying extra parked commits gets
