@@ -22,6 +22,37 @@ One integration branch (`master`). Work lands only through PRs,
 squash-merged by a human with CI green. Everything else below is how to
 stay out of git's way.
 
+Scope: this skill speaks GIT ONLY - branches, commits, merges, checks,
+worktrees, SHAs. Delegation mechanics (which subagent, pid, RPC stage,
+steer/stop) belong in the delegation/lane-ops skills and their reports;
+a git-level status says "merge in progress, gates running, push pending"
+and names the fallback, never the worker plumbing.
+
+## Open only real PRs (verify the diff before create)
+A squash commits whatever is ON the branch at merge time, not what the
+PR description promised - so a branch carrying extra parked commits gets
+them silently absorbed, and a follow-up PR on the same branch can open
+diffing EMPTY against master. Before `gh pr create`, verify the branch
+actually differs:
+
+```bash
+git fetch origin && git diff origin/master...HEAD --stat   # empty => phantom
+```
+
+Empty stat while `git log origin/master..HEAD` still lists commits =
+the content is already on master via an earlier squash: do NOT create
+the PR; if one is already open, close it as superseded (say where the
+content landed), delete the branch, and tell the user immediately - a
+phantom PR wastes the human gate. Prevention: one branch per PR, and
+never park later-phase commits on a branch whose PR is awaiting merge.
+Group features into ONE PR when they belong together (gate + port on
+one feature = one PR; a RED gate alone is a separate PR only when the
+port cannot exist without master-side fixtures). Check the PR right
+after create: draft must be flipped (`gh pr ready <n>`) and the title
+must be the real one (`gh pr edit <n> --title ...`) - `gh pr create`
+can land a draft with a boilerplate title, and a draft with the wrong
+title is not a deliverable.
+
 ## Start of work (new branch)
 
 Checklist before a single line of work:
@@ -121,12 +152,13 @@ same turn:
 - Gate or count evidence is SHA-scoped: quote numbers only from the tree
   you verified at the SHA you name. A stale or detached checkout
   fabricates health (phantom package counts, files master deleted still
-  "present") - sync it first, or cite the current lane worktree instead.
-- When a spawned child does the push, spell its required environment in
-  the task contract - parent-shell exports do not cross the spawn
-  boundary. An unset commit-signing agent socket stalls a finished merge
-  at push time: name the env line and the no-force recovery rule
-  (amend only never-pushed commits, else fixup commit) in the task.
+  "present") - sync it first before quoting anything.
+- When anything but this shell does the push (helper, hook, another
+  session), it inherits nothing from this environment: an unset
+  commit-signing agent socket stalls a finished merge at push time.
+  Set the env line in the same invocation as the push, and know the
+  no-force recovery rule: amend only never-pushed commits, else a
+  fixup commit.
 
 CI status is part of the work, not an afterthought:
 
@@ -256,8 +288,6 @@ Never `-D` without the empty diff - it is the only guard left. An
 intervening merge on master makes the whole-tree diff non-empty; then
 scope the diff to the paths your branch touched.
 
-
-
 Repeat the start-of-work sweep to catch older debris. Then start the
 next branch from the refreshed master. Never reuse a merged branch for
 new work: squash-merge gives the new commits new SHAs, and a reused
@@ -266,14 +296,29 @@ temptation follows.
 
 ### When the agent's terminal gates git mutations
 
-If the shell refuses git mutations (a safety hook), route the post-merge
-cleanup through a delegated worker micro-task instead of hand-running it.
-Give the task's edit gate an anchor file that EXISTS in the worker's tree
-at its base commit: an anchor that lives only on another unmerged branch
-reads as missing there and pushes the worker to refuse or fabricate. For
-a cleanup-only task the safe anchor is the lane log (append-only); a
-worker refusal on anchor grounds is it doing the right thing  - 
-re-dispatch with a legal anchor, not a wider scope.
+If the shell refuses git mutations (a safety hook), hand the post-merge
+cleanup to a helper running in a checkout of THIS repo at a commit that
+exists on a merged ref. Cleanup instructions referencing a ref the
+helper cannot see read as errors and push it to refuse or fabricate. A
+helper refusing on those grounds is doing the right thing - fix the ref
+scope, not the refusal.
+
+## Agent dot-dirs are untracked
+
+Every project dir accumulates agent state dirs - `.pi`, `.hermes`,
+`.claude`, `.codex`, `.agents` and friends - used for WIP notes, plans,
+locks, and session artifacts. They are machine- and agent-local by
+design: never commit them, never diff them, never clean them. Ignore
+them in every repo you touch:
+
+```bash
+printf '%s\n' '.pi/' '.hermes/' '.claude/' '.codex/' '.agents/' >> .gitignore
+```
+
+If one got committed earlier, untrack it without deleting the files:
+`git rm -r --cached .pi` then commit. Do not rely on `.git/info/exclude`
+for shared repos - it only silences your clone; the repo-level
+`.gitignore` is the contract every contributor and agent sees.
 
 ## Human merges, agent assists
 
