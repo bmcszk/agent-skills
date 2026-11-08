@@ -25,6 +25,17 @@ updates, or when the user reports local skill edits.
    (token budget, verify commands, description routing) plus unslop
    (no AI tells, no em dashes) and ponytail (smallest complete change;
    drop restated prose to pay for the new lines).
+   - Re-read the installed copy section by section for contamination
+     before copying: a session may have written genuine laws AND
+     project-specific debris (lane names, worker plumbing, one-off
+     status rules) into the same file. Debris passes the three triage
+     questions on a file-level skim because it reads polished - judge
+     each section; rewrite project-flavored phrasing tool-agnostic or
+     drop it.
+   - Do not add scope-exclusion paragraphs: a section listing what the
+     skill does NOT cover documents nothing actionable - the
+     description already routes tasks in and out. User law: out-of-scope
+     notes are bloat.
 4. **Say no cleanly.** Not valuable / not agnostic = leave local, expect
    overwrite on update, and note that in the PR or session log. A local
    change kept local is disposable by design - that is fine, not loss.
