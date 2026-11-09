@@ -344,11 +344,12 @@ for shared repos - it only silences your clone; the repo-level
 
 
 **Contract/mission md files are agent-local too: every contract, lane,
-mission, or spec md a worker or the agent writes lives under
-`<project>/.hermes/` (e.g. `.hermes/lane/<lane>/`), never at repo root
-and never in tracked tree paths.** Lane logs, mission files, post-merge
-notes, spike decisions - all in `.hermes/`. If one lands in the repo tree
-or repo root, move it out before the PR opens.
+mission, or spec md a worker or the agent writes lives under the running
+agent's state dir in the project (`.hermes/` here, `.pi/`, `.claude/`,
+`.codex/` on their platforms), never at repo root and never in tracked
+tree paths.** Lane logs, mission files, post-merge notes, spike
+decisions - all in there. If one lands in the repo tree or repo root,
+move it out before the PR opens.
 
 ## Human merges, agent assists
 

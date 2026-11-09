@@ -146,6 +146,9 @@ The test for every line:
 - Agent agnostic: describe capabilities, not clients. "Run the project's
   build command" beats a runner-specific command; quarantine unavoidable
   client incantations in a reference the body does not require.
+  A LIST of agent state dirs (`.pi`, `.hermes`, `.claude`, `.codex`, ...)
+  is legitimate content; a LAW sentence that mandates one platform's dir
+  as the sole home for project files is not.
 - Model agnostic: procedures must survive a small model. One instruction
   per line, explicit 1-2-3 ordering, no "simply" or "obviously". Anything
   a weak model would skip gets a gate (script, checklist) instead of
