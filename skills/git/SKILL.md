@@ -334,7 +334,8 @@ commits, diffs, and cleanup sweeps leave them alone. Ignore every
 active agent's dir in the repos you touch:
 
 ```bash
-printf '%s\n' '.<agent>/' >> .gitignore   # one line per agent the repo carries
+printf '%s\n' '.worktrees/' '.hermes/' '.pi/' '.opencode/' >> .gitignore
+# one line per agent dir the repo actually carries
 ```
 
 An earlier commit that already tracks one untracks the files without
@@ -342,6 +343,11 @@ deleting them: `git rm -r --cached '.<agent>'` then commit. For shared
 repos the contract lives at the repo level: `.gitignore` speaks to
 every contributor and agent, while `.git/info/exclude` silences only
 your clone.
+
+The full gitignore contract - baseline classes, rule shapes,
+negation carve-outs, verification: read
+[references/gitignore.md](references/gitignore.md) when writing or
+auditing a repo's `.gitignore`.
 
 **Contract and mission md files are agent-local too: every contract,
 lane, mission, or spec md a worker or the agent writes lives in the
