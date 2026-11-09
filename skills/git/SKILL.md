@@ -4,8 +4,9 @@ description: >-
   Use when working with git in any repo under PR flow: starting work on a
   branch, updating a stale branch, resolving conflicts, rebasing, naming
   branches or commits, watching CI, cleaning up after a merged PR, or
-  managing worktrees. Carries the house laws: squash-merge PRs, merge over
-  rebase to avoid force pushes, humans merge, CI must stay green, worktrees
+  managing worktrees. Carries the house laws: squash-merge PRs, merge
+  preferred over rebase as the refresh flow with force pushes guarded by
+  --force-with-lease, humans merge, CI must stay green, worktrees
   only for parallel work inside .worktrees/. Not for GitHub API or gh CLI
   details (see github skill) or git internals.
 license: MIT
@@ -163,7 +164,7 @@ CI status is part of the work, not an afterthought:
 - One fix = one new commit; do not amend pushed commits.
 - If master moved, refresh before pushing again.
 
-### Refreshing a branch: merge, do not rebase
+### Refreshing a branch: merge is the default, rebase is deliberate
 
 Default refresh of a stale branch is a merge that can push normally:
 
@@ -174,13 +175,40 @@ git merge origin/master        # or: git merge-base --is-ancestor \
 git push                       # ordinary push, no force
 ```
 
-A rebase rewrites your pushed commits, so the push needs `--force` /
-`--force-with-lease`, which can destroy teammates' pushes. Prefer the
-merge. If a rebase is truly required (user asks, or a rebase-merge
-policy), wait for the working tree to be clean first (commit or stash),
-rebase only unpushed commits when possible, and if history was already
-pushed, push back with `--force-with-lease` (never bare `--force`), and
-say what you overwrote.
+The house stays on the merge and treats rebase as a deliberate choice
+for the runs that want it (a moved base is the common case). Pushed
+history rewrites go back with `--force-with-lease`
+(never bare `--force`): it can destroy teammates' pushes. A rebase of
+pushed commits waits for a clean working tree first (commit or stash),
+confines the rewrite to unpushed commits whenever possible, and says
+what it overwrote.
+
+### The pull policy lives in config, not just in habit
+
+`pull.rebase` / `branch.<name>.rebase` in any gitconfig silently
+rewrites on every `git pull`. Audit the config before trusting a repo:
+
+```bash
+git config --show-origin --get-regexp '^(pull\.rebase|branch\.[^.]+\.rebase)'
+```
+
+The durable fix is global `pull.ff = only`: pulls merge by default, and
+a diverged pull refuses loudly ("Not possible to fast-forward") instead
+of rewriting. Local repo config beats the global, so sweep the clones
+too:
+
+```bash
+git config --local --get-regexp '^(pull\.rebase|branch\.[^.]+\.rebase)'
+```
+
+Prove a pull-policy change behaviorally, not by key presence: bare
+origin + two clones in a sandbox, push one commit from each, then
+`git pull` in the first - it must FAIL with the fast-forward refusal.
+A pull that succeeds means the test never diverged (the second clone's
+commit was never pushed).
+
+Machine setup and config audits: read
+[references/setup.md](references/setup.md).
 
 ### Common base (where branches diverged)
 
@@ -297,22 +325,30 @@ helper cannot see read as errors and push it to refuse or fabricate. A
 helper refusing on those grounds is doing the right thing - fix the ref
 scope, not the refusal.
 
-## Agent dot-dirs are untracked
+## Agent state dirs are untracked
 
-Every project dir accumulates agent state dirs - `.pi`, `.hermes`,
-`.claude`, `.codex`, `.agents` and friends - used for WIP notes, plans,
-locks, and session artifacts. They are machine- and agent-local by
-design: never commit them, never diff them, never clean them. Ignore
-them in every repo you touch:
+Every project dir accumulates agent state dirs - the running agent's
+dot-dir and its kin (`.<agent>/`) - used for WIP notes, plans, locks,
+and session artifacts. They stay machine- and agent-local by design:
+commits, diffs, and cleanup sweeps leave them alone. Ignore every
+active agent's dir in the repos you touch:
 
 ```bash
-printf '%s\n' '.pi/' '.hermes/' '.claude/' '.codex/' '.agents/' >> .gitignore
+printf '%s\n' '.<agent>/' >> .gitignore   # one line per agent the repo carries
 ```
 
-If one got committed earlier, untrack it without deleting the files:
-`git rm -r --cached .pi` then commit. Do not rely on `.git/info/exclude`
-for shared repos - it only silences your clone; the repo-level
-`.gitignore` is the contract every contributor and agent sees.
+An earlier commit that already tracks one untracks the files without
+deleting them: `git rm -r --cached '.<agent>'` then commit. For shared
+repos the contract lives at the repo level: `.gitignore` speaks to
+every contributor and agent, while `.git/info/exclude` silences only
+your clone.
+
+**Contract and mission md files are agent-local too: every contract,
+lane, mission, or spec md a worker or the agent writes lives in the
+agent's state dir (`.<agent>/`) inside the project.** Lane logs, mission
+files, post-merge notes, spike decisions - all in there. Move anything
+that landed in the repo tree or repo root to the state dir before the
+PR opens.
 
 ## Human merges, agent assists
 

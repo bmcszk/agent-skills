@@ -37,8 +37,8 @@ triggers:
 Include negative triggers for adjacent skills when confusion is likely
 ("not for X"). Off-target activation is the number one skill failure mode.
 
-The description is also the ONLY surface some runtimes always expose: pi
-lists skills to subagents by name + description and treats the body as
+The description is also the ONLY surface some runtimes always expose: a
+runner lists skills to subagents by name + description and treats the body as
 optional reading that may never load. Put a standing law every agent must
 obey regardless of task (citation format, communication rules) IN the
 description, not deep in the body - a rule at line 380 of a 400-line body
@@ -146,6 +146,10 @@ The test for every line:
 - Agent agnostic: describe capabilities, not clients. "Run the project's
   build command" beats a runner-specific command; quarantine unavoidable
   client incantations in a reference the body does not require.
+  Each agent writes its own state dir; examples may name it
+  (`.<agent>/`), the law sentence carries only the pattern. Replace the
+  platform's dir name with `.<agent>/` when porting a law across
+  platforms.
 - Model agnostic: procedures must survive a small model. One instruction
   per line, explicit 1-2-3 ordering, no "simply" or "obviously". Anything
   a weak model would skip gets a gate (script, checklist) instead of
