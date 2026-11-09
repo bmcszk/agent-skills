@@ -16,7 +16,7 @@ runtime data, logs, env files, dependencies, agent dirs, OS noise.
 /bin/
 /dist/
 /build/
-/hello                 # generated binary at repo root, anchored
+/hello
 
 # Test and coverage artifacts
 *.test
@@ -40,8 +40,9 @@ saves/*.json
 
 # Environment and secrets
 .env
-.env.local
 .env.*
+!.env.example
+!.env.sample
 
 # Dependencies and caches
 vendor/
@@ -57,7 +58,7 @@ Thumbs.db
 .vscode/
 ```
 
-Go repos additionally ignore `go.work` and keep `go.mod` + `go.sum`
+Go repos also ignore `go.work` and keep `go.mod` + `go.sum`
 tracked. Product lock files stay tracked; lock files belonging to
 agent tooling inside the repo (`.opencode/package-lock.json`) follow
 the tool dir and stay untracked.
@@ -94,19 +95,24 @@ file-level rules are needed for them.
   negation: `git add` on the ignored fixture refuses with an
   "ignored by .gitignore" hint, and a force-add hides the landmine.
 - Ignore whole generated directories (`/dist/`) instead of listing
-  their artifacts file by file.
+  their artifacts file by file: new artifacts stay clean with no edit
+  to the list.
 - Level owns the rule: product-wide classes in the repo file, one
   clone's personal scratch in `.git/info/exclude`.
 
 ## Verify after every edit
 
+Run `git check-ignore -v` one path per call:
+
 ```bash
-git check-ignore -v .worktrees/ .hermes/ .pi/ .opencode/
-git status --short
+git check-ignore -v .worktrees/
+git check-ignore -v .hermes/
+git check-ignore -v .pi/
+git check-ignore -v .opencode/
 ```
 
-`git check-ignore -v` prints the matching rule per path and exits 1
-for a path no rule hits: every path meant to be ignored must print a
-line. `git status --short` must show the ignored dirs gone from the
+Each call prints the matching rule and exits 0; exit 1 means that path
+matches no rule, so every path meant to be ignored must print a line.
+`git status --short` must show the ignored dirs gone from the
 untracked list. For a negation, `git add` the fixture path and
 confirm it stages.
