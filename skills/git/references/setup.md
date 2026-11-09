@@ -40,8 +40,8 @@ Per-key behavior:
 - `push.autoSetupRemote`: git 2.37+. First push of a new branch sets its
   upstream; no `--set-upstream`.
 - `pull.ff = only`: a diverged pull refuses loudly instead of merging or
-  rewriting. This is the merge-over-rebase law in config. Audit for
-  rebase-on-pull overrides before trusting a clone:
+  rewriting. This is the integration-branch pull law in config. Audit
+  for rebase-on-pull overrides before trusting a clone:
 
   ```bash
   git config --show-origin --get-regexp '^(pull\.rebase|branch\.[^.]+\.rebase)'

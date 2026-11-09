@@ -4,8 +4,9 @@ description: >-
   Use when working with git in any repo under PR flow: starting work on a
   branch, updating a stale branch, resolving conflicts, rebasing, naming
   branches or commits, watching CI, cleaning up after a merged PR, or
-  managing worktrees. Carries the house laws: squash-merge PRs, merge over
-  rebase to avoid force pushes, humans merge, CI must stay green, worktrees
+  managing worktrees. Carries the house laws: squash-merge PRs, merge
+  preferred over rebase as the refresh flow with force pushes guarded by
+  --force-with-lease, humans merge, CI must stay green, worktrees
   only for parallel work inside .worktrees/. Not for GitHub API or gh CLI
   details (see github skill) or git internals.
 license: MIT
@@ -163,7 +164,7 @@ CI status is part of the work, not an afterthought:
 - One fix = one new commit; do not amend pushed commits.
 - If master moved, refresh before pushing again.
 
-### Refreshing a branch: merge, do not rebase
+### Refreshing a branch: merge is the default, rebase is deliberate
 
 Default refresh of a stale branch is a merge that can push normally:
 
@@ -174,19 +175,18 @@ git merge origin/master        # or: git merge-base --is-ancestor \
 git push                       # ordinary push, no force
 ```
 
-A rebase rewrites your pushed commits, so the push needs `--force` /
-`--force-with-lease`, which can destroy teammates' pushes. Prefer the
-merge. If a rebase is truly required (user asks, or a rebase-merge
-policy), wait for the working tree to be clean first (commit or stash),
-rebase only unpushed commits when possible, and if history was already
-pushed, push back with `--force-with-lease` (never bare `--force`), and
-say what you overwrote.
+The house stays on the merge and treats rebase as a deliberate choice
+for the runs that want it (a moved base is the common case). Pushed
+history rewrites go back with `--force-with-lease`
+(never bare `--force`): it can destroy teammates' pushes. A rebase of
+pushed commits waits for a clean working tree first (commit or stash),
+confines the rewrite to unpushed commits whenever possible, and says
+what it overwrote.
 
-### Enforce merge-over-rebase in config, not just in habit
+### The pull policy lives in config, not just in habit
 
 `pull.rebase` / `branch.<name>.rebase` in any gitconfig silently
-rewrites on every `git pull` - the exact force-push bait this section
-bans. Audit config before trusting a repo to obey the law:
+rewrites on every `git pull`. Audit the config before trusting a repo:
 
 ```bash
 git config --show-origin --get-regexp '^(pull\.rebase|branch\.[^.]+\.rebase)'
@@ -328,24 +328,24 @@ scope, not the refusal.
 ## Agent state dirs are untracked
 
 Every project dir accumulates agent state dirs - the running agent's
-dot-dir and its kin (`<agent>/`) - used for WIP notes, plans, locks,
+dot-dir and its kin (`.<agent>/`) - used for WIP notes, plans, locks,
 and session artifacts. They stay machine- and agent-local by design:
 commits, diffs, and cleanup sweeps leave them alone. Ignore every
 active agent's dir in the repos you touch:
 
 ```bash
-printf '%s\n' '<agent>/' >> .gitignore   # one line per agent the repo carries
+printf '%s\n' '.<agent>/' >> .gitignore   # one line per agent the repo carries
 ```
 
 An earlier commit that already tracks one untracks the files without
-deleting them: `git rm -r --cached '<agent>'` then commit. For shared
+deleting them: `git rm -r --cached '.<agent>'` then commit. For shared
 repos the contract lives at the repo level: `.gitignore` speaks to
 every contributor and agent, while `.git/info/exclude` silences only
 your clone.
 
 **Contract and mission md files are agent-local too: every contract,
 lane, mission, or spec md a worker or the agent writes lives in the
-agent's state dir (`<agent>/`) inside the project.** Lane logs, mission
+agent's state dir (`.<agent>/`) inside the project.** Lane logs, mission
 files, post-merge notes, spike decisions - all in there. Move anything
 that landed in the repo tree or repo root to the state dir before the
 PR opens.

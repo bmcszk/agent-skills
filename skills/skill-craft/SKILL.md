@@ -147,8 +147,8 @@ The test for every line:
   build command" beats a runner-specific command; quarantine unavoidable
   client incantations in a reference the body does not require.
   Each agent writes its own state dir; examples may name it
-  (`<agent>/`), the law sentence carries only the pattern. Replace the
-  platform's dir name with `<agent>/` when porting a law across
+  (`.<agent>/`), the law sentence carries only the pattern. Replace the
+  platform's dir name with `.<agent>/` when porting a law across
   platforms.
 - Model agnostic: procedures must survive a small model. One instruction
   per line, explicit 1-2-3 ordering, no "simply" or "obviously". Anything
