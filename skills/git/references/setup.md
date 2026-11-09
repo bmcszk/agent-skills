@@ -33,9 +33,6 @@ emails, and paths.
 [rerere]
 	enabled = true
 	autoUpdate = false
-
-[gpg "ssh"]
-	allowedSignersFile = ~/.ssh/allowed_signers
 ```
 
 Per-key behavior:
@@ -55,8 +52,11 @@ Per-key behavior:
 - `rerere`: replays recorded conflict resolutions. `autoUpdate` stays
   false so the replay lands unstaged and gets reviewed before continue.
 - `merge "ours"` driver: inert until a `.gitattributes` names it (below).
-- `gpg.ssh.allowedSignersFile`: lets `git log --show-signature` verify
-  SSH-signed commits; one line per identity: `<email> <keytype> <key>`.
+- Verification is forge-side: the signing key is registered with the
+  forge and that is where the "Verified" badge comes from.
+  `gpg.ssh.allowedSignersFile` is deliberately NOT configured - a local
+  trust list means ~/.ssh maintenance the house skips. Do not add it
+  while setting up a machine.
 
 ## Per-host includes
 
@@ -127,5 +127,4 @@ the incoming side of a conflict is discarded without a visible diff.
 ```bash
 git config --global --list --show-origin
 git var GIT_COMMITTER_IDENT
-git log --show-signature -1    # on a repo with signed history
 ```
