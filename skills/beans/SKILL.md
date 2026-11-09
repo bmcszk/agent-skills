@@ -151,6 +151,7 @@ or human triaging it must:
    when in-repo evidence isn't enough. Cite sources in the body.
 3. **Scope the work** - split into tasks / subtasks. A requirement
    that is one fat bean is a smell; it should be an epic + children.
+   Write literal plan values (branch `blaze-cve-bump`), never `$(whoami)-...`.
 4. **Write acceptance criteria** - `- [ ]` checkboxes an outside
    reviewer can independently verify.
 5. **Discover skills for the coding agent** - when the leaf will be
@@ -401,7 +402,6 @@ Process and CLI hygiene - not the closure rules, which live in
 
 | Don't | Do |
 |-------|-----|
-| Skip `beans prime` at session start | Run it first, every session |
 | Scripts without `--json` | `--json` for machine-readable output |
 | Edit `.beans/` files directly | Use CLI commands |
 | Ignore etag for concurrent updates | Use `--if-match` for safe concurrent edits |
