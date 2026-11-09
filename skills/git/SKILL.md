@@ -325,31 +325,30 @@ helper cannot see read as errors and push it to refuse or fabricate. A
 helper refusing on those grounds is doing the right thing - fix the ref
 scope, not the refusal.
 
-## Agent dot-dirs are untracked
+## Agent state dirs are untracked
 
-Every project dir accumulates agent state dirs - `.pi`, `.hermes`,
-`.claude`, `.codex`, `.agents` and friends - used for WIP notes, plans,
-locks, and session artifacts. They are machine- and agent-local by
-design: never commit them, never diff them, never clean them. Ignore
-them in every repo you touch:
+Every project dir accumulates agent state dirs - the running agent's
+dot-dir and its kin (`<agent>/`) - used for WIP notes, plans, locks,
+and session artifacts. They stay machine- and agent-local by design:
+commits, diffs, and cleanup sweeps leave them alone. Ignore every
+active agent's dir in the repos you touch:
 
 ```bash
-printf '%s\n' '.pi/' '.hermes/' '.claude/' '.codex/' '.agents/' >> .gitignore
+printf '%s\n' '<agent>/' >> .gitignore   # one line per agent the repo carries
 ```
 
-If one got committed earlier, untrack it without deleting the files:
-`git rm -r --cached .pi` then commit. Do not rely on `.git/info/exclude`
-for shared repos - it only silences your clone; the repo-level
-`.gitignore` is the contract every contributor and agent sees.
+An earlier commit that already tracks one untracks the files without
+deleting them: `git rm -r --cached '<agent>'` then commit. For shared
+repos the contract lives at the repo level: `.gitignore` speaks to
+every contributor and agent, while `.git/info/exclude` silences only
+your clone.
 
-
-**Contract/mission md files are agent-local too: every contract, lane,
-mission, or spec md a worker or the agent writes lives under the running
-agent's state dir in the project (`.hermes/` here, `.pi/`, `.claude/`,
-`.codex/` on their platforms), never at repo root and never in tracked
-tree paths.** Lane logs, mission files, post-merge notes, spike
-decisions - all in there. If one lands in the repo tree or repo root,
-move it out before the PR opens.
+**Contract and mission md files are agent-local too: every contract,
+lane, mission, or spec md a worker or the agent writes lives in the
+agent's state dir (`<agent>/`) inside the project.** Lane logs, mission
+files, post-merge notes, spike decisions - all in there. Move anything
+that landed in the repo tree or repo root to the state dir before the
+PR opens.
 
 ## Human merges, agent assists
 

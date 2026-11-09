@@ -44,7 +44,7 @@ check three things before calling it done:
    keeping a one-line "enforced by <gate>" pointer. Split it the other
    way and both files are half-procedures.
 5. Amendment-wrapper absorption: when a base skill gains a rule that a
-   hermes-local `<name>-notes` wrapper also carries, the wrapper drops
+   platform-local `<name>-notes` wrapper also carries, the wrapper drops
    its copy in the same pass; a rule stated normatively in the base
    and the wrapper is the duplication case of item 1.
 

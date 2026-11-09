@@ -50,13 +50,12 @@ Per-key behavior:
 - `fetch.prune`: deleted remote branches drop on every fetch.
 - `diff.algorithm = histogram`: cleaner hunks around moved code.
 - `rerere`: replays recorded conflict resolutions. `autoUpdate` stays
-  false so the replay lands unstaged and gets reviewed before continue.
+  false so the replay lands unstaged and gets reviewed before continuing.
 - `merge "ours"` driver: inert until a `.gitattributes` names it (below).
-- Verification is forge-side: the signing key is registered with the
-  forge and that is where the "Verified" badge comes from.
-  `gpg.ssh.allowedSignersFile` is deliberately NOT configured - a local
-  trust list means ~/.ssh maintenance the house skips. Do not add it
-  while setting up a machine.
+- Verification is forge-side: the signing key registers with the forge
+  and the Verified badge comes from there. The reference config carries
+  signing keys only, so signature verification lives entirely with the
+  forge.
 
 ## Per-host includes
 
@@ -95,7 +94,7 @@ Laws:
 - `gpg.format = ssh` needs git 2.34+; `signingkey` carries the PUBLIC key
   (the same key registered with the forge shows commits as Verified).
 - `excludesFile` holds per-host untracked noise (agent dot-dirs and
-  friends); it complements, never replaces, the repo-level `.gitignore`.
+  friends); it extends the repo-level `.gitignore`, and both filters apply.
 - `url.insteadOf` makes https clones push over ssh.
 - A second host (gitlab) duplicates the same file shape with its own
   `gitdir:` and `insteadOf` blocks.
