@@ -182,6 +182,34 @@ rebase only unpushed commits when possible, and if history was already
 pushed, push back with `--force-with-lease` (never bare `--force`), and
 say what you overwrote.
 
+### Enforce merge-over-rebase in config, not just in habit
+
+`pull.rebase` / `branch.<name>.rebase` in any gitconfig silently
+rewrites on every `git pull` - the exact force-push bait this section
+bans. Audit config before trusting a repo to obey the law:
+
+```bash
+git config --show-origin --get-regexp '^(pull\.rebase|branch\.[^.]+\.rebase)'
+```
+
+The durable fix is global `pull.ff = only`: pulls merge by default, and
+a diverged pull refuses loudly ("Not possible to fast-forward") instead
+of rewriting. Local repo config beats the global, so sweep the clones
+too:
+
+```bash
+git config --local --get-regexp '^(pull\.rebase|branch\.[^.]+\.rebase)'
+```
+
+Prove a pull-policy change behaviorally, not by key presence: bare
+origin + two clones in a sandbox, push one commit from each, then
+`git pull` in the first - it must FAIL with the fast-forward refusal.
+A pull that succeeds means the test never diverged (the second clone's
+commit was never pushed).
+
+Machine setup and config audits: read
+[references/setup.md](references/setup.md).
+
 ### Common base (where branches diverged)
 
 Find it before any rebase or conflict fix:
@@ -313,6 +341,14 @@ If one got committed earlier, untrack it without deleting the files:
 `git rm -r --cached .pi` then commit. Do not rely on `.git/info/exclude`
 for shared repos - it only silences your clone; the repo-level
 `.gitignore` is the contract every contributor and agent sees.
+
+
+**Contract/mission md files are agent-local too: every contract, lane,
+mission, or spec md a worker or the agent writes lives under
+`<project>/.hermes/` (e.g. `.hermes/lane/<lane>/`), never at repo root
+and never in tracked tree paths.** Lane logs, mission files, post-merge
+notes, spike decisions - all in `.hermes/`. If one lands in the repo tree
+or repo root, move it out before the PR opens.
 
 ## Human merges, agent assists
 
