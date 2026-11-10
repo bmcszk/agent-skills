@@ -7,8 +7,9 @@ description: >-
   managing worktrees. Carries the house laws: squash-merge PRs, merge
   preferred over rebase as the refresh flow with force pushes guarded by
   --force-with-lease, humans merge, CI must stay green, worktrees
-  only for parallel work inside .worktrees/. Not for GitHub API or gh CLI
-  details (see github skill) or git internals.
+  only for parallel work inside .worktrees/. Not for GitHub API or
+  gh CLI details beyond a PR review round (see references/github.md),
+  or for git internals.
 license: MIT
 metadata:
   audience: developers
@@ -242,33 +243,33 @@ WORKING TREE and sweeps uncommitted edits into the count. Three dots in
 
 ## Fixing conflicts
 
-When master moved into your branch's files (or CI shows conflicts):
+When master moved into your branch's files (or CI shows conflicts),
+read [references/merge-rebase-conflicts.md](references/merge-rebase-conflicts.md):
+it carries the full loop - inventory, read both sides, resolve
+semantically, marker gates, commit - plus rerere, recovery paths, and
+the ours/theirs flip under rebase. Laws that stay here regardless:
 
-```bash
-git merge-base HEAD origin/master   # fork point
-git merge origin/master             # merge now stops at conflicts
-git status                          # conflicts: both modified / UU
-# edit each file; keep BOTH sides when semantics differ; markers <<<<<<<,
-# =======, >>>>>>> must be fully removed; no leftover marker may remain
-git add <file>                      # per resolved file
-git commit                          # closes the merge
-```
+- Remove every conflict marker before committing; search
+  `grep -rn '^<<<<<<<\|^=======$\|^>>>>>>>' --include='*' .` is clean.
+- The resolution file must build and behave as both authors intended,
+  not "master's version wins"; run the project's gates BEFORE the
+  resolution commit - a resolution that compiles but breaks behavior
+  is a new bug - and CI on the merge commit confirms.
 
-The invariant: after resolution the file must build and behave as both
-authors intended - not "master's version wins". Re-read the hunk after
-editing. Then run the tests (the project's gates) BEFORE the merge
-commit: a conflict resolution that compiles but breaks behavior is a new
-bug with an innocent-looking commit. CI on the merge commit confirms.
+## Reviewer comments on the PR
 
-`git rebase --continue` after conflicts follows the same resolve/stage/
-continue loop when a rebase is the chosen path. Search for stray markers
-across the tree before committing:
-`grep -rn '^<<<<<<<\|^=======$\|^>>>>>>>' --include='*' .`
+Respond to every reviewer comment: fix the code, push, and reply per
+thread through the `gh` CLI. Read
+[references/github.md](references/github.md) when a PR carries review
+comments - it carries the full comment inventory, the code-context
+anchors, the reply and resolve recipes, and the completion gate. Hard
+laws that stay here regardless:
 
-The full conflict loop with verified tool semantics (marker shapes and
-labels, rerere, recovery paths, ours/theirs under rebase): read
-[references/merge-rebase-conflicts.md](references/merge-rebase-conflicts.md)
-when a merge or rebase stops on conflicts or a resolution needs proving.
+- The round is not done while any thread is unanswered: resolved
+  (fix landed, reply posted, checks green) or visibly open with the
+  reply that says why.
+- Resolve a thread only when it is addressed AND green on the PR
+  head; replies carry the full head SHA.
 
 ## Worktrees
 
