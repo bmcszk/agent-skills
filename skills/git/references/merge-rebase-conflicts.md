@@ -42,7 +42,6 @@ git push --force-with-lease             # only if the branch was pushed before
 Prove the inventory line prints ONLY commits this session authored
 before any rebase. A commit someone else pushed to the branch is
 shared history; the rebase stops until that fact changes the plan.
-Pushed-history rewrites wait for a clean working tree, and
 `--force-with-lease` fails when the remote moved since the last
 fetch, which is the guard working. Fetch BEFORE the force push and
 never between the check and the push.
@@ -268,7 +267,21 @@ a time instead.
 merge is uncommitted; in an octopus read it only in that state (`git
 merge --no-commit` for a preview).
 
-## History views at the fork
+## Finding the common base, and views at the fork
+
+`merge-base` is the common ancestor; `--fork-point` additionally reads
+the reflog to find the original tip when master was rewound (squash
+merges rewrite master constantly). Fork-point fails empty (exit 1) when
+no reflog knows the old tip - fresh clones, post-`reset` states - so
+always fall back:
+
+```bash
+git merge-base HEAD origin/master        # merge base
+git merge-base --fork-point origin/master HEAD   # true fork, reflog-aware
+git merge-base --fork-point origin/master HEAD \
+  || git merge-base origin/master HEAD
+git log --oneline $(git merge-base HEAD origin/master)..HEAD
+```
 
 `git log --oneline --left-right master...branch` splits the range
 into sides: `<` = on master only, `>` = on the branch only. Three

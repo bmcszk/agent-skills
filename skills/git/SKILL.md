@@ -216,30 +216,11 @@ Machine setup and config audits: read
 
 ### Common base (where branches diverged)
 
-Find it before any rebase or conflict fix:
-
-```bash
-git merge-base HEAD origin/master        # merge base
-git merge-base --fork-point origin/master HEAD   # true fork, reflog-aware
-git log --oneline $(git merge-base HEAD origin/master)..HEAD
-```
-
-`merge-base` is the common ancestor; `--fork-point` additionally reads
-the reflog to find the original tip when master was rewound (squash
-merges rewrite master constantly). Fork-point fails empty (exit 1) when
-no reflog knows the old tip - fresh clones, post-`reset` states - so
-always fall back:
-
-```bash
-git merge-base --fork-point origin/master HEAD \
-  || git merge-base origin/master HEAD
-```
-
-Diff against the fork point, not against master's tip:
-`git diff $(git merge-base HEAD origin/master) HEAD` - the second rev
-makes it committed-changes-only; one rev alone diffs against the
-WORKING TREE and sweeps uncommitted edits into the count. Three dots in
-`git log A...B` also splits into theirs/mine/ours views.
+Find the common base before any rebase or conflict fix, and diff
+against it, never against master's tip. The `merge-base` recipe, the
+`--fork-point` fallback when no reflog knows the old tip, and the
+diff/history views at the fork: read
+[references/merge-rebase-conflicts.md](references/merge-rebase-conflicts.md).
 
 ## Fixing conflicts
 
