@@ -181,7 +181,10 @@ history rewrites go back with `--force-with-lease`
 (never bare `--force`): it can destroy teammates' pushes. A rebase of
 pushed commits waits for a clean working tree first (commit or stash),
 confines the rewrite to unpushed commits whenever possible, and says
-what it overwrote.
+what it overwrote. Full refresh recipes, the merge-or-rebase decision
+table, and rebase tool semantics: read
+[references/merge-rebase-conflicts.md](references/merge-rebase-conflicts.md)
+when picking between them or rebasing.
 
 ### The pull policy lives in config, not just in habit
 
@@ -232,7 +235,9 @@ git merge-base --fork-point origin/master HEAD \
 ```
 
 Diff against the fork point, not against master's tip:
-`git diff $(git merge-base HEAD origin/master)`. Three dots in
+`git diff $(git merge-base HEAD origin/master) HEAD` - the second rev
+makes it committed-changes-only; one rev alone diffs against the
+WORKING TREE and sweeps uncommitted edits into the count. Three dots in
 `git log A...B` also splits into theirs/mine/ours views.
 
 ## Fixing conflicts
@@ -259,6 +264,11 @@ bug with an innocent-looking commit. CI on the merge commit confirms.
 continue loop when a rebase is the chosen path. Search for stray markers
 across the tree before committing:
 `grep -rn '^<<<<<<<\|^=======$\|^>>>>>>>' --include='*' .`
+
+The full conflict loop with verified tool semantics (marker shapes and
+labels, rerere, recovery paths, ours/theirs under rebase): read
+[references/merge-rebase-conflicts.md](references/merge-rebase-conflicts.md)
+when a merge or rebase stops on conflicts or a resolution needs proving.
 
 ## Worktrees
 
