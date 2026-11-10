@@ -89,7 +89,13 @@ and WHEN; references hold HOW-much-detail. Every reference is named in the
 body with its load condition ("when the run times out, read
 references/eval-patterns.md"), and every named file exists: a reference the
 body never points to is dead, and a body pointing at a missing file
-dead-ends the run that needs it. A generic example name in the body counts
+dead-ends the run that needs it.
+
+Body and references carry each rule once (no duplicates, simplicity in
+the skill, details in the referenced docs): the body holds laws, the
+reference holds procedures, and whichever copy restates the other gets
+trimmed - a rule sitting in two copies drifts the moment one side is
+edited. A generic example name in the body counts
 as a dangling reference to a linter; write examples as "when X, read
 references/<actual-file>.md".
 
