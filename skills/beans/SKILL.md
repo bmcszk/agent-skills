@@ -270,6 +270,9 @@ When dispatching bean work to subagents (especially small or free models):
 - **Design decisions go in the bean body.** Keep the full design inside the task via `--body-replace-old/new`; the bean is the single source of truth. Do not scatter design across scratch files.
 - **One stall = change tactic.** Hangs and text-only returns are signals - do not retry with the same prompt. Switch task size, agent, or toolset. Two failures = stop delegating that step.
 - **Bypass wrappers for diagnostics.** Use raw commands when reading exact errors or lint positions.
+- **Read-only review dispatches inline their content.** A review child that must run repo commands burns its budget on tool loops; paste the diff or file text into the prompt and give a neutral working directory. Smoke-test a silent contract with a one-word prompt at the same cwd, and bisect a silent contract by halving it.
+- **Parallel children get their own output files.** A shared result path is silent last-writer-wins loss; recover a lost child's findings from its live transcript instead of re-dispatching.
+- **Judge verdict substance, not marker format**, before re-dispatching a worker.
 
 ### Agent Task Lifecycle
 
