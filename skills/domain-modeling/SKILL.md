@@ -43,7 +43,10 @@ ADR dir when the first record is needed.
   halves quoted.
 - Update the glossary inline when a term resolves. Never batch.
   The glossary holds terms and meanings only: no implementation
-  detail, no scratch notes, no decisions.
+  detail, no scratch notes, no decisions. Term format, the Avoid
+  list, and the single vs multi-context map layout: read
+  [references/glossary-format.md](references/glossary-format.md) when
+  writing or editing a glossary.
 
 ## Decision records
 
@@ -55,3 +58,7 @@ Offer a record only when all three hold:
    for stated reasons.
 
 Missing any of the three: skip the record.
+
+Record format, numbering, and optional sections: read
+[references/adr-format.md](references/adr-format.md) when writing a
+decision record.

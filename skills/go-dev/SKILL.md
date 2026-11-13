@@ -55,6 +55,8 @@ Build, vet, lint, and tests check that code is correct. None of them checks that
 |------|------|
 | Any tradeoff | [development-balance.md](references/development-balance.md) |
 | Implementation, refactor, or review | [core-go-rules.md](references/core-go-rules.md) |
+| Driving a lint sweep over complexity or structure findings, or verifying findings that repeat | [lint-sweeps.md](references/lint-sweeps.md) |
+| Wiring a custom linter, version pins, config examples, or CI lint triage | [golangci-config.md](references/golangci-config.md) |
 | Line breaking, declarations, control flow, signatures, pointer vs value | [style.md](references/style.md) |
 | Goroutines, channels, `select`, mutex and atomics, `errgroup`, worker pools | [concurrency.md](references/concurrency.md) |
 | Queries, scanning, transactions, isolation, pooling, batching, indexes | [database.md](references/database.md) |

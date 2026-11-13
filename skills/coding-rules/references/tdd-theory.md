@@ -51,3 +51,37 @@ survives refactors because it ignores internal structure.
   per cycle.
 - Refactoring is not part of the loop: it belongs to the review
   stage, after the slice is green.
+
+## Phase markers in practice
+
+The SKILL.md Comments section makes the `given` / `when` / `then`
+markers required structure; this section fixes where they sit.
+
+- One phase per line, in strict order: `given`, `when`, `then`. `then`
+  follows `when`, so `then` opens no test body. A single `// when x,
+  then y` line collapses the act and the assertion into one thought.
+- `given` marks optional setup; `when` and `then` are mandatory. A
+  marker names one phase and stays short: prose about what the test
+  covers belongs in the test name.
+- A marker owns the statements below it up to the next marker, so a
+  marker with no code beneath it is decoration. Move it above real
+  action or drop it, and a dangling `// given` gets deleted: optional
+  setup earns no empty marker.
+- One test, one act. `when` holds the single act under test; `then`
+  only observes. A second unit call inside `then` is a missing test
+  rather than a placement problem: move it to its own test with its
+  own `when` and `then`. Repeating one act parametrized is still one
+  act, and an assertion that derives its expected value through a
+  helper is observation.
+- Table-driven tests have no marker scope of their own: a plain loop
+  body carries no phases. Drive all rows through one top-level act
+  under a single `// when` / `// then` pair and carry per-row
+  expectations as row fields.
+- A fluent DSL whose phases are receivers in a chain carries no marker
+  comments: the chain is the structure, and markers on top build a
+  second, competing one.
+- In Go, markers belong to the body they sit in: a marker inside a
+  `t.Run` closure satisfies that subtest and leaves the enclosing test
+  unmarked.
+- A marker opens its comment line: `// if x then y` is prose, so the
+  phase name must be the line's first word.

@@ -46,8 +46,6 @@ PR bodies, or any documentation. IDs are opaque to readers, titles are not.
   task: apply it to EVERY artifact in one motion, and grep the touched
   tree for the ID pattern before pushing to catch stragglers.
 
----
-
 ## Workflow Model
 
 The lifecycle has levels (milestone → epic → feature → task/bug,
@@ -238,9 +236,8 @@ Code-fix bean creation: [`references/all-code-delegated.md`](references/all-code
 ## CLI Commands
 
 Every subcommand and flag is documented in
-[`references/cli.md`](references/cli.md). This section is a quick
-top-of-mind index for the four commands an agent uses in 95% of
-sessions.
+[`references/cli.md`](references/cli.md). This section indexes the
+four commands most sessions use.
 
 | Command | When to reach for it |
 |---|---|
@@ -253,6 +250,8 @@ sessions.
 On-disk file format (frontmatter, filename convention, field schema):
 [`references/bean-file-format.md`](references/bean-file-format.md). The
 CLI owns that file - never hand-edit `.beans/*.md`.
+
+CLI failure modes: [references/failure-modes.md](references/failure-modes.md).
 
 ### Write-back comments (audit verdicts, review notes)
 

@@ -114,6 +114,10 @@ plugin mechanism (a `pre_tool_call` hook). The plugin blocks the tool call
 at the gateway level so the model never sees the violating result. Use the
 runner's plugin-authoring and delegation skills if installed.
 
+Rewrites that replace whole sections obey the rewrite-safety rules: read
+[references/rewrite-safety.md](references/rewrite-safety.md) when a pass
+replaces sections, merges rules, or compresses prose.
+
 ## Slim by moving, not by deleting law
 
 When a body is over budget, the move is mechanical: procedures only some
