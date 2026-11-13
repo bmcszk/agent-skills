@@ -197,6 +197,7 @@ cat /sys/class/drm/card1-HDMI-A-1/dpms    # display powered?
 ## References
 
 - **`references/electron-gamescope-fix.md`** - Electron apps (Discord, Heroic) in gamescope-session: root causes (Electron-Wayland, shortcuts.vdf not repointed, CompatToolMapping force-pin to proton), automated fix flow, restart requirement, verification commands, pitfalls (binary VDF needs python-vdf, userdata placeholder `0/`, grep -q too broad), rollback.
+- **`references/network-stability.md`** - Flaky-link triage: layered probe ladder (gateway vs WAN anchor, fresh-lookup dig, NAT-session-hang signature, same-time-daily clustering), kernel-journal arbitration, reversible offload discriminators, bounded overnight capture, verdict discipline.
 
 ## Fix-script index (in `~/scripts/` - adjust to your setup)
 

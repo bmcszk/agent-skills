@@ -84,3 +84,23 @@ not against memory of what a wave was supposed to deliver. When two
 workers harvest in parallel, each filer lists the target tracker's open
 tasks first and folds same-capability findings into the surviving task
 (fold note in the body) instead of creating near-duplicates.
+
+## The skills CLI update fork
+
+The `skills` CLI update hashes the UPSTREAM tree against the lock
+and never reads the install dir: a hand-edit to an installed skill
+survives every "all up to date" run forever and silently forks the
+install. Detect the fork by hashing the install folders against
+upstream and lock values; a mismatch is the fork. The forked copy
+may hold an improvement a parallel session wrote: diff it against
+upstream and judge the delta before declaring the local side stale.
+
+Lock hash-format drift (old 40-hex digests vs the current 64-hex)
+makes naive hash comparison report total drift on skills that never
+changed: filter both sides to 64-hex digests before comparing, or
+every old-lock skill reads as modified.
+
+`skills add` and `skills update` respawn symlinks into agent dirs
+even on universal-agent boxes where they were deliberately removed:
+sweep `find <agent-dirs> -maxdepth 1 -type l` after every CLI run
+and prune the respawned links.

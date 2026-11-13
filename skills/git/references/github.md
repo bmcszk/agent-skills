@@ -224,3 +224,50 @@ contradiction is the most common blocking finding); diff-verify the
 body's file and scope claims against
 `git diff <base>...HEAD --name-only`; re-run all gates at head; and
 re-verify them after any fix round, then run `gh pr create`.
+
+## Classifying review comments
+
+Classify ALL comments before drafting any reply, into three kinds:
+placement or symbol-location notes (the code exists but sits in the
+wrong place), hygiene-sweep notes (the class of issue repeats across
+siblings), and questions (answer, no change). The sweep class is
+where fixes get lost: re-read the original comment and confirm every
+named symbol is gone, INCLUDING the siblings of the class - a fix
+that corrects only the instance the reviewer pointed at leaves the
+rest of the class for the next round.
+
+## Hunk-math anchoring
+
+Before batch-posting inline comments, parse the `@@` hunk ranges of
+the diff: a line the PR does not change cannot carry an inline
+comment, and posting against it either errors or silently anchors to
+the nearest changed line, attaching the review to the wrong code.
+
+## Coverage audit round
+
+Run one audit round over test coverage before answering "tests?"
+comments, built from the implementation and not from test names
+(test names describe intent; only assertions describe coverage):
+
+- Inventory the feature's behaviors from the implementation, then
+  map each behavior to the tier of the test that exercises it and
+  to that tier's assertion strength (a smoke test asserting no
+  exception is weaker than a value-asserting unit test).
+- Compare the longest duration any test exercises against the
+  server's write timeout: a feature that passes a 5-second test and
+  times out at 30 seconds of real writes is uncovered where it
+  actually breaks.
+- Zero-coverage paths block merge: a behavior with no test at any
+  tier is a finding to state, not to argue.
+
+## Branch drift laws
+
+- `git pull --rebase` before every review-fix push: a diverged
+  remote turns the push into a merge commit the reviewer must
+  untangle from the fixes.
+- Work on the branch the review flags, never a detached copy of it:
+  fixes pushed from a copy diverge from the reviewed head, and the
+  review anchors go stale.
+- Amend own-PR commits only with `--force-with-lease` - a bare
+  `--force` overwrites commits pushed by anyone else in the
+  meantime.

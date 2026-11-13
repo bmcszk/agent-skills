@@ -58,7 +58,7 @@ walls without a preview, already-fetched URLs. Then per source:
 1. Extract only goal-relevant facts; skip navigation and boilerplate.
 2. Assign each unique URL a numbered citation on first encounter; reuse it after.
 3. Tier the source: primary (official docs, filings, papers, pricing pages), secondary (tech press, analyst reports), tertiary (forums, wikis, aggregators). Tertiary never solely supports a material claim.
-4. Fetch failures go down the recovery ladder in `references/tools.md` - Wayback, archive.today, API pivot, browser. Cite snapshots with their archive date.
+4. Fetch failures go down the recovery ladder in `references/tools.md` - Wayback, archive.today, API pivot, browser. Cite snapshots with their archive date. When a recovered page looks wrong, read `references/blocked-page-recovery.md` - the routes-that-lie catalogue and its detection heuristics.
 
 ### 3d - Evidence labels
 

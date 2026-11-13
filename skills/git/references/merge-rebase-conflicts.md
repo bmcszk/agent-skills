@@ -293,3 +293,20 @@ and HEAD as the second: `git diff $(git merge-base HEAD
 origin/master) HEAD`. The single-rev form `git diff <commit>` diffs
 against the WORKING TREE, so uncommitted edits count as branch
 changes.
+
+## Porting intent across branch families
+
+The same feature often lives as parallel families of branches
+(per-release, per-environment), and porting to one family is not
+porting to all. Map the families first with `git for-each-ref` plus
+merge-base ancestor walks: two branches sharing a recent merge-base
+ancestor are one family, and a fix ported into one reaches the other
+through their merge, not through a second port.
+
+Port the FINAL diff, not the commit list: the commit list carries
+fixup and rebase residue that cherry-picks as conflicts, while the
+final diff is the settled intent. Apply it as one patch, then grep
+the destination family for the feature's key symbols - a port can
+silently drop a helper, a constant, or a test when a hunk applies
+with fuzz, and the grep is the only check that catches the dropped
+piece before the family merges.

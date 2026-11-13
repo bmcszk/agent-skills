@@ -63,6 +63,7 @@ Build, vet, lint, and tests check that code is correct. None of them checks that
 | Error strings, wrapping, `errors.Is`/`As`/`Join`, panic, log fields | [error-handling.md](references/error-handling.md) |
 | Profiling, allocations, CPU and cache, GC limits, I/O, caching | [performance.md](references/performance.md) |
 | Go version bump, `go fix`, new stdlib API, json/v2, omitempty/omitzero | [modern-go.md](references/modern-go.md) |
+| Upgrading go directives or toolchain pins across consumers, or deleting dead code at scale | [repo-upgrade.md](references/repo-upgrade.md) |
 | Unit, integration, or E2E tests | [go-tests](../go-tests/SKILL.md) |
 | New project, layout, library choice | [go-setup](../go-setup/SKILL.md) |
 | File layout (const/var/types/public before private) | [coding-rules](../coding-rules/SKILL.md) |

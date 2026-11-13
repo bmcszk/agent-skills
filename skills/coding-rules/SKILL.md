@@ -22,7 +22,10 @@ test can fail. A change that cannot be written test-first needs its
 test seams fixed first, not a skip of this rule. Where tests attach,
 what a good test is, and the anti-patterns that ruin suites: read
 [references/tdd-theory.md](references/tdd-theory.md) when writing the
-first test of a change or reviewing a test suite.
+first test of a change or reviewing a test suite. Load
+[references/enforcement-gates.md](references/enforcement-gates.md)
+when rules are enforced through delegated passes (worker waves that
+classify, fix, or verify findings).
 
 ## Top-level function shows intent and business sequence
 
