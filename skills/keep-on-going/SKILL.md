@@ -306,6 +306,12 @@ Stop ONLY if a human decision is genuinely required, and check cheaper
 sources first: this skill, the epic body, prior user directives, the
 ledger. Most "I need a decision" moments are research gaps, not decision
 gaps. Fix mid-loop problems proactively and record them in the ledger.
+Local tooling failure is the exception: when build tools, linters, or
+package managers break on this machine, STOP the current path, record
+the failure as a bean in the project's task list, ask the user for
+assistance, and WAIT for the fix - do not work around or bypass broken
+local tooling.
+
 When the epic finishes, state it in one line, then claim the next ready
 bean or state the stop condition. Stop only for: spending money,
 destroying data, crossing a trust boundary, or exhausted instruction
@@ -387,38 +393,12 @@ covers what an author misses about their own change.
 ## PR-open ≠ session-pause (user binding)
 
 A PR waiting for review is NOT a stopping point and never an excuse to
-end the turn idle. While a PR is open the session presses on autonomously:
-
-1. **Run a retrospective audit** on the session so far: audit the problems
-   actually hit (wrong model dispatches, stalled RPC lanes, narration
-   comments, scope-rule misses), fix their structural causes in the
-   governing skills/contracts/hooks: lessons land where the next
-   session loads them, not in chat history.
-2. **Continue the epic loop** on the same branch: next ready bean,
-   re-gate, commit, push: the open PR absorbs the new commits.
-3. **Frontier check**: if a genuine human decision surfaced mid-wave,
-   batch it into one focused question-list session (whole frontier, numbered,
-   recommended answers). Ad-hoc asks and waiting are both failures.
-
-Communication rule: report state in one line ("PR open, worker on X,
-next Y"), never end a turn with idle capacity while beans are ready.
-
-Session close needs a LEDGER-shaped state summary, not narrative:
-beans closed (by title, not id), commits pushed, CI verdict, next pick.
-The next session loads the ledger, not the transcript.
-
-### Retro loopback (binding)
-
-Every retro finding gets a **structural** fix, never a verbal one:
-- a mistake a check could catch → wire the check (linter rule, CI job,
-  pre-push hook) before writing any prose rule;
-- a wrong dispatch pattern (model choice, contract shape) → fix the
-  delegating skill's contract template so the next dispatch inherits
-  the fix;
-- a steering rule that failed → patch the skill that owns it, not the
-  session transcript.
-Retro closes only when the problems that already occurred cannot
-recur through the same path.
+end the turn idle: the session presses on - retro audit of problems
+hit (fixes land in governing skills), the next ready bean on the same
+branch, human questions batched into one frontier session. The loop
+steps and the retro-loopback law: read
+[references/pr-open-loop.md](references/pr-open-loop.md) while a PR
+awaits review.
 
 ---
 

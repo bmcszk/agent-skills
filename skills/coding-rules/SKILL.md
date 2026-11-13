@@ -13,6 +13,17 @@ description: >
 
 These rules apply to any language and any project. Apply them to new code and to code you touch. Do not reshuffle unrelated code only to match them.
 
+## Test-driven development always
+
+Write the failing test first, then the code that makes it pass - for
+every feature, bugfix, and refactor. Red, green, refactor: the test
+names the contract before the code exists, and the red run proves the
+test can fail. A change that cannot be written test-first needs its
+test seams fixed first, not a skip of this rule. Where tests attach,
+what a good test is, and the anti-patterns that ruin suites: read
+[references/tdd-theory.md](references/tdd-theory.md) when writing the
+first test of a change or reviewing a test suite.
+
 ## Top-level function shows intent and business sequence
 
 - The top-level function reads like the use case: a short list of business steps in order.

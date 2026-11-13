@@ -63,3 +63,24 @@ Installed skills come from several upstreams (own repo, third-party
 imports). Only skills whose source repo accepts PRs from this user are
 harvestable; third-party skills get wrapper amendments instead
 (personal-skill-authoring law), never upstream PRs.
+
+## Harvest destination: tool lessons land in the tool's repo
+
+When the harvested lessons are ABOUT a specific tool the user owns (a
+plugin, a CLI, a service), the destination is that tool's own repo, not
+the generic skills library: generic, agnostic lessons land in the
+tool's shipped docs (README sections, docs/) through its normal PR
+flow, so every user of the tool gets them without installing any
+skill. Only cross-project workflow knowledge that no single repo should
+own stays in the skills library. The tool repo's own laws still bind:
+public repos get the leak sweep before any push.
+
+Classify every candidate three ways before filing anything:
+already-mechanical in the tool (skip - do not re-propose shipped
+behavior), a generic capability the tool COULD own (file with the
+cold-start failure mode as the evidence), or house-only procedure
+(keep local). Verify "already shipped" against the tool's actual code,
+not against memory of what a wave was supposed to deliver. When two
+workers harvest in parallel, each filer lists the target tracker's open
+tasks first and folds same-capability findings into the surviving task
+(fold note in the body) instead of creating near-duplicates.

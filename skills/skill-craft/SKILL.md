@@ -73,6 +73,14 @@ tied to conditions, failure modes learned in practice, domain procedures
 whose ordering matters. Generic advice the model already supplies ("write
 clean code", basic tutorials) is dead weight no matter how correct.
 
+Apply it at write time to every section: "would a strong model already
+supply this, or did this cost real time to learn?" Mechanics a strong
+model can derive (a conversion recipe, a standard refactor shape, a
+language's footgun rules) get one line at most; the durable content is
+the non-obvious law - silent failure modes, oracle mismatches, the
+trap that ate a session. A harvest or port that ships derivable
+prose pays for a slim-down pass later; write the lean version first.
+
 ## Freedom calibration
 
 Match instruction rigidity to task fragility, not to writing mood.
@@ -113,6 +121,10 @@ its source. State execution intent explicitly ("run", not "you could").
 plugin mechanism (a `pre_tool_call` hook). The plugin blocks the tool call
 at the gateway level so the model never sees the violating result. Use the
 runner's plugin-authoring and delegation skills if installed.
+
+Rewrites that replace whole sections obey the rewrite-safety rules: read
+[references/rewrite-safety.md](references/rewrite-safety.md) when a pass
+replaces sections, merges rules, or compresses prose.
 
 ## Slim by moving, not by deleting law
 
@@ -184,7 +196,10 @@ rendering (clickable review) and link checkers (broken reference fails in
 CI, not at runtime). Keep paths relative to the skill dir with forward
 slashes, and name the load condition next to the link - the condition
 triggers the read, the link just carries it. Abstract mentions that teach
-naming rather than load a file stay in backticks.
+naming rather than load a file stay in backticks. Pointer wording craft,
+the two-loads budget, and when a step stays in-file: read
+[references/context-pointers.md](references/context-pointers.md) when
+writing or auditing load-condition links.
 
 ## Mechanical quality gate for skill libraries
 

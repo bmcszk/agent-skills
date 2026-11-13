@@ -199,3 +199,28 @@ The round is done when every surface agrees with the story:
 Wrap every remote read in a retry (3 attempts, short sleep): a single
 `dial tcp ... i/o timeout` against api.github.com is routine and is
 never news about your PR.
+
+## Authoring the PR body
+
+- The body is current with the branch: update it in the same push
+  cycle as the work. When later work absorbs into an already-open PR,
+  add one section per absorbed item. A reviewer judges completeness
+  by the body, so a stale body reads as an unfinished PR even with CI
+  green.
+- Close with a gate-evidence block naming every gate the repo
+  enforces, each quoted from a rerun at the head SHA. Numbers from an
+  older run are not evidence, and an omitted gate reads as hidden
+  work.
+- A grouped-feature PR opens with one line per feature plus the
+  shared design decisions; the title comes from the lead feature. A
+  partial feature is disclosed in the body, never claimed as shipped
+  in the title.
+
+## Pre-open audit
+
+Open the PR only after a read-only audit, in this order: re-read
+every doc the body links against the final tip (a stale-doc
+contradiction is the most common blocking finding); diff-verify the
+body's file and scope claims against
+`git diff <base>...HEAD --name-only`; re-run all gates at head; and
+re-verify them after any fix round, then run `gh pr create`.

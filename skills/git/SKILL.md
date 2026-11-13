@@ -6,7 +6,9 @@ description: >-
   branches or commits, watching CI, cleaning up after a merged PR, or
   managing worktrees. Carries the house laws: squash-merge PRs, merge
   preferred over rebase as the refresh flow with force pushes guarded by
-  --force-with-lease, humans merge, CI must stay green, worktrees
+  --force-with-lease, humans merge, CI must stay green, green gates
+  before any push, mid-flight PRs stay draft with ready-for-review as
+  the final step, worktrees
   only for parallel work inside .worktrees/. Not for GitHub API or
   gh CLI details beyond a PR review round (see references/github.md),
   or for git internals.
@@ -20,7 +22,9 @@ metadata:
 
 # Git
 
-One integration branch (`master`). Work lands only through PRs,
+One integration branch (`master`) - `master` is the default branch
+name everywhere: scripts, CI configs, docs, and branch recipes
+reference `master`, never `main`. Work lands only through PRs,
 squash-merged by a human with CI green. Everything else below is how to
 stay out of git's way.
 
@@ -43,11 +47,18 @@ phantom PR wastes the human gate. Prevention: one branch per PR, and
 never park later-phase commits on a branch whose PR is awaiting merge.
 Group features into ONE PR when they belong together (gate + port on
 one feature = one PR; a RED gate alone is a separate PR only when the
-port cannot exist without master-side fixtures). Check the PR right
-after create: draft must be flipped (`gh pr ready <n>`) and the title
+port cannot exist without master-side fixtures). One PR per epic is
+the granularity law; when an epic is genuinely too big for one review,
+group reasonably similar tasks into one PR - never one PR per feature
+or task (a PR wave of small PRs rots as a group and buries the human
+gate under ceremony). Mid-flight work opens
+as a DRAFT: `gh pr create --draft` while the work is still in progress,
+and flipping to ready-for-review (`gh pr ready <n>`) is the LAST step -
+taken only when the work is complete, gates are green, and the PR is
+ready for the human eye. Check the PR right after create: the title
 must be the real one (`gh pr edit <n> --title ...`) - `gh pr create`
-can land a draft with a boilerplate title, and a draft with the wrong
-title is not a deliverable.
+can land a boilerplate title, and a draft with the wrong title hides
+what the branch is until the flip.
 
 ## Start of work (new branch)
 
@@ -61,6 +72,11 @@ git worktree prune             # drop metadata of removed worktrees
 git branch --merged master | grep -v master | xargs -r git branch -d
 git switch -c <type>/<short-desc>   # from fresh master
 ```
+
+Never branch from a stale local base: if `git pull` reports
+"Already up to date" but `origin/master` moved (`git rev-list
+--count master..origin/master` prints nonzero), fetch failed or a
+remote is misconfigured - fix that before branching.
 
 The merged-branch sweep: `git branch -d` refuses unmerged branches, so it
 is safe as written - and under squash-merge it catches nothing from
@@ -158,6 +174,9 @@ same turn:
 
 CI status is part of the work, not an afterthought:
 
+- Push only green commits: never push a commit that fails the
+  project's tests or linter. Red gates are fixed locally first - a
+  pushed red commit rots every branch that shares its files.
 - Watch from push: `gh pr checks <PR>` (or `gh run watch`). No "looks
   done" without the checks line: every job `pass`.
 - Red = stop and fix the root cause; never merge red, never re-run to
@@ -360,4 +379,7 @@ PR opens.
 - On a red check: fix, push, watch again. On a stale PR: refresh
   (merge master in), push, re-watch.
 - Report state, not confidence: "CI green, ready to merge" with the
-  checks line pasted.
+  checks line pasted. Every PR mentioned to a human carries its full
+  URL (`https://github.com/<org>/<repo>/pull/<n>`), never a bare
+  number; the same discipline covers CI runs and other cited
+  artifacts.
