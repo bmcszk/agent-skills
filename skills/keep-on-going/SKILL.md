@@ -306,6 +306,12 @@ Stop ONLY if a human decision is genuinely required, and check cheaper
 sources first: this skill, the epic body, prior user directives, the
 ledger. Most "I need a decision" moments are research gaps, not decision
 gaps. Fix mid-loop problems proactively and record them in the ledger.
+Local tooling failure is the exception: when build tools, linters, or
+package managers break on this machine, STOP the current path, record
+the failure as a bean in the project's task list, ask the user for
+assistance, and WAIT for the fix - do not work around or bypass broken
+local tooling.
+
 When the epic finishes, state it in one line, then claim the next ready
 bean or state the stop condition. Stop only for: spending money,
 destroying data, crossing a trust boundary, or exhausted instruction
