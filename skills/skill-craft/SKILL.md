@@ -184,7 +184,10 @@ rendering (clickable review) and link checkers (broken reference fails in
 CI, not at runtime). Keep paths relative to the skill dir with forward
 slashes, and name the load condition next to the link - the condition
 triggers the read, the link just carries it. Abstract mentions that teach
-naming rather than load a file stay in backticks.
+naming rather than load a file stay in backticks. Pointer wording craft,
+the two-loads budget, and when a step stays in-file: read
+[references/context-pointers.md](references/context-pointers.md) when
+writing or auditing load-condition links.
 
 ## Mechanical quality gate for skill libraries
 
