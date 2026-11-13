@@ -60,19 +60,15 @@ the evidence from the session, the proposed fix, and who owns it
 
 ## Fix quality
 
-- A severity claim carries a measured number from the session (call
-  counts, wall time, token totals, churn lines). A cost claim without
-  a number is a vibe.
+- A severity claim carries a measured number from the session; a cost
+  claim without a number is a vibe.
 - Every fix passes the recurrence test before the retro closes:
   replay the failure against the earliest point where the new rule
-  would fire. [keep-on-going](../keep-on-going/SKILL.md#recurrence-test-for-retro-fixes)
-  carries the law and the replay procedure. A rule whose first firing
-  point is review stage, after the full batch shipped, is a detector
-  rather than prevention: move it earlier (a canary, the contract, a
-  dispatch gate) until replay shows it catching the failure at file 1.
-- A fix for a step an agent executes is wired as an enforced check (a
-  script, a runner gate) when one exists, with a one-line skill
-  pointer to it: prose governs the willing and code governs the
-  rushed. Present the ledger with the enforcement mechanism named per
-  fix (script, skill rule, or both), so a fix reported as documented
-  is still open.
+  would fire ([keep-on-going](../keep-on-going/SKILL.md#recurrence-test-for-retro-fixes)
+  carries the procedure). A rule whose first firing point is review
+  stage is a detector, not prevention: move it earlier until replay
+  shows it catching the failure at file 1.
+- A fix for an executed step is wired as an enforced check when one
+  exists, with a one-line skill pointer: prose governs the willing,
+  code governs the rushed. Name the enforcement mechanism per fix in
+  the ledger.

@@ -203,40 +203,24 @@ never news about your PR.
 ## Authoring the PR body
 
 - The body is current with the branch: update it in the same push
-  cycle as the work. When later epics absorb into an already-open PR,
-  add one section per absorbed item with a one-line result and the
-  commit refs. A reviewer judges completeness by the body, so a stale
-  body reads as an unfinished PR even with CI green.
-- Close with a gate-evidence block naming every gate the repo enforces
-  (build, vet, lint issue counts, full test count) plus the CI
-  conclusion, each quoted from a rerun at the head SHA. An omitted
-  gate reads as hidden work, and numbers from an older slice log are
-  not evidence.
-- A grouped-feature PR opens with one line per feature (the feature
-  and its one-line result), followed by the shared design decisions
-  (parity policy, recorded deviations, fail-closed guarantees) and the
-  gate-evidence block for the whole branch. The title comes from the
-  lead feature; the remaining feature titles live in the body list.
-  One grouped PR gets one review sweep covering every feature, with
-  each finding checked against its own feature's contract.
-- A partial feature is disclosed: mark it in the title or drop it from
-  the title, and state the deferral in the body. A title claiming a
-  partial feature reads to a skim-reader as shipped.
+  cycle as the work. When later work absorbs into an already-open PR,
+  add one section per absorbed item. A reviewer judges completeness
+  by the body, so a stale body reads as an unfinished PR even with CI
+  green.
+- Close with a gate-evidence block naming every gate the repo
+  enforces, each quoted from a rerun at the head SHA. Numbers from an
+  older run are not evidence, and an omitted gate reads as hidden
+  work.
+- A grouped-feature PR opens with one line per feature plus the
+  shared design decisions; the title comes from the lead feature. A
+  partial feature is disclosed in the body, never claimed as shipped
+  in the title.
 
 ## Pre-open audit
 
-Open the PR only after a read-only audit over the diff and the body
-draft, in this order:
-
-1. Re-read every doc the body links (verification docs, acceptance
-   tables, appendices) against the final tip, and fix stale docs
-   before touching the body: a stale-doc contradiction is the most
-   common blocking finding.
-2. Diff-verify the body's file and scope claims: check every path the
-   body names against `git diff <base>...HEAD --name-only`. A body
-   naming a file the diff does not touch, or missing one it does, is a
-   standing reviewer finding.
-3. Re-run the gates at head: build, vet, formatting, full tests, the
-   repo's lint script, and any environment-gated smoke with the
-   environment the tests expect.
-4. Re-verify the gates after any fix round, then run `gh pr create`.
+Open the PR only after a read-only audit, in this order: re-read
+every doc the body links against the final tip (a stale-doc
+contradiction is the most common blocking finding); diff-verify the
+body's file and scope claims against
+`git diff <base>...HEAD --name-only`; re-run all gates at head; and
+re-verify them after any fix round, then run `gh pr create`.

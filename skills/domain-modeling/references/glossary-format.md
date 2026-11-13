@@ -24,16 +24,21 @@ _Avoid_: Client, buyer, account
 
 ## Rules
 
-- **Be opinionated.** When multiple words exist for the same concept, pick the best one and list the others under `_Avoid_`.
-- **Keep definitions tight.** One or two sentences max. Define what it IS, not what it does.
-- **Only include terms specific to this project's context.** General programming concepts (timeouts, error types, utility patterns) don't belong even if the project uses them extensively. Before adding a term, ask: is this a concept unique to this context, or a general programming concept? Only the former belongs.
-- **Group terms under subheadings** when natural clusters emerge. If all terms belong to a single cohesive area, a flat list is fine.
+- Be opinionated: when multiple words exist for the same concept, pick
+  the best one and list the others under `_Avoid_`.
+- Keep definitions tight: one or two sentences max, what the term IS,
+  not what it does.
+- Project-specific terms only: general programming concepts (timeouts,
+  error types, utility patterns) stay out even when the project uses
+  them extensively.
+- Group terms under subheadings when natural clusters emerge; a flat
+  list is fine when all terms belong to one cohesive area.
 
 ## Single vs multi-context repos
 
-**Single context (most repos):** One `GLOSSARY.md` at the repo root.
-
-**Multiple contexts:** A `GLOSSARY-MAP.md` at the repo root lists the contexts, where they live, and how they relate to each other:
+A single-context repo (most repos) keeps one `GLOSSARY.md` at the
+repo root. Multiple contexts get a `GLOSSARY-MAP.md` at the root
+listing the contexts, where they live, and how they relate:
 
 ```md
 # Glossary Map
@@ -51,10 +56,8 @@ _Avoid_: Client, buyer, account
 - **Ordering ↔ Billing**: Shared types for `CustomerId` and `Money`
 ```
 
-The skill infers which structure applies:
-
-- If `GLOSSARY-MAP.md` exists, read it to find contexts
-- If only a root `GLOSSARY.md` exists, single context
-- If neither exists, create a root `GLOSSARY.md` lazily when the first term is resolved
+Which structure applies: a `GLOSSARY-MAP.md` means read it to find
+the contexts; a lone root `GLOSSARY.md` means single context; neither
+means create the root glossary lazily when the first term resolves.
 
 When multiple contexts exist, infer which one the current topic relates to. If unclear, ask.
