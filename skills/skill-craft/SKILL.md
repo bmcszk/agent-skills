@@ -73,6 +73,14 @@ tied to conditions, failure modes learned in practice, domain procedures
 whose ordering matters. Generic advice the model already supplies ("write
 clean code", basic tutorials) is dead weight no matter how correct.
 
+Apply it at write time to every section: "would a strong model already
+supply this, or did this cost real time to learn?" Mechanics a strong
+model can derive (a conversion recipe, a standard refactor shape, a
+language's footgun rules) get one line at most; the durable content is
+the non-obvious law - silent failure modes, oracle mismatches, the
+trap that ate a session. A harvest or port that ships derivable
+prose pays for a slim-down pass later; write the lean version first.
+
 ## Freedom calibration
 
 Match instruction rigidity to task fragility, not to writing mood.
