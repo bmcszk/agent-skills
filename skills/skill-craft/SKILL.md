@@ -234,6 +234,8 @@ Maintainer-only PR combining and install/master delta sync: read
 [references/repo-maintenance.md](references/repo-maintenance.md) when
 performing repo upkeep.
 
+- [hermes-skills.md](references/hermes-skills.md) - when authoring or pruning hermes-local skills, or splitting global vs local knowledge.
+
 ## Skill harvest
 
 The global skill dir mutates in place; updates overwrite local changes.
