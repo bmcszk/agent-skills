@@ -124,7 +124,10 @@ runner's plugin-authoring and delegation skills if installed.
 
 Rewrites that replace whole sections obey the rewrite-safety rules: read
 [references/rewrite-safety.md](references/rewrite-safety.md) when a pass
-replaces sections, merges rules, or compresses prose.
+replaces sections, merges rules, or compresses prose. Read
+[references/project-coupled-skills.md](references/project-coupled-skills.md)
+when relocating project-coupled skills between a shared library and an
+owning repo, or when triaging `skills` CLI install/update behavior.
 
 ## Slim by moving, not by deleting law
 

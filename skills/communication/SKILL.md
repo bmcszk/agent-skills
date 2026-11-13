@@ -68,3 +68,8 @@ skill. Evidence over apology.
   through that repo's workflow - never build workaround machinery
   around a plugin defect. Return to the real tools the moment they
   answer again.
+- Persistent-state consent: build nothing persistent - timers, cron
+  entries, daemons, services - from an inferred make-it-right. A yes
+  covers exactly the question asked; scope extensions get stated
+  options and a wait, not a running artifact the user has to find
+  and remove.

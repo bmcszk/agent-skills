@@ -42,3 +42,26 @@ behind exit 0.
   try/except silently skips every frontmatter check when the
   dependency is missing and still prints OK. Run the lint under the
   same interpreter CI uses; a bare-interpreter green is unproven.
+- Repo linters report required-section gaps ONE AT A TIME: fixing a
+  single missing heading and re-running surfaces the next gap on
+  the next run, one rerun per gap. Copy the full skeleton (all
+  required sections) from a lint-clean bean of the same type
+  instead, and pass in one run.
+- Verify a claimed fix where the CONSUMER reads the fixed value, not
+  where the writer wrote it: the installed path is not the serving
+  path (a repo checkout can differ from the running unit's copy).
+  Resolve the unit ExecStart or `/proc/<pid>/cmdline` first to learn
+  what actually executes, then verify against that copy.
+- Old fix notes go stale when routing, config, or availability
+  change: a note verified last month describes last month's paths.
+  Re-verify before carrying the note forward into a new campaign or
+  bean.
+- CLI gaps that hide behind exit 0: `beans show` strips custom YAML
+  fields (read the `.beans` file directly to see them);
+  `--parent ''` is a silent no-op (clearing a parent is
+  `--remove-parent`); `update -t` retype skips parent re-validation
+  (verify parentage via `list --json` and do retype plus parent fix
+  in one batch); an empty-filter `list --json` emits literal `null`
+  not `[]` (guard the consumer); `list --json` can carry raw control
+  chars (parse with `strict=False`); `create --json` nests the bean
+  under `.bean.id`, not at the top level.
