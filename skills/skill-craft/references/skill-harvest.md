@@ -13,6 +13,16 @@ updates, or when the user reports local skill edits.
    (skill-craft's [references/repo-maintenance.md](repo-maintenance.md) has the diff recipe). Diffs are
    candidates; style-only churn (em dash rewrites, hash timestamps) is
    not.
+   - Compare against the fetched default branch (`origin/master`), not
+     the local checkout and not `git rev-list --all`: a local checkout
+     lags, and `--all` includes unmerged local branches, so an
+     unshipped edit looks already upstream. An installed blob found
+     only in older default-branch history is a stale install, not a
+     local mutation.
+   - `git cherry` marks squash-merged commits as unmerged. Judge a
+     branch by its content diff against the default branch.
+   - Each agent may hold its own copy of a skill (for example
+     `~/.claude/skills` beside `~/.agents/skills`). Diff the copies too.
 2. **Triage each change** - three questions, all must answer yes:
    - Does it carry valuable knowledge (a fix, a law, a failure mode that
      cost real time)?
