@@ -34,3 +34,14 @@ Deep-dive topics are split into focused reference files:
 | Apply transforms without considering order | Remember: transforms apply in reverse call order |
 | Load/decode images every frame | Load once, cache the `*ebiten.Image` |
 | Use `screen.Set(x, y, color)` for many pixels | Use shaders or `Image.Fill()` for bulk pixel ops |
+| Call `Target().ReadPixels()` outside a running game loop | `ReadPixels` panics unless `ebiten.RunGame` is running - the `//go:build windowed` tag is necessary but NOT sufficient; read from the `screen` image passed into `Draw`, or produce test pixels headlessly through your own frame/palette expansion seam |
+
+## Windowed build tags and pixel reads
+
+- `//go:build windowed` controls COMPILATION only - it never initializes ebiten's
+  UI backend; the backend's `running` state is set solely inside `ebiten.RunGame`.
+- A pixel-reading test must either run inside a real loop (an app hosts exactly one
+  run loop per process) or stay headless: produce expected pixels through your own
+  palette/frame expansion seam and assert on those.
+- Gate the loop-driven capture on the display being available; it skips on CI and
+  headless machines, so never let it be the only coverage for a capture path.
